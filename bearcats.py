@@ -1,66 +1,85 @@
 import pandas as pd
 # from bearcats import DataFrame
 
+# get rid of all the return `DataFrame`s
+
 class DataFrame:
+    def __repr__(self):
+        return str(self._pdf)
+
     def __init__(self, pdf):
         self._pdf = pdf
 
-    @property
-    def bdf(self):
-        pdf = self._pdf
-        return DataFrame(pdf)
-
+    # mimics json library verb
     @classmethod
     def load(cls, path, *args, **kwargs):
         pdf = pd.read_csv(path, *args, **kwargs)
         return DataFrame(pdf)
 
+    # mimics json library verb
     def dump(path, index=False, *args, **kwargs):
         pdf = self._pdf
-        self._pdf.to_csv(path, *args, **kwargs)
+        pdf.to_csv(path, *args, **kwargs)
         return DataFrame(pdf)
 
-    def __repr__(self):
-        return str(self._pdf)
-
+    # columns
     def select(self, columns):
         pdf = self._pdf[columns]
         return DataFrame(pdf)
 
-    @property
-    def dimensions(self):
-        pass
+    # rename
+    def rename(self, mapping):
+        pdf = self._pdf.rename(columns=mapping)
+        return DataFrame(pdf)
 
+    # rows
+    # keep?
     def filter(self, func):
         pdf = self._pdf.loc[func]
         return DataFrame(pdf)
 
+    # columns
     def mutate(self, mutations):
         pdf = self._pdf.copy()
-        for name, mutation in mutations.items():
-            pdf[name] = pdf.apply(mutation, axis=1)
+        for column, mutation in mutations.items():
+            pdf[column] = pdf.apply(mutation, axis=1)
         return DataFrame(pdf)
 
+    # rows
+    # top?
     def head(self, n=5):
         pdf = self._pdf.head(n)
         return DataFrame(pdf)
 
+    # last
     def tail(self, n=5):
         pdf = self._pdf.tail(n)
         return DataFrame(pdf)
 
     def sample(self, n=1):
+        # if fraction then do sample frac
         pdf = self._pdf.sample(n)
         return DataFrame(pdf)
 
-    def sort(self):
-        pass
+    def sort(self, columns, reverse=False):
+        pdf = self._pdf.sort_values(by=columns, ascending=False if reverse else True)
+        return DataFrame(pdf)
 
     def drop(self):
+        # NAs
         pass
 
     def join(self):
+        # left, inner and on keys?
         pass
+
+    @property
+    def dimensions(self):
+        pass
+
+    # something about group by / summarise
+
+    # rename columns
 
 df = pd.DataFrame({
     "a": [1, 2, 3, 4, 5],
@@ -69,42 +88,41 @@ df = pd.DataFrame({
     "d": [1.0, 3.99, 4.88, 1_000_300.19, 0.2222]
 })
 
-# df.to_csv("example.csv")
+# bf = DataFrame(df)
 
-DataFrame.load("example.csv")
-
-pd.read_csv("example.csv", header=0)
-
-bf = DataFrame(df)
-
-# bf = DataFrame.import("")
-# bf.export("example.csv")
-
-# bf = DataFrame.from("example.csv")
-# bf.to("example.csv")
-
-# bf.load("example.csv")
-# bf.dump("example.csv")
-
-(bf
-    .select(["a", "d"])
-    .head(5)
-    .mutate({
-        "e": lambda d: d["d"] * 5
-    })
-    .filter(lambda d: d["a"] >= 3)
-)
-
+bc.load()
+bf.dump()
 
 bf = (
-    bf
-    .select(["a", "b", "d"])
-    .head(5)
-    .mutate({
-        "e": lambda x: x["d"] * 5,
-        "f": lambda x: x["e"] / 5
-    })
-    .filter(lambda x: x["a"] >= 3)
+    DataFrame.load("example.csv")
+        .select(["a", "d"])
+        # do I want this? adding complexity or simplicity?
+        # .mutate(f=lambda d: d["e"] / 5)
+        .mutate({
+            "e": lambda d: d["d"] * 5,
+            "f": lambda d: d["e"] / 5
+        })
+        .filter(lambda d: d["a"] >= 3)
+        .head(5)
+        .sort(["d"], reverse=True)
+        .rename({"f": "h"})
+        # .sort("d")
+        # .select("f")
 )
 
-#
+bf = (
+    DataFrame.load("example.csv")
+        .select(["a", "d"])
+        .mutate({
+            "e": lambda d: d["d"] * 5,
+            "f": lambda d: d["e"] / 5
+        })
+        .filter(lambda d: d["a"] >= 3)
+        .sort(["d"], reverse=True)
+        .rename({"f": "h"})
+        .head(5)
+)
+
+pd.set_option('display.float_format', lambda x: '%.2f' % x)
+
+bf
