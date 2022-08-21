@@ -1,45 +1,56 @@
 import pandas as pd
+# from bearcats import DataFrame
 
 class DataFrame:
     def __init__(self, pdf):
-        self.pdf = pdf
+        self._pdf = pdf
 
-    def __repr__(self):
-        return str(self.pdf)
-        # return self.pdf.to_string()
-
-    def select(self, columns):
-        pdf = self.pdf[columns]
+    @property
+    def bdf(self):
+        pdf = self._pdf
         return DataFrame(pdf)
 
-    @staticmethod
-    def csv():
-        pass
+    @classmethod
+    def load(cls, path, *args, **kwargs):
+        pdf = pd.read_csv(path, *args, **kwargs)
+        return DataFrame(pdf)
+
+    def dump(path, index=False, *args, **kwargs):
+        pdf = self._pdf
+        self._pdf.to_csv(path, *args, **kwargs)
+        return DataFrame(pdf)
+
+    def __repr__(self):
+        return str(self._pdf)
+
+    def select(self, columns):
+        pdf = self._pdf[columns]
+        return DataFrame(pdf)
 
     @property
     def dimensions(self):
         pass
 
     def filter(self, func):
-        pdf = self.pdf.loc[func]
+        pdf = self._pdf.loc[func]
         return DataFrame(pdf)
 
     def mutate(self, mutations):
-        pdf = self.pdf.copy()
+        pdf = self._pdf.copy()
         for name, mutation in mutations.items():
             pdf[name] = pdf.apply(mutation, axis=1)
         return DataFrame(pdf)
 
     def head(self, n=5):
-        pdf = self.pdf.head(n)
+        pdf = self._pdf.head(n)
         return DataFrame(pdf)
 
     def tail(self, n=5):
-        pdf = self.pdf.tail(n)
+        pdf = self._pdf.tail(n)
         return DataFrame(pdf)
 
     def sample(self, n=1):
-        pdf = self.pdf.sample(n)
+        pdf = self._pdf.sample(n)
         return DataFrame(pdf)
 
     def sort(self):
@@ -58,7 +69,22 @@ df = pd.DataFrame({
     "d": [1.0, 3.99, 4.88, 1_000_300.19, 0.2222]
 })
 
+# df.to_csv("example.csv")
+
+DataFrame.load("example.csv")
+
+pd.read_csv("example.csv", header=0)
+
 bf = DataFrame(df)
+
+# bf = DataFrame.import("")
+# bf.export("example.csv")
+
+# bf = DataFrame.from("example.csv")
+# bf.to("example.csv")
+
+# bf.load("example.csv")
+# bf.dump("example.csv")
 
 (bf
     .select(["a", "d"])
