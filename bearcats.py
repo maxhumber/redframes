@@ -8,6 +8,7 @@ class DataFrame:
         return str(self._pdf)
 
     def __init__(self, pdf):
+        # should this be more exposed or less?
         self._pdf = pdf
 
     # mimics json library verb
@@ -18,6 +19,7 @@ class DataFrame:
 
     # mimics json library verb
     def dump(path, index=False, *args, **kwargs):
+        # merge kwargs + index? and allow for overwrite
         pdf = self._pdf
         pdf.to_csv(path, *args, **kwargs)
         return DataFrame(pdf)
@@ -28,8 +30,8 @@ class DataFrame:
         return DataFrame(pdf)
 
     # rename
-    def rename(self, mapping):
-        pdf = self._pdf.rename(columns=mapping)
+    def rename(self, columns):
+        pdf = self._pdf.rename(columns=columns)
         return DataFrame(pdf)
 
     # rows
@@ -71,15 +73,23 @@ class DataFrame:
 
     def join(self):
         # left, inner and on keys?
+        # .left_join()
+        # .inner_join()
         pass
+
+    # what about concatenate? and (appending rows?)
+    # .append() ?
+    # .extend() ?
 
     @property
     def dimensions(self):
         pass
 
+    # do I want .info() ? .describe?
+    # something about how many categories?
+
     # something about group by / summarise
 
-    # rename columns
 
 df = pd.DataFrame({
     "a": [1, 2, 3, 4, 5],
@@ -94,6 +104,9 @@ bc.load()
 bf.dump()
 
 bf = (
+    # call this a DataTable? Panel? Frame? Table? DF? BFrame??
+    # should this be bc.loads()?
+    # bc.DataFrame
     DataFrame.load("example.csv")
         .select(["a", "d"])
         # do I want this? adding complexity or simplicity?
@@ -121,8 +134,17 @@ bf = (
         .sort(["d"], reverse=True)
         .rename({"f": "h"})
         .head(5)
+        # .convert() # to pandas
+        # .as_pandas_dataframe()
+        # .to_df()
+        # .as_df()
+        # .pdf
+        # .unwrap()
+        # .collect()
 )
 
+# what to do about these options?
+# where should they go?
 pd.set_option('display.float_format', lambda x: '%.2f' % x)
 
 bf
