@@ -24,8 +24,6 @@ Pandas = Bear Cats (Chinese)
 
 ### Questions
 
-- Should there be a convert/revert... or just sit it on top of pandas?
-- support sql? json?
 - support list of lists?
 - support dictionary?
 - support to_dict?
@@ -40,3 +38,5 @@ Pandas = Bear Cats (Chinese)
 - `.mutate(f=lambda d: d["e"] / 5)` is no good. Use a dictionary!
 - `.select("a")` is no good. Use a list!
 - reindex is fine
+- DON'T SIT ON TOP OF PANDAS ... NOT SAFE!
+- No sql/json support

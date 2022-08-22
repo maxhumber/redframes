@@ -8,7 +8,7 @@ def load(path, *args, **kwargs):
 class DataFrame:
     def __repr__(self):
         # FIXME: not returning properly
-        return self._pdf.to_string()
+        return repr(self._pdf)
 
     def __init__(self, data):
         if isinstance(data, pd.DataFrame):
@@ -84,9 +84,7 @@ class DataFrame:
     def convert(self):
         return self._pdf
 
-    # something about group by / summarise
 
-# cast, recast, decast, backcast, open/close, in/out, up/down??
 class PandasDataFrame(pd.DataFrame):
-    def revert(self):
+    def convert(self):
         return DataFrame(self)
