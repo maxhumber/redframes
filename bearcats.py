@@ -17,11 +17,6 @@ class DataFrame:
         else:
             self._pdf = pd.DataFrame(data)
 
-    @classmethod
-    def load(cls, path, *args, **kwargs):
-        pdf = pd.read_csv(path, *args, **kwargs)
-        return DataFrame(pdf)
-
     def dump(path, *args, **kwargs):
         kwargs = {"index": False} | kwargs
         pdf = self._pdf
