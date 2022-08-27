@@ -1,6 +1,13 @@
 # bearcats
 Pandas = Bear Cats (Chinese)
 
+# Inspiration
+
+- pandas
+- dplyr
+- Dask Bag
+- Clumper
+
 ### Goals
 
 - Method chaining!
