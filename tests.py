@@ -11,20 +11,42 @@ df = pd.DataFrame({
     "value": [16, 50, 31, 1, 24.5]
 })
 
-index = ["country", "geo"]
+df
+
 
 # SPREAD
 
-# def pivot_wider(data, names_from = "name", values_from = "value")
+def pivot_wider(df, names_from, values_from):
+    index = [col for col in df.columns if col not in [names_from, values_from]]
+    df = pd.pivot_table(df, index=index, columns=[names_from], values=[values_from])
+    df.columns = [col for col in df.columns.get_level_values(1)]
+    df = df.reset_index().rename_axis(None, axis=0)
+    return df
 
-df = pd.pivot_table(df, index=index, columns=['stat'], values=["value"])
-df.columns = [col for col in df.columns.get_level_values(1)]
-df = df.reset_index().rename_axis(None, axis=0)
+pivot_wider(df, names_from="stat", values_from="value")
+
+def spread(df, column, over):
+    index = [col for col in df.columns if col not in [column, over]]
+    df = pd.pivot_table(df, index=index, columns=[column], values=[over])
+    df.columns = [col for col in df.columns.get_level_values(1)]
+    df = df.reset_index().rename_axis(None, axis=0)
+    return df
+
+df = spread(df, "stat", "value")
 df
 
 # GATHER
 
-(
+def gather(df, columns, into=("variable", "value"), dropna=True):
+    index = [col for col in df.columns if col not in columns]
+    df = pd.melt(df, id_vars=index, value_vars=columns, var_name=into[0], value_name=into[1])
+    df = df.dropna(subset="value")
+    return df
+
+gather(df, ["pop", "gdp", "temp"])
+
+
+df = (
     pd.melt(df, id_vars=index, value_vars=['gdp', "pop", "temp"], var_name='variable', value_name='value')
         .dropna(subset="value")
 )
