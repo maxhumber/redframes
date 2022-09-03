@@ -10,6 +10,7 @@ Pandas = Bear Cats (Chinese)
 
 ### Goals
 
+- Everything returned is a python object
 - Method chaining!
 - No surprises!
 - Less Googling!

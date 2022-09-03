@@ -5,26 +5,99 @@ pd.set_option("display.float_format", lambda x: "%.2f" % x)
 
 
 df = pd.DataFrame({
+    "country": ["Can", "Can", "Can", "Can", "Can"],
+    "geo": ["ON", "ON", "ON", "NFLD", "NFLD"],
+    "stat": ["pop", "gdp", "temp", "pop", "temp"],
+    "value": [16, 50, 31, 1, 24.5]
+})
+
+index = ["country", "geo"]
+
+# SPREAD
+
+# def pivot_wider(data, names_from = "name", values_from = "value")
+
+df = pd.pivot_table(df, index=index, columns=['stat'], values=["value"])
+df.columns = [col for col in df.columns.get_level_values(1)]
+df = df.reset_index().rename_axis(None, axis=0)
+df
+
+# GATHER
+
+(
+    pd.melt(df, id_vars=index, value_vars=['gdp', "pop", "temp"], var_name='variable', value_name='value')
+        .dropna(subset="value")
+)
+
+
+
+
+
+###
+
+index = "geo"
+df = pd.pivot_table(df, index=[index], columns=['stat'], values=["value"])
+df.columns = [col for col in df.columns.get_level_values(1)]
+df = df.rename_axis(None, axis=0).reset_index()
+df = df.rename(columns={"index": "geo"})
+
+
+df = pd.pivot_table(df, index=['geo'], columns=['stat'], values=["value"])
+df.columns = [col for col in df.columns.get_level_values(1)]
+df = df.rename_axis(None, axis=0).reset_index()
+df
+
+
+df.columns = [' '.join(col).strip() for col in df.columns.values]
+df
+
+
+
+
+df = pd.DataFrame({
+    "A": ["foo", "foo", "foo", "foo", "foo", "bar", "bar", "bar", "bar"],
+    "B": ["one", "one", "one", "two", "two", "one", "one", "two", "two"],
+    "C": ["small", "large", "large", "small", "small", "large", "small", "small", "large"],
+    "D": [1, 2, 2, 3, 3, 4, 5, 6, 7],
+    "E": [2, 4, 5, 5, 6, 6, 8, 9, 9]
+})
+
+df
+
+pd.pivot_table(df, values='D', index=['A'], columns=['C'], aggfunc="sum")
+
+
+df = pd.DataFrame({
     "continent": ["NA", "NA", "NA", "EUR", "EUR", "ASIA", "ASIA", "ASIA"],
     "country": ["CAN", "MEX", "USA", "GBP", "FRA", "JAP", "CHN", "KOR"],
     "gdp": [60, 30, 390, 90, 85, 88, 360, 45]
 })
 
-list(df["continent"].values)
+
+list(map(lambda x: x * 5, [1, 2, 3]))
 
 
-list(df["continent"].values)
+df = (
+    rf.load("example.csv")
+    .select(["a", "d"])
+    .map({
+        "e": lambda d: d["d"] * 5,
+        "f": lambda d: d["e"] / 5
+    })
+    .filter(lambda d: d["a"] >= 3)
+    .head(5)
+    .sort(["d"], reverse=True)
+    .rename({"f": "h"})
+    .dump("")
+)
 
-list(map(lambda x: x * 2, df["continent"].values))
-list(map(lambda x: x * 2, df["continent"]))
+df.types["a"]
+df.empty
+df.dimensions
+df.columns
+df.values
+df["e"]
 
-
-
-df.info()
-
-df.shape
-
-df.describe()
 
 
 df = bc.DataFrame({
@@ -33,17 +106,63 @@ df = bc.DataFrame({
     "gdp": [60, 30, 390, 90, 85, 88, 360, 45]
 })
 
-df["gdp"] * 5
+fancy_min = lambda x: min(x)
+fancy_min([3, 4, 5, 2, 1])
 
-list(df.columns)
 
-df.dict()
-df.pandas()
+(
+    df
+    .mutate({
+        "gdp": lambda d: d["column"] * 1_000_000_000
+    })
+    .group(["continent"])
+    .summarize({
+        "total_gdp": ("gdp", bc.reducers.mean),
+        "count_countries": (count, "gdp"),
+        "fancy_gdp": min
+    })
+    .aggregate([
+        ("count", "gdp", count),
+        ("mean_gdp", "gdp", sum),
+    ])
+    .ungroup()
+    .summarise([
+        bc.summarise.sum
+        ("gdp", sum),
+        (sum, "gdp"),
+        # mean_gdp = sum("gdp")
+        ("mean_gdp", sum, "gdp")
+    ])
+    .summarise({
+        ("sum_gdp", "gpd"):
+        "sum": ("gdp", sum),
+        "mean": ("gdp", mean),
+        "new_func": ("gdp", lambda c: min(c))
+    })
+)
+
+from functools import reduce
+reduce(sum, [1, 2, 3])
+
+DataFrame({"continent": [], "sum": []})
+
+sum()
+count()
+median()
+quantile([0.25,0.75])
+apply(function)
+min()
+max()
+mean()
+var()
+std()
 
 df.reduce({
     "new_column_name": lambda x: x["column"].mean(),
     "new_column_name2": ("column", lambda c: c.mean()),
 })
+
+
 
 df.reduce(["continent"], {"gdp": [sum, lambda x: x.min()]})
 
@@ -97,6 +216,9 @@ df = pd.DataFrame(
 
 y = df["a"]
 X = df[["b", "c", "d"]]
+
+y.values
+X.values
 df.values.tolist()
 
 pd.to_numeric()
