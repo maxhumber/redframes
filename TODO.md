@@ -23,13 +23,15 @@ from redframe import DataFrame
 
 
 - add datasets
+- make sure it works with fantasy
+- machine learning
+- visualization
 
 - intrinsic
     - ✅ __init__
     - ✅ __getitem__
     - ✅ __repr__
     - ✅ _repr_html_
-    - ✅ __eq__
 - properties
     - ✅ columns
     - ✅ dimensions
@@ -57,13 +59,14 @@ from redframe import DataFrame
     - ✅ rename
     - ✅ mutate
     - ✅ join
-    - split
-    - unite/combine
+    - ✅ separate
+    - ✅ combine
     - drop (columns)
     - ❌ retype / to_datetime / to_numeric
 - other
-    - gather
-    - spread
+    - ✅ gather
+    - ✅ spread
+    - complete
     - group
     - ungroup
     - dump

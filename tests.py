@@ -1,7 +1,63 @@
 import pandas as pd
 import bearcats as bc
+import numpy as np
 
 pd.set_option("display.float_format", lambda x: "%.2f" % x)
+
+np.array(["10"])
+
+df = pd.DataFrame({
+    "country": ["a", "a", "a", "b"],
+    "century": [19, 20, 20, 19],
+    "year": [93, 21, 22, 95]
+})
+
+import itertools
+
+df=pd.DataFrame({'g1':['a','b','c'],
+                'g2':['x','y','z'],
+                'val':[1,2,3]})
+
+
+columns = ["g1", "g2"]
+def complete(df, columns):
+    series = []
+    for column in columns:
+        series.append(df[column])
+    df = df.set_index(columns)
+    df = df.reindex(pd.MultiIndex.from_tuples(itertools.product(*series), names=columns))
+    df = df.reset_index()
+    return df
+
+complete(df, columns)
+
+
+
+from uuid import uuid4
+
+def combine(df, columns, into, *, separator="_", remove=True):
+    df = df.copy()
+    new = str(uuid4())
+    df[new] = df[columns].apply(lambda row: separator.join(row.values.astype(str)), axis=1)
+    if remove:
+        df = df.drop(columns, axis=1)
+    df = df.rename(columns={new: into})
+    return df
+
+df = combine(df, ["century", "year"], into="year", separator="-")
+
+def seperate(df, column, into, delimiter):
+    df = df.copy()
+    df[into] = df[column].str.split(delimiter, expand=True)
+    return df
+
+
+seperate(df, "year", into=["century", "year"], separator="-")
+
+df[['V','allele']] = df['V'].str.split('-',expand=True)
+
+
+
 
 
 df = pd.DataFrame({
@@ -11,28 +67,20 @@ df = pd.DataFrame({
     "value": [16, 50, 31, 1, 24.5]
 })
 
+df = bc.DataFrame(df)
+
 df
 
+df.spread(column="stat", using="value").gather(columns=["gdp", "pop", "temp"])
 
-# SPREAD
-
-def pivot_wider(df, names_from, values_from):
-    index = [col for col in df.columns if col not in [names_from, values_from]]
-    df = pd.pivot_table(df, index=index, columns=[names_from], values=[values_from])
+def spread(df, column, using):
+    index = [col for col in df.columns if col not in [column, using]]
+    df = pd.pivot_table(df, index=index, columns=[column], values=[using])
     df.columns = [col for col in df.columns.get_level_values(1)]
     df = df.reset_index().rename_axis(None, axis=0)
     return df
 
-pivot_wider(df, names_from="stat", values_from="value")
-
-def spread(df, column, over):
-    index = [col for col in df.columns if col not in [column, over]]
-    df = pd.pivot_table(df, index=index, columns=[column], values=[over])
-    df.columns = [col for col in df.columns.get_level_values(1)]
-    df = df.reset_index().rename_axis(None, axis=0)
-    return df
-
-df = spread(df, "stat", "value")
+df = spread(df, "stat", using="value")
 df
 
 # GATHER

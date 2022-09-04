@@ -1,4 +1,6 @@
+from uuid import uuid4
 import pandas as pd
+
 
 def load(path):
     """
@@ -57,13 +59,6 @@ class DataFrame:
         """
         # return self._pdf[key]
         return self._pdf[key].values.tolist()
-
-    def __eq__(self, rhs):
-        """
-        >>> DataFrame({"foo": [0]}) == DataFrame({"foo": [0]})
-        True
-        """
-        return self._pdf == rhs._pdf
 
     @property
     def empty(self):
@@ -140,7 +135,7 @@ class DataFrame:
         """
         return DataFrame(self._pdf.tail(rows))
 
-    def sample(self, rows, /, seed=None):
+    def sample(self, rows, *, seed=None):
         """
         >>> df = DataFrame({"foo": range(100)})
         >>> df.sample(5, seed=1)
@@ -179,7 +174,7 @@ class DataFrame:
         """
         return DataFrame(self._pdf.loc[func])
 
-    def sort(self, columns, /, reverse=False):
+    def sort(self, columns, *, reverse=False):
         """
         >>> df = DataFrame({"foo": [1, 1, 2, 2, 3], "bar": [1, -7, 5, 4, 5]})
         >>> df.sort(["bar"])
@@ -199,7 +194,7 @@ class DataFrame:
         """
         return DataFrame(self._pdf.sort_values(by=columns, ascending=not reverse))
 
-    def dedupe(self, columns=None, /, keep="first"):
+    def dedupe(self, columns=None, *, keep="first"):
         """
         >>> df = DataFrame({"foo": [1, 1, 1, 2, 2, 2], "bar": [1, 2, 3, 4, 5, 5]})
         >>> df.dedupe(["foo"])
@@ -250,20 +245,6 @@ class DataFrame:
             pdf[column] = pdf.apply(mutation, axis=1)
         return DataFrame(pdf)
 
-    def reindex(self):
-        """
-        >>> df = DataFrame({"foo": range(100)})
-        >>> df.sample(5, seed=42).reindex()
-           foo
-        0   83
-        1   53
-        2   70
-        3   45
-        4   44
-        """
-        pdf = self._pdf.reset_index(drop=True)
-        return DataFrame(pdf)
-
     def dropna(self, columns=None):
         """
         >>> df = DataFrame({"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 1]})
@@ -280,7 +261,7 @@ class DataFrame:
         pdf = self._pdf.dropna(subset=columns)
         return DataFrame(pdf)
 
-    def join(self, rhs, columns, /, how="left", suffixes=("_lhs", "_rhs")):
+    def join(self, rhs, columns, *, how="left", suffixes=("_lhs", "_rhs")):
         if not isinstance(rhs, DataFrame):
             raise TypeError("rhs is not of type DataFrame")
         if not isinstance(columns, list):
@@ -296,21 +277,35 @@ class DataFrame:
         new = pd.concat([top, bottom])
         return DataFrame(new)
 
-    def convert(self):
-        return PandasDataFrame(self._pdf)
-
-    def dump(path=None):
-        pdf = self._pdf
-        if not path:
-            return pdf.to_dict(orient="list")
-        if not path.endswith(".csv"):
-            raise CustomError("Bad news")
-        kwargs = {"index": False} | kwargs
-        pdf.to_csv(path, *args, **kwargs)
+    def spread(self, column, using):
+        pdf = self._pdf.copy()
+        index = [col for col in pdf.columns if col not in [column, using]]
+        pdf = pd.pivot_table(pdf, index=index, columns=[column], values=[using])
+        pdf.columns = [col for col in pdf.columns.get_level_values(1)]
+        pdf = pdf.reset_index().rename_axis(None, axis=0)
         return DataFrame(pdf)
 
-    # not ready
-    # group + ungroup
+    def gather(self, columns, into=("variable", "value"), *, dropna=True):
+        pdf = self._pdf.copy()
+        index = [col for col in pdf.columns if col not in columns]
+        pdf = pd.melt(pdf, id_vars=index, value_vars=columns, var_name=into[0], value_name=into[1])
+        pdf = pdf.dropna(subset="value")
+        return DataFrame(pdf)
+
+    def seperate(self, column, into, *, separator):
+        pdf = self._pdf.copy()
+        pdf[into] = pdf[column].str.split(separator, expand=True)
+        return DataFrame(pdf)
+
+    def combine(self, columns, into, *, separator="_", remove=True):
+        pdf = self._pdf.copy()
+        new = str(uuid4())
+        pdf[new] = pdf[columns].apply(lambda row: separator.join(row.values.astype(str)), axis=1)
+        if remove:
+            pdf = pdf.drop(columns, axis=1)
+        pdf = pdf.rename(columns={new: into})
+        return DataFrame(pdf)
+
     def reduce(self, groups, funcs):
         pdf = self._pdf.copy()
         pdf = pdf.groupby(groups).agg(funcs).reset_index()
@@ -321,6 +316,19 @@ class DataFrame:
                                 if y]]) if not isinstance(item, str) else item
             for item in pdf.columns
         ]
+        return DataFrame(pdf)
+
+    def convert(self):
+        return PandasDataFrame(self._pdf)
+
+    def dump(path=None):
+        pdf = self._pdf.copy()
+        if not path:
+            return pdf.to_dict(orient="list")
+        if not path.endswith(".csv"):
+            raise CustomError("Bad news")
+        kwargs = {"index": False} | kwargs
+        pdf.to_csv(path, *args, **kwargs)
         return DataFrame(pdf)
 
 class PandasDataFrame(pd.DataFrame):
