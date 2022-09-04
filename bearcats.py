@@ -306,6 +306,24 @@ class DataFrame:
         pdf = pdf.rename(columns={new: into})
         return DataFrame(pdf)
 
+    def complete(self, columns):
+        pdf = self._pdf.copy()
+        series = [pdf[column] for column in columns]
+        index = pd.MultiIndex.from_tuples(itertools.product(*series), names=columns)
+        pdf = pdf.set_index(columns)
+        pdf = pdf.reindex(index)
+        pdf = pdf.reset_index()
+        return DataFrame(pdf)
+
+    def fill(self, columns=None, forward=True):
+        pdf = self._pdf.copy()
+        method = "ffill" if forward else "bfill"
+        if columns:
+            pdf[columns] = pdf[columns].fillna(method=method)
+        else:
+            pdf = pdf.fillna(method=method)
+        return DataFrame(pdf)
+
     def reduce(self, groups, funcs):
         pdf = self._pdf.copy()
         pdf = pdf.groupby(groups).agg(funcs).reset_index()
