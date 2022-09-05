@@ -1,17 +1,11 @@
 import pandas as pd
-import bearcats as bc
+import redframes as rf
 import numpy as np
+
+rf.DataFrame()
 
 pd.set_option("display.float_format", lambda x: "%.2f" % x)
 
-
-
-
-df = pd.DataFrame({
-    "continent": ["NA", None, None, "EUR", None, "ASIA", None, None],
-    "country": ["CAN", "MEX", "USA", "GBP", "FRA", "JAP", "CHN", "KOR"],
-    "gdp": [60, 30, 390, 90, 85, 88, 360, 45]
-})
 
 df = pd.DataFrame({
     "continent": ["NA", "NA", "NA", "EUR", "EUR", "ASIA", "ASIA", "ASIA"],
@@ -19,26 +13,49 @@ df = pd.DataFrame({
     "gdp": [60, 30, 390, 90, 85, 88, 360, 45]
 })
 
+df.count()
 
-def multiply_by_5(row):
-    return row["column"] * 5
+dstring = """
+Is this going to show up?
+"""
 
+def test():
+    dstring
+    return None
 
+help(test)
+
+def aggregate(df, apropos, by=None):
+    if by:
+        df = df.groupby(by)
+    df = df.agg(**apropos)
+    df = df.reset_index()
+    return df
+
+aggregate(df, {
+    "total_gdp": ("gdp", sum),
+    "mean_gdp": ("gdp", np.mean),
+    "min_gdp": ("gdp", lambda c: min(c)),
+    "percentile": ("gdp", lambda c: np.percentile(c, 0.5))
+}, by=["continent"])
+
+df = rf.DataFrame(df)
 
 (
     df
-    .mutate({
-        "gdp": lambda row: row["column"] * 1_000
-    })
-    .group(["continent"])
-    .summarise({
-        "sum": ("gdp", sum),
-        "mean": ("gdp", mean),
-        "new_func": ("gdp", lambda c: min(c))
-    })
+    .mutate({"gdp": lambda row: row["gdp"] * 100})
+    .summarise(
+        {
+            "total_gdp": ("gdp", sum),
+            "mean_gdp": ("gdp", mean),
+            "min_gdp": ("gdp", lambda c: min(c))
+        },
+        by=["continent"],
+    )
 )
 
-
+pull_("")
+convert_()
 
 list(map(lambda x: x * 5, [1, 2, 3]))
 
@@ -47,10 +64,10 @@ df = (
     rf.load("example.csv")
     .select(["a", "d"])
     .map({
-        "e": lambda d: d["d"] * 5,
-        "f": lambda d: d["e"] / 5
+        "e": lambda row: row["d"] * 5,
+        "f": lambda row: row["e"] / 5
     })
-    .filter(lambda d: d["a"] >= 3)
+    .filter(lambda row: row["a"] >= 3)
     .head(5)
     .sort(["d"], reverse=True)
     .rename({"f": "h"})

@@ -1,51 +1,45 @@
 ### todo
 
-from bearcats import DataFrame
-from redframes import RedFrame
-
 - add datasets
 - make sure it works with fantasy
 - machine learning
 - visualization
 
 - intrinsic
-    - ✅ __init__
-    - ✅ __getitem__
-    - ✅ __repr__
-    - ✅ _repr_html_
+    - ✅ `__init__`
+    - ✅ `__getitem__` -> list[Any]
+    - ✅ `_repr_html_` -> html
+    - ✅ `__repr__` -> str
+    - ✅ `__eq__` -> bool
 - properties
-    - ✅ columns
-    - ✅ dimensions
-    - ✅ values
-    - ✅ types
-    - ✅ empty
-- row operations
-    - ✅ head
-    - ✅ tail
-    - ✅ sample
-    - ✅ filter
-    - ✅ sort
-    - ✅ dedupe (distinct, deduplicate, drop_duplicates)
-    - ✅ append
-    - ✅ dropna
-    - ✅ fillna (ffill/bfill)
-    - ❌ shift
-    - ❌ replacena
-    - ❌ slice (rows)
+    - ✅ `shape` -> dict
+    - ✅ `columns` -> list[str]
+    - ✅ `rows` -> list[list[Any]]
+    - ✅ `types` -> dict
+    - ✅ `empty` -> bool
+- row verbs
+    - ✅ take (any number of rows from head or tail)
+    - ✅ slice (any number of rows from a start index to an end)
+    - ✅ sample (any rows by count or percent)
+    - ✅ sort (rows by column)
+    - ✅ fill
+    -    replace
+    - ✅ keep (rows by condition)
+    - 📛 dedupe (rows by keeping only those that are unique)
+    - 📛 denull (rows with NA values)
 - column operations
-    - ✅ select
-    - ✅ rename
-    - ✅ mutate
-    - ✅ join
-    - ✅ separate
-    - ✅ combine
-    - drop (columns)
+    - ✅ rename (columns with dictionary)
+    - ✅ select (columns to keep)
+    - ✅ discard (unneeded columns)
+    - ✅ mutate (new columns with functions)
+    - ✅ split (a column into other columns)
+    - ✅ combine (multiple columns into a single column)
 - other
+    - ✅ append (another DataFrame)
+    - ✅ join (another DataFrame)
     - ✅ gather
     - ✅ spread
     - ✅ complete
-    - summarise
-    - count / tally
-    - dump
+    - ✅ aggregate
+    - export()
     - to_dict
-    - convert_to_pandas
