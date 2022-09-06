@@ -19,33 +19,39 @@ class TestDataFrame(unittest.TestCase):
 
     def test_init_good_csv(self):
         path = str(Path(self.tempdir) / "test_init_good.csv")
-        pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "b", "c"]}).to_csv(path, index=False)
+        pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "b", "c"]}).to_csv(
+            path, index=False
+        )
         df = rf.DataFrame(path)
         self.assertIsNotNone(df)
-    
+
     def test_init_bad_csv(self):
         with self.assertRaises(FileNotFoundError):
             rf.DataFrame("test_init_bad.csv")
 
     def test_init_bad_format(self):
         with self.assertRaises(TypeError):
-            rf.DataFrame("test_init_bad_format.json")  
+            rf.DataFrame("test_init_bad_format.json")
 
     def test_init_good_dict(self):
         df = rf.DataFrame({"foo": [1, 2, 3]})
         self.assertIsNotNone(df)
 
     def test_init_bad_dict_values_not_in_list(self):
-        with self.assertRaisesRegex(ValueError, "If using all scalar values, you must pass an index"):
+        with self.assertRaisesRegex(
+            ValueError, "If using all scalar values, you must pass an index"
+        ):
             rf.DataFrame({"foo": 0})
 
     def test_init_bad_dict_mismatched_lengths(self):
-        with self.assertRaisesRegex(ValueError, "All arrays must be of the same length"):
+        with self.assertRaisesRegex(
+            ValueError, "All arrays must be of the same length"
+        ):
             rf.DataFrame({"foo": [0], "bar": [1, 2]})
 
     def test_init_pandas_dataframe(self):
         pdf = pd.DataFrame({"foo": [1, 2, 3]})
-        rdf = rf.DataFrame(pdf) 
+        rdf = rf.DataFrame(pdf)
         self.assertIsNotNone(rdf)
 
     def test_init_bad_type(self):
@@ -55,19 +61,19 @@ class TestDataFrame(unittest.TestCase):
     def test_repr(self):
         df = rf.DataFrame({"foo": [0]})
         result = repr(df)
-        expected = '   foo\n0    0'
+        expected = "   foo\n0    0"
         self.assertEqual(result, expected)
 
-    def test_repr_html(self): 
+    def test_repr_html(self):
         df = rf.DataFrame({"foo": [0, 1, 2]})
         result = df._repr_html_()[:50]
-        expected = '<div>\n<style scoped>\n    .dataframe tbody tr th:on'
+        expected = "<div>\n<style scoped>\n    .dataframe tbody tr th:on"
         self.assertEqual(result, expected)
 
     def test_getitem(self):
         df = rf.DataFrame({"foo": [1, 2, 3, 4], "bar": ["a", "b", "c", "d"]})
         result = df["bar"]
-        expected = ['a', 'b', 'c', 'd']
+        expected = ["a", "b", "c", "d"]
         self.assertEqual(result, expected)
 
     def test_getitem_for_nonexistent_column(self):
@@ -80,30 +86,32 @@ class TestDataFrame(unittest.TestCase):
         df2 = rf.DataFrame({"foo": [0]})
         self.assertEqual(df1, df2)
 
-    def test_eq_bad_df(self): 
+    def test_eq_bad_df(self):
         df1 = rf.DataFrame({"bar": [0]})
         df2 = rf.DataFrame({"foo": [0]})
         self.assertNotEqual(df1, df2)
 
-    def test_eq_bad_type(self): 
+    def test_eq_bad_type(self):
         df = rf.DataFrame({"bar": [0]})
         with self.assertRaises(NotImplementedError):
             df == 0
 
     def test_shape(self):
         df = rf.DataFrame({"foo": range(3), "bar": ["a", "b", "c"]})
-        self.assertEqual(df.shape, {'rows': 3, 'columns': 2})
-    
+        self.assertEqual(df.shape, {"rows": 3, "columns": 2})
+
     def test_types(self):
-        df = rf.DataFrame({"foo": ["a", "b", "c"], "bar": [1, 2, 3], "baz": [4.0, None, 5.6]})
-        expected = {'foo': str, 'bar': int, 'baz': float}
+        df = rf.DataFrame(
+            {"foo": ["a", "b", "c"], "bar": [1, 2, 3], "baz": [4.0, None, 5.6]}
+        )
+        expected = {"foo": str, "bar": int, "baz": float}
         result = df.types
         self.assertEqual(result, expected)
 
     def test_columns(self):
         df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         result = df.columns
-        expected = ['foo', 'bar']
+        expected = ["foo", "bar"]
         self.assertEqual(result, expected)
 
     def test_rows(self):
@@ -150,7 +158,9 @@ class TestDataFrame(unittest.TestCase):
 
     def test_take_over(self):
         df = rf.DataFrame({"foo": range(100)})
-        with self.assertRaisesRegex(ValueError, "Rows argument exceeds total number of rows"):
+        with self.assertRaisesRegex(
+            ValueError, "Rows argument exceeds total number of rows"
+        ):
             df.take(101)
 
     def test_slice(self):
@@ -204,3 +214,22 @@ class TestDataFrame(unittest.TestCase):
         df1 = df.sample(seed=42)
         df2 = df.sample(seed=24)
         self.assertNotEqual(df1, df2)
+
+
+        """
+        >>> df = DataFrame({"foo": [1, 1, 2, 2, 3], "bar": [1, -7, 5, 4, 5]})
+        >>> df.sort(["bar"])
+           foo  bar
+        1    1   -7
+        0    1    1
+        3    2    4
+        2    2    5
+        4    3    5
+        >>> df.sort(["bar"], reverse=True)
+           foo  bar
+        2    2    5
+        4    3    5
+        3    2    4
+        0    1    1
+        1    1   -7
+        """
