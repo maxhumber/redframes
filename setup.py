@@ -16,5 +16,5 @@ setup(
     classifiers=[],
     packages=find_packages(),
     python_requires=">=3.9",
-    setup_requires=["setuptools>=62.1.0"]
+    setup_requires=["setuptools>=62.1.0"],
 )

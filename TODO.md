@@ -2,43 +2,41 @@
 
 - intrinsic
     - ✅ `__init__`
-    - ✅ `__getitem__` -> list[Any]
-    - ✅ `_repr_html_` -> html
-    - ✅ `__repr__` -> str
-    - ✅ `__eq__` -> bool
+    - ✅ `__getitem__`
+    - ✅ `_repr_html_`
+    - ✅ `__repr__`
+    - ✅ `__eq__`
 - properties
-    - ✅ `shape` -> dict
-    - ✅ `columns` -> list[str]
-    - ✅ `rows` -> list[list[Any]]
-    - ✅ `types` -> dict
-    - ✅ `empty` -> bool
+    - ✅ `shape`
+    - ✅ `types`
+    - ✅ `columns`
+    - ✅ `rows`
+    - ✅ `empty`
 - row
     - ✅ take (any number of rows from head or tail)
     - ✅ slice (any number of rows from a start index to an end)
     - ✅ sample (any rows by count or percent)
-    - ✅ sort (rows by column)
-    - ✅ fill
-    - ✅ filter (rows by condition)
-    - 📛 dedupe (rows by keeping only those that are unique)
-    - 📛 denull (rows with NA values)
+    - sort (rows by column)
+    - fill
+    - filter (rows by condition)
+    - dedupe (rows by keeping only those that are unique)
+    - denull (rows with NA values)
 - column
-    - ✅ rename (columns with dictionary)
-    - ✅ select (columns to keep)
-    - ✅ discard (unneeded columns)
-    - ✅ mutate (new columns with functions)
-    - ✅ split (a column into other columns)
-    - ✅ combine (multiple columns into a single column)
+    - rename (columns with dictionary)
+    - select (columns to keep)
+    - discard (unneeded columns)
+    - mutate (new columns with functions)
+    - split (a column into other columns)
+    - combine (multiple columns into a single column)
 - other
-    - ✅ append (another DataFrame)
-    - ✅ join (another DataFrame)
-    - ✅ gather
-    - ✅ spread
-    - ✅ complete
-    - ✅ aggregate
+    - append (another DataFrame)
+    - join (another DataFrame)
+    - gather
+    - spread
+    - complete
+    - aggregate
     - export
 
-- pull_
-- export_
 
 - add datasets
 - make sure it works with fantasy
