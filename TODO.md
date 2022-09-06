@@ -1,10 +1,5 @@
 ### todo
 
-- add datasets
-- make sure it works with fantasy
-- machine learning
-- visualization
-
 - intrinsic
     - ✅ `__init__`
     - ✅ `__getitem__` -> list[Any]
@@ -17,17 +12,16 @@
     - ✅ `rows` -> list[list[Any]]
     - ✅ `types` -> dict
     - ✅ `empty` -> bool
-- row verbs
+- row
     - ✅ take (any number of rows from head or tail)
     - ✅ slice (any number of rows from a start index to an end)
     - ✅ sample (any rows by count or percent)
     - ✅ sort (rows by column)
     - ✅ fill
-    -    replace
-    - ✅ keep (rows by condition)
+    - ✅ filter (rows by condition)
     - 📛 dedupe (rows by keeping only those that are unique)
     - 📛 denull (rows with NA values)
-- column operations
+- column
     - ✅ rename (columns with dictionary)
     - ✅ select (columns to keep)
     - ✅ discard (unneeded columns)
@@ -41,5 +35,12 @@
     - ✅ spread
     - ✅ complete
     - ✅ aggregate
-    - export()
-    - to_dict
+    - export
+
+- pull_
+- export_
+
+- add datasets
+- make sure it works with fantasy
+- machine learning
+- visualization
