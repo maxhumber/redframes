@@ -1,4 +1,4 @@
-from __future__ import annotations # remove at 3.10+
+from __future__ import annotations  # remove at 3.10+
 
 from typing import Any
 
@@ -11,7 +11,7 @@ class DataFrame:
     ):
         if isinstance(data, str):
             if not data.endswith(".csv"):
-                raise TypeError(f"\'{data}\' is not a '.csv'")
+                raise TypeError(f"'{data}' is not a '.csv'")
             self._data = pd.read_csv(data)
         elif isinstance(data, dict):
             self._data = pd.DataFrame(data)
@@ -43,8 +43,8 @@ class DataFrame:
     def types(self) -> dict[str, Any]:
         data = self._data
         data = data.reset_index(drop=True)
-        data = data.astype('object')
-        types = {str(col): type(data.loc[0, col]) for col in data} # type: ignore
+        data = data.astype("object")
+        types = {str(col): type(data.loc[0, col]) for col in data}  # type: ignore
         return types
 
     @property
@@ -76,7 +76,7 @@ class DataFrame:
 
     def slice(self, /, start: int, end: int) -> DataFrame:
         data = self._data
-        data = data.iloc[start:end] # DEBATE: should this be +1?
+        data = data.iloc[start:end]  # DEBATE: should this be +1?
         data = data.reset_index(drop=True)
         return DataFrame(data)
 
@@ -90,4 +90,13 @@ class DataFrame:
             data = data.sample(frac=rows, random_state=seed)
         else:
             raise TypeError("rows must be a number >= 0")
+        data = data.reset_index(drop=True)
+        return DataFrame(data)
+
+    def sort(self, /, columns: list[str], *, reverse: bool = False) -> DataFrame:
+        if not isinstance(columns, list):
+            raise TypeError(f"Invalid columns argument ({type(columns)})")
+        data = self._data
+        data = data.sort_values(by=columns, ascending=not reverse)
+        data = data.reset_index(drop=True)
         return DataFrame(data)

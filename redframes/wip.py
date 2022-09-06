@@ -8,30 +8,6 @@ import pandas as pd
 
 
 class DataFrame:
-
-    def sample(self, rows, *, seed=None):
-        """
-        >>> df = DataFrame({"foo": range(100)})
-        >>> df.sample(5, seed=1)
-            foo
-        80   80
-        84   84
-        33   33
-        81   81
-        93   93
-        >>> df.sample(0.03, seed=42)
-            foo
-        83   83
-        53   53
-        70   70
-        """
-        if rows >= 1:
-            return DataFrame(self._data.sample(rows, random_state=seed))
-        elif 0 < rows < 1:
-            return DataFrame(self._data.sample(frac=rows, random_state=seed))
-        else:
-            raise TypeError("rows must be a number >= 0")
-
     def filter(self, func):
         """
         >>> df = DataFrame({"foo": [1, 2, 2, 2, 2, 3], "bar": [1, 2, 3, 4, 5, 6]})
@@ -47,27 +23,7 @@ class DataFrame:
         3    2    4
         """
         return DataFrame(self._data.loc[func])
-
-    def sort(self, columns, *, reverse=False):
-        """
-        >>> df = DataFrame({"foo": [1, 1, 2, 2, 3], "bar": [1, -7, 5, 4, 5]})
-        >>> df.sort(["bar"])
-           foo  bar
-        1    1   -7
-        0    1    1
-        3    2    4
-        2    2    5
-        4    3    5
-        >>> df.sort(["bar"], reverse=True)
-           foo  bar
-        2    2    5
-        4    3    5
-        3    2    4
-        0    1    1
-        1    1   -7
-        """
-        return DataFrame(self._data.sort_values(by=columns, ascending=not reverse))
-
+        
     def dedupe(self, columns=None):
         """
         >>> df = DataFrame({"foo": [1, 1, 1, 2, 2, 2], "bar": [1, 2, 3, 4, 5, 5]})
