@@ -36,15 +36,13 @@ class TestDataFrame(unittest.TestCase):
         self.assertIsNotNone(df)
 
     def test_init_bad_dict_values_not_in_list(self):
-        with self.assertRaisesRegex(
-            ValueError, "If using all scalar values, you must pass an index"
-        ):
+        message = "If using all scalar values, you must pass an index"
+        with self.assertRaisesRegex(ValueError, message):
             rf.DataFrame({"foo": 0})
 
     def test_init_bad_dict_mismatched_lengths(self):
-        with self.assertRaisesRegex(
-            ValueError, "All arrays must be of the same length"
-        ):
+        message = "All arrays must be of the same length"
+        with self.assertRaisesRegex(ValueError, message):
             rf.DataFrame({"foo": [0], "bar": [1, 2]})
 
     def test_init_pandas_dataframe(self):
@@ -99,9 +97,8 @@ class TestDataFrame(unittest.TestCase):
         self.assertEqual(df.shape, {"rows": 3, "columns": 2})
 
     def test_types(self):
-        df = rf.DataFrame(
-            {"foo": ["a", "b", "c"], "bar": [1, 2, 3], "baz": [4.0, None, 5.6]}
-        )
+        data = {"foo": ["a", "b", "c"], "bar": [1, 2, 3], "baz": [4.0, None, 5.6]}
+        df = rf.DataFrame(data)
         expected = {"foo": str, "bar": int, "baz": float}
         result = df.types
         self.assertEqual(result, expected)
@@ -156,9 +153,8 @@ class TestDataFrame(unittest.TestCase):
 
     def test_take_over(self):
         df = rf.DataFrame({"foo": range(100)})
-        with self.assertRaisesRegex(
-            ValueError, "Rows argument exceeds total number of rows"
-        ):
+        message = "Rows argument exceeds total number of rows"
+        with self.assertRaisesRegex(ValueError, message):
             df.take(101)
 
     def test_slice(self):
@@ -268,9 +264,8 @@ class TestDataFrame(unittest.TestCase):
 
     def test_filter_bad_type(self):
         df = rf.DataFrame({"foo": range(10)})
-        with self.assertRaisesRegex(
-            TypeError, "Must be a 'rowwise' function that returns a bool"
-        ):
+        message = "Must be a 'rowwise' function that returns a bool"
+        with self.assertRaisesRegex(TypeError, message):
             df.filter(">= 3")
 
     def test_filter_bad_column_argument(self):
@@ -308,9 +303,8 @@ class TestDataFrame(unittest.TestCase):
 
     def test_dedupe_bad_keep_argument(self):
         df = rf.DataFrame({"foo": range(10)})
-        with self.assertRaisesRegex(
-            ValueError, "keep argument must be one of {'first', 'last'}"
-        ):
+        message = "keep argument must be one of {'first', 'last'}"
+        with self.assertRaisesRegex(ValueError, message):
             df.dedupe(["foo"], keep="anything")
 
     def test_dedupe_one_column(self):
@@ -326,18 +320,16 @@ class TestDataFrame(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_sanitize_default(self):
-        df = rf.DataFrame(
-            {"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 2]}
-        )
+        data = {"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 2]}
+        df = rf.DataFrame(data)
         result = df.sanitize()
         # Annoying that pandas can't mix Nones + Ints
         expected = rf.DataFrame({"foo": [0.0, 0], "bar": [1.0, 2]})
         self.assertEqual(result, expected)
 
     def test_sanitize_bad_type(self):
-        df = rf.DataFrame(
-            {"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 2]}
-        )
+        data = {"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 2]}
+        df = rf.DataFrame(data)
         with self.assertRaisesRegex(TypeError, "Invalid columns argument *"):
             df.sanitize("foo")
 
@@ -347,18 +339,207 @@ class TestDataFrame(unittest.TestCase):
             df.sanitize(["bar"])
 
     def test_sanitize_one_column(self):
-        df = rf.DataFrame(
-            {"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 2]}
-        )
+        data = {"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 2]}
+        df = rf.DataFrame(data)
         result = df.sanitize(["foo"])
         expected = rf.DataFrame({"foo": [0.0, 0, 0], "bar": [1, None, 2]})
         self.assertEqual(result, expected)
 
-    def testXXXXXX(self):
+    def test_fill_default_down(self):
+        df = rf.DataFrame({"foo": [1, None, None, 2], "bar": [None, 2, 1, None]})
+        result = df.fill()
+        expected = rf.DataFrame({"foo": [1.0, 1, 1, 2], "bar": [None, 2, 1, 1]})
+        self.assertEqual(result, expected)
+
+    def test_fill_up(self):
+        df = rf.DataFrame({"foo": [1, None, None, 2], "bar": [None, 2, 1, None]})
+        result = df.fill(strategy="up")
+        expected = rf.DataFrame({"foo": [1.0, 2, 2, 2], "bar": [2, 2, 1, None]})
+        self.assertEqual(result, expected)
+
+    def test_fill_bad_columns_type(self):
         df = rf.DataFrame({"foo": [1, None, None, 2, 3, None]})
-        df.fill(["foo"], strategy="constant", constant=0)
-        
+        with self.assertRaisesRegex(TypeError, "Invalid columns argument *"):
+            df.fill("foo")
 
+    def test_fill_bad_strategy(self):
+        df = rf.DataFrame({"foo": [1, None, None, 2, 3, None]})
+        message = "Invalid strategy, must be one of {'down', 'up', 'constant}"
+        with self.assertRaisesRegex(ValueError, message):
+            df.fill(["foo"], strategy="anything")
 
-    def test_replace(self):
-        df.replace({"foo": {"bar": "baz"}})
+    def test_fill_single_column(self):
+        df = rf.DataFrame({"foo": [1, None, None, 2], "bar": [None, 2, 1, None]})
+        result = df.fill(["foo"], strategy="up")
+        expected = rf.DataFrame({"foo": [1.0, 2, 2, 2], "bar": [None, 2, 1, None]})
+        self.assertEqual(result, expected)
+
+    def test_fill_constant_missing_constant(self):
+        df = rf.DataFrame({"foo": [1, None, None, 2], "bar": [None, 2, 1, None]})
+        message = "strategy='constant' requires a corresponding constant= argument"
+        with self.assertRaisesRegex(ValueError, message):
+            df.fill(["foo"], strategy="constant")
+
+    def test_fill_constant(self):
+        df = rf.DataFrame({"foo": [1, None, None, 2], "bar": [None, 2, 1, None]})
+        result = df.fill(["foo"], strategy="constant", constant=3)
+        expected = rf.DataFrame({"foo": [1.0, 3, 3, 2], "bar": [None, 2, 1, None]})
+        self.assertEqual(result, expected)
+
+    def test_replace_bad_argument_type(self):
+        df = rf.DataFrame({"foo": ["a", "b", "c", "a"], "bar": [1, 2, None, 3]})
+        with self.assertRaisesRegex(TypeError, "Invalid rules type *"):
+            df.replace(["foo"])
+
+    def test_replace_bad_column(self):
+        df = rf.DataFrame({"foo": ["a", "b", "c", "a"], "bar": [1, 2, None, 3]})
+        with self.assertRaisesRegex(KeyError, "Invalid columns *"):
+            df.replace({"baz": {"a": "b"}})
+
+    def test_replace_single(self):
+        df = rf.DataFrame({"foo": ["a", "b", "c", "a"], "bar": [1, 2, None, 3]})
+        result = df.replace({"foo": {"a": "z"}})
+        expected = rf.DataFrame({"foo": ["z", "b", "c", "z"], "bar": [1, 2, None, 3]})
+        self.assertEqual(result, expected)
+
+    def test_replace_mixed_types(self):
+        df = rf.DataFrame({"foo": ["a", "b", "c", "a"], "bar": [1, 2, None, 3]})
+        result = df.replace({"bar": {1: "z"}})
+        expected = rf.DataFrame({"foo": ["a", "b", "c", "a"], "bar": ["z", 2, None, 3]})
+        self.assertEqual(result, expected)
+
+    def test_replace_multiple(self):
+        df = rf.DataFrame({"foo": ["a", "b", "c", "a"], "bar": [1, 2, None, 3]})
+        result = df.replace({"foo": {"a": "z", "b": "y"}, "bar": {1: 0, 3: 0}})
+        expected = rf.DataFrame({"foo": ["z", "y", "c", "z"], "bar": [0, 2, None, 0]})
+        self.assertEqual(result, expected)
+
+    def test_rename_bad_type(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        with self.assertRaisesRegex(TypeError, "Invalid columns type *"):
+            df.rename("foo")
+
+    def test_rename_bad_columns(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        with self.assertRaisesRegex(KeyError, "Invalid columns *"):
+            df.rename({"jaz": "haz"})
+
+    def test_rename_single(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        result = df.rename({"baz": "jaz"})
+        expected = rf.DataFrame({"foo": [1], "bar": [2], "jaz": [3]})
+        self.assertEqual(result, expected)
+
+    def test_rename_multiple(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        result = df.rename({"foo": "oof", "bar": "rab", "baz": "zab"})
+        expected = rf.DataFrame({"oof": [1], "rab": [2], "zab": [3]})
+        self.assertEqual(result, expected)
+
+    def test_select_bad_columns(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        with self.assertRaises(KeyError):
+            df.select(["a", "y", "z"])
+
+    def test_select_bad_type_argument(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        with self.assertRaisesRegex(TypeError, "Invalid columns type *"):
+            df.select("foo")
+
+    def test_select_multiple(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        result = df.select(["foo", "bar"])
+        expected = rf.DataFrame({"foo": [1], "bar": [2]})
+        self.assertEqual(result, expected)
+
+    def test_select_single(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        result = df.select(["baz"])
+        expected = rf.DataFrame({"baz": [3]})
+        self.assertEqual(result, expected)
+
+    def test_discard_bad_columns(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        with self.assertRaises(KeyError):
+            df.discard(["a", "y", "z"])
+
+    def test_discard_bad_type_argument(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        with self.assertRaisesRegex(TypeError, "Invalid columns type *"):
+            df.discard("foo")
+
+    def test_discard_multiple(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        result = df.discard(["foo", "bar"])
+        expected = rf.DataFrame({"baz": [3]})
+        self.assertEqual(result, expected)
+
+    def test_discard_single(self):
+        df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
+        result = df.discard(["baz"])
+        expected = rf.DataFrame({"foo": [1], "bar": [2]})
+        self.assertEqual(result, expected)
+
+    def test_mutate_bad_type(self):
+        df = rf.DataFrame({"foo": range(10)})
+        with self.assertRaisesRegex(TypeError, "Must be a dictionary of mutations"):
+            df.mutate("foo")
+
+    def test_mutate_single(self):
+        df = rf.DataFrame({"foo": range(3)})
+        result = df.mutate({"bar": lambda row: row["foo"] * 2})
+        expected = rf.DataFrame({"foo": [0, 1, 2], "bar": [0, 2, 4]})
+        self.assertEqual(result, expected)
+
+    def test_mutate_multiple_and_after(self):
+        df = rf.DataFrame({"foo": [0.0, 1, 2]})
+        result = df.mutate(
+            {"bar": lambda row: row["foo"] * 4, "baz": lambda row: row["bar"] / 2}
+        )
+        expected = rf.DataFrame(
+            {"foo": [0.0, 1, 2], "bar": [0.0, 4, 8], "baz": [0.0, 2, 4]}
+        )
+        self.assertEqual(result, expected)
+
+    def test_mutate_with_none(self):
+        df = rf.DataFrame({"foo": [1, None, 2, 3]})
+        result = df.mutate({"bar": lambda row: row["foo"] * 5})
+        expected = rf.DataFrame({"foo": [1, None, 2, 3], "bar": [5, None, 10, 15]})
+        self.assertEqual(result, expected)
+
+    def test_mutate_strings(self):
+        df = rf.DataFrame({"foo": ["a", "a", None, "b", "a"]})
+
+        def replace(row):
+            value = row["foo"]
+            replacements = {"a": "x", "b": "y"}
+            replacement = replacements.get(value)
+            return replacement
+
+        result = df.mutate({"bar": replace})
+        expected = rf.DataFrame(
+            {"foo": ["a", "a", None, "b", "a"], "bar": ["x", "x", None, "y", "x"]}
+        )
+        self.assertEqual(result, expected)
+
+    def test_mutate_multiple_column_references(self):
+        df = rf.DataFrame({"foo": range(10, 10 + 5), "bar": range(3, 3 + 5)})
+        result = df.mutate({"baz": lambda row: row["foo"] - row["bar"]})
+        expected = rf.DataFrame(
+            {"foo": range(10, 10 + 5), "bar": range(3, 3 + 5), "baz": [7] * 5}
+        )
+        self.assertEqual(result, expected)
+
+    def test_mutate_overwrite_column(self):
+        df = rf.DataFrame({"foo": range(5)})
+        result = df.mutate({"foo": lambda row: row["foo"] * 2})
+        expected = rf.DataFrame({"foo": map(lambda x: x * 2, range(5))})
+        self.assertEqual(result, expected)
+
+    def test_mutate_retype(self):
+        df = rf.DataFrame({"foo": range(5)})
+        original_type = df.types["foo"]
+        df = df.mutate({"foo": str})
+        new_type = df.types["foo"]
+        self.assertEqual(original_type, int)
+        self.assertEqual(new_type, str)

@@ -31,7 +31,7 @@ class DataFrame:
 
     def __eq__(self, rhs: object) -> bool:
         if not isinstance(rhs, DataFrame):
-            raise NotImplementedError("__eq__ is just for checking rf.DataFrame")
+            raise NotImplementedError("__eq__ only works on rf.DataFrame")
         lhs, rhs = self._data, rhs._data
         return lhs.equals(rhs)
 
@@ -111,7 +111,7 @@ class DataFrame:
 
     def filter(self, /, func: Callable[..., bool]) -> DataFrame:
         if not callable(func):
-            raise TypeError("Must 'rowwise' function that returns a bool")
+            raise TypeError("Must be a 'rowwise' function that returns a bool")
         data = self._data.copy()
         data = data.loc[func]  # type: ignore
         data = data.reset_index(drop=True)
@@ -151,16 +151,70 @@ class DataFrame:
     ) -> DataFrame:
         if not (isinstance(columns, list) or not columns):
             raise TypeError(f"Invalid columns argument ({type(columns)})")
-        try: 
+        try:
             method = {"down": "ffill", "up": "bfill", "constant": None}[strategy]
         except KeyError:
-            raise ValueError("Invalid strategy, must be one of {'down', 'up', 'constant}")
+            raise ValueError(
+                "Invalid strategy, must be one of {'down', 'up', 'constant}"
+            )
         if strategy == "constant" and not constant:
-            raise ValueError("strategy='constant' requires a corresponding constant= argument")
+            raise ValueError(
+                "strategy='constant' requires a corresponding constant= argument"
+            )
         data = self._data.copy()
         value = None if strategy in ["down", "up"] else constant
         if columns:
-            data[columns] = data[columns].fillna(value=constant, method=method)
+            data[columns] = data[columns].fillna(value=constant, method=method)  # type: ignore
         else:
-            data = data.fillna(value=value, method=method)
+            data = data.fillna(value=value, method=method)  # type: ignore
+        return DataFrame(data)
+
+    def replace(self, /, rules: dict[str, dict[Any, Any]]) -> DataFrame:
+        if not isinstance(rules, dict):
+            raise TypeError(f"Invalid rules type ({type(rules)})")
+        bad_columns = list(set(rules.keys()) - set(self.columns))
+        if bad_columns:
+            raise KeyError(f"Invalid columns {bad_columns}")
+        data = self._data.copy()
+        data = data.replace(rules)
+        return DataFrame(data)
+
+    def rename(self, /, columns: dict[str, str]) -> DataFrame:
+        if not isinstance(columns, dict):
+            raise TypeError(f"Invalid columns type ({type(columns)})")
+        bad_columns = list(set(columns.keys()) - set(self.columns))
+        if bad_columns:
+            raise KeyError(f"Invalid columns {bad_columns}")
+        data = self._data.copy()
+        data = data.rename(columns=columns)
+        return DataFrame(data)
+
+    def select(self, /, columns: list[str]) -> DataFrame:
+        if not isinstance(columns, list):
+            raise TypeError(f"Invalid columns type ({type(columns)})")
+        bad_columns = list(set(columns) - set(self.columns))
+        if bad_columns:
+            raise KeyError(f"Invalid columns {bad_columns}")
+        data = self._data.copy()
+        data = data[columns]
+        return DataFrame(data)
+
+    def discard(self, /, columns: list[str]) -> DataFrame:
+        if not isinstance(columns, list):
+            raise TypeError(f"Invalid columns type ({type(columns)})")
+        data = self._data.copy()
+        data = data.drop(columns, axis=1)
+        return DataFrame(data)
+
+    def mutate(self, /, mutations: dict[str, Callable[..., Any]]) -> DataFrame:
+        if not isinstance(mutations, dict):
+            raise TypeError("Must be a dictionary of mutations")
+        data = self._data.copy()
+        for column, mutation in mutations.items():
+            data[column] = data.apply(mutation, axis=1)
+        return DataFrame(data)
+
+    def split(self, column, into, *, separator):
+        data = self._data.copy()
+        data[into] = data[column].str.split(separator, expand=True)
         return DataFrame(data)
