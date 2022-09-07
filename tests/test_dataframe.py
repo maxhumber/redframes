@@ -458,25 +458,25 @@ class TestDataFrame(unittest.TestCase):
         expected = rf.DataFrame({"baz": [3]})
         self.assertEqual(result, expected)
 
-    def test_discard_bad_columns(self):
+    def test_remove_bad_columns(self):
         df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
         with self.assertRaises(KeyError):
-            df.discard(["a", "y", "z"])
+            df.remove(["a", "y", "z"])
 
-    def test_discard_bad_type_argument(self):
+    def test_remove_bad_type_argument(self):
         df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
         with self.assertRaisesRegex(TypeError, "Invalid columns type *"):
-            df.discard("foo")
+            df.remove("foo")
 
-    def test_discard_multiple(self):
+    def test_remove_multiple(self):
         df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
-        result = df.discard(["foo", "bar"])
+        result = df.remove(["foo", "bar"])
         expected = rf.DataFrame({"baz": [3]})
         self.assertEqual(result, expected)
 
-    def test_discard_single(self):
+    def test_remove_single(self):
         df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
-        result = df.discard(["baz"])
+        result = df.remove(["baz"])
         expected = rf.DataFrame({"foo": [1], "bar": [2]})
         self.assertEqual(result, expected)
 
@@ -546,33 +546,33 @@ class TestDataFrame(unittest.TestCase):
 
     def test_split_bad_column_type(self):
         df = rf.DataFrame({"foo": ["foo-1", "foo-2", "foo-3"]})
-        with self.assertRaisesRegex(TypeError, "column= argument must be a string"):
-            df.split(["foo"], on="-", into=["foo"])
+        with self.assertRaisesRegex(TypeError, "column argument must be a string"):
+            df.split(["foo"], sep="-", into=["foo"])
 
-    def test_split_bad_on_type(self):
+    def test_split_bad_sep_type(self):
         df = rf.DataFrame({"foo": ["foo-1", "foo-2", "foo-3"]})
-        with self.assertRaisesRegex(TypeError, "on= separator must be a string"):
-            df.split("foo", on=1, into=["foo"])
+        with self.assertRaisesRegex(TypeError, "sep= separator must be a string"):
+            df.split("foo", sep=1, into=["foo"])
 
     def test_split_bad_into_type(self):
         df = rf.DataFrame({"foo": ["foo-1", "foo-2", "foo-3"]})
         with self.assertRaisesRegex(TypeError, "into= columns argument must be a list"):
-            df.split("foo", on="-", into="foo")
+            df.split("foo", sep="-", into="foo")
 
     def test_split_bad_into_wrong_length(self):
         df = rf.DataFrame({"foo": ["foo-1", "foo-2", "foo-3"]})
         with self.assertRaisesRegex(ValueError, "Columns must be same length as key"):
-            df.split("foo", on="-", into=["foo"])
+            df.split("foo", sep="-", into=["foo"])
 
     def test_split_easy(self):
         df = rf.DataFrame({"foo": ["foo-1", "foo-2", "foo-3"]})
-        result = df.split("foo", on="-", into=["foo", "bar"])
+        result = df.split("foo", sep="-", into=["foo", "bar"])
         expected = rf.DataFrame({"foo": ["foo"] * 3, "bar": ["1", "2", "3"]})
         self.assertEqual(result, expected)
 
     def test_split_more_than_one(self):
         df = rf.DataFrame({"foo": ["0:1:2", "3:4:5"]})
-        result = df.split("foo", on=":", into=["foo", "bar", "baz"])
+        result = df.split("foo", sep=":", into=["foo", "bar", "baz"])
         expected = rf.DataFrame(
             {"foo": ["0", "3"], "bar": ["1", "4"], "baz": ["2", "5"]}
         )
@@ -580,7 +580,7 @@ class TestDataFrame(unittest.TestCase):
 
     def test_split_multiple_with_overflow(self):
         df = rf.DataFrame({"foo": ["0:1:2", "3:4:5:6"]})
-        result = df.split("foo", on=":", into=["foo", "bar", "baz", "jaz"])
+        result = df.split("foo", sep=":", into=["foo", "bar", "baz", "jaz"])
         expected = rf.DataFrame(
             {
                 "foo": ["0", "3"],
@@ -589,4 +589,31 @@ class TestDataFrame(unittest.TestCase):
                 "jaz": [None, "6"],
             }
         )
+        self.assertEqual(result, expected)
+
+    def test_combine_bad_columns_type(self):
+        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+        with self.assertRaisesRegex(TypeError, "columns argument must be a list"):
+            df.combine("foo", sep="-", into="foo")
+        
+    def test_combine_bad_sep_type(self):
+        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+        with self.assertRaisesRegex(TypeError, "sep= separator must be a string"):
+            df.combine(["foo", "bar"], sep=1, into="baz")
+
+    def test_combine_bad_into_type(self):
+        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+        with self.assertRaisesRegex(TypeError, "into= column argument must be a str"):
+            df.combine(["foo", "bar"], sep="_", into=["baz"])
+
+    def test_combine_two(self):
+        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+        result = df.combine(["foo", "bar"], sep="_", into="baz")
+        expected = rf.DataFrame({"baz": ["1_4", "2_5", "3_6"]})
+        self.assertEqual(result, expected)
+
+    def test_combine_two_overwrite(self):
+        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+        result = df.combine(["foo", "bar"], sep="_", into="foo")
+        expected = rf.DataFrame({"foo": ["1_4", "2_5", "3_6"]})
         self.assertEqual(result, expected)

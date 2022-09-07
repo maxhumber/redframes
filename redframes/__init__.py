@@ -200,7 +200,7 @@ class DataFrame:
         data = data[columns]
         return DataFrame(data)
 
-    def discard(self, /, columns: list[str]) -> DataFrame:
+    def remove(self, /, columns: list[str]) -> DataFrame:
         if not isinstance(columns, list):
             raise TypeError(f"Invalid columns type ({type(columns)})")
         data = self._data.copy()
@@ -217,21 +217,34 @@ class DataFrame:
 
     def split(self, /, column: str, *, sep: str, into: list[str]) -> DataFrame:
         if not isinstance(column, str):
-            raise TypeError("column= argument must be a string")
-        if not isinstance(on, str):
-            raise TypeError("on= separator must be a string")
+            raise TypeError("column argument must be a string")
+        if not isinstance(sep, str):
+            raise TypeError("sep= separator must be a string")
         if not isinstance(into, list):
             raise TypeError("into= columns argument must be a list")
         data = self._data.copy()
         data[into] = data[column].str.split(sep, expand=True)
         return DataFrame(data)
 
-    def combine(self, /, columns: list[str], into, *, separator="_"):
+    def combine(self, /, columns: list[str], *, sep: str = "_", into: str) -> DataFrame:
+        if not isinstance(columns, list):
+            raise TypeError("columns argument must be a list")
+        if not isinstance(sep, str):
+            raise TypeError("sep= separator must be a string")
+        if not isinstance(into, str):
+            raise TypeError("into= column argument must be a str")
         data = self._data.copy()
         new = uuid.uuid4().hex
         data[new] = data[columns].apply(
-            lambda row: separator.join(row.values.astype(str)), axis=1
+            lambda row: sep.join(row.values.astype(str)), axis=1
         )
         data = data.drop(columns, axis=1)
         data = data.rename(columns={new: into})
+        return DataFrame(data)
+
+    def append(self, /, df: DataFrame) -> DataFrame:
+        if not isinstance(df, DataFrame):
+            raise TypeError("df argument must be a rf.DataFrame")
+        top, bottom = self._data.copy(), df._data.copy()
+        data = pd.concat([top, bottom])
         return DataFrame(data)

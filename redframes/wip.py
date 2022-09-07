@@ -8,7 +8,6 @@ import pandas as pd
 
 
 class DataFrame:
-
     def join(self, rhs, columns, *, how="left", suffixes=("_lhs", "_rhs")):
         if not isinstance(rhs, DataFrame):
             raise TypeError("rhs is not of type DataFrame")
@@ -19,11 +18,6 @@ class DataFrame:
         lhs, rhs = self._data, rhs._data
         data = pd.merge(lhs, rhs, on=columns, how=how, suffixes=suffixes)
         return DataFrame(data)
-
-    def append(self, df):
-        top, bottom = self._data, df._data
-        new = pd.concat([top, bottom])
-        return DataFrame(new)
 
     def spread(self, column, using):
         data = self._data.copy()
@@ -45,7 +39,6 @@ class DataFrame:
         )
         data = data.dropna(subset="value")
         return DataFrame(data)
-
 
     def complete(self, columns):
         data = self._data.copy()
