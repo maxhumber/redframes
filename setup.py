@@ -1,12 +1,7 @@
-from pathlib import Path
-from pkg_resources import parse_requirements
 from setuptools import find_packages, setup
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
-
-with Path('requirements.txt').open() as f:
-    install_requires = [str(req) for req in parse_requirements(f)]
 
 setup(
     name="redframes",
