@@ -1,24 +1,7 @@
-from __future__ import annotations
-
 import itertools
-from typing import Any
-from uuid import uuid4
-
-import pandas as pd
 
 
 class DataFrame:
-    def join(self, rhs, columns, *, how="left", suffixes=("_lhs", "_rhs")):
-        if not isinstance(rhs, DataFrame):
-            raise TypeError("rhs is not of type DataFrame")
-        if not isinstance(columns, list):
-            raise TypeError("columns is not of type list")
-        if not how in ["left", "right", "inner", "outer"]:
-            raise TypeError("")
-        lhs, rhs = self._data, rhs._data
-        data = pd.merge(lhs, rhs, on=columns, how=how, suffixes=suffixes)
-        return DataFrame(data)
-
     def spread(self, column, using):
         data = self._data.copy()
         index = [col for col in data.columns if col not in [column, using]]
@@ -68,14 +51,3 @@ class DataFrame:
         kwargs = {"index": False} | kwargs
         data.to_csv(path)
         return DataFrame(data)
-
-
-class PandasDataFrame(pd.DataFrame):
-    def convert(self):
-        return DataFrame(self)
-
-
-if __name__ == "__main__":
-    import doctest
-
-    doctest.testmod()

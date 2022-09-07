@@ -1,5 +1,9 @@
 ### todo
 
+- utilities
+    - rf.load
+    - rf.wrap
+    - rf.unwrap
 - intrinsic
     - ✅ `__init__`
     - ✅ `__getitem__`
@@ -31,7 +35,7 @@
     - ✅ split (a column into other columns)
     - ✅ combine (multiple columns into a single column)
 - extend
-    - append (another DataFrame)
+    - ✅ append (another DataFrame)
     - join (another DataFrame)
 - tidy
     - gather
@@ -70,5 +74,3 @@ from_pandas
 convert
 
 SHOULD I INSTANTIATE OFF PANDAS? CONVERT FUNCTION OUTSIDE?
-WHAT ABOUT SQL?
-Instaniate from rows/columns?

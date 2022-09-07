@@ -1,9 +1,27 @@
-from __future__ import annotations  # REMOVE: 3.10+
+from __future__ import annotations
 
 import uuid
 from typing import Any, Callable, Literal
 
 import pandas as pd
+
+
+def load(path: str) -> DataFrame:
+    pdf = pd.read_csv(path)
+    df = pandas.wrap(pdf)
+    return df
+
+
+class pandas:
+    @classmethod
+    def wrap(cls, /, pdf: pd.DataFrame) -> DataFrame:
+        df = DataFrame()
+        df._data = pdf.copy()
+        return df
+
+    @classmethod
+    def unwrap(cls, /, df: DataFrame) -> pd.DataFrame:
+        return df._data.copy()
 
 
 class DataFrame:
@@ -57,6 +75,10 @@ class DataFrame:
         return self._data.values.tolist()
 
     @property
+    def data(self) -> dict[str, list[Any]]:
+        return self._data.to_dict(orient="list")
+
+    @property
     def empty(self) -> bool:
         return self._data.empty
 
@@ -79,7 +101,8 @@ class DataFrame:
         data = self._data.copy()
         data = data.iloc[start:end]  # DEBATE: end+1?
         data = data.reset_index(drop=True)
-        return DataFrame(data)
+        return pandas.wrap(data)
+        # return DataFrame(data)
 
     def sample(self, /, rows: int | float = 1, *, seed: int | None = None) -> DataFrame:
         if type(rows) not in [int, float]:
@@ -247,4 +270,31 @@ class DataFrame:
             raise TypeError("df argument must be a rf.DataFrame")
         top, bottom = self._data.copy(), df._data.copy()
         data = pd.concat([top, bottom])
+        data = data.reset_index(drop=True)
+        return DataFrame(data)
+
+    def join(
+        self,
+        /,
+        rhs: DataFrame,
+        *,
+        on: dict[str, str],
+        method: Literal["left", "right", "inner", "full"] = "left",
+        suffixes=("_lhs", "_rhs"),
+    ) -> DataFrame:
+        if not isinstance(rhs, DataFrame):
+            raise TypeError("rhs must be a rf.DataFrame")
+        if not isinstance(on, dict):
+            raise TypeError("on= argument must be a dict")
+        if not method in ["left", "right", "inner", "full"]:
+            raise TypeError(
+                "method= argument must be one of {'left', 'right', 'inner', 'full'}"
+            )
+        method = "outer" if method == "full" else method
+        lon, ron = list(on.keys()), list(on.values())
+        lhs, rhs = self._data.copy(), rhs._data.copy()
+        data = pd.merge(
+            lhs, rhs, left_on=lon, right_on=ron, how=method, suffixes=suffixes
+        )
+        data = data.reset_index(drop=True)
         return DataFrame(data)

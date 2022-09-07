@@ -446,6 +446,9 @@ class TestDataFrame(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "Invalid columns type *"):
             df.select("foo")
 
+    def test_select_multiple_repeated(self):
+        pass
+
     def test_select_multiple(self):
         df = rf.DataFrame({"foo": [1], "bar": [2], "baz": [3]})
         result = df.select(["foo", "bar"])
@@ -595,7 +598,7 @@ class TestDataFrame(unittest.TestCase):
         df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         with self.assertRaisesRegex(TypeError, "columns argument must be a list"):
             df.combine("foo", sep="-", into="foo")
-        
+
     def test_combine_bad_sep_type(self):
         df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         with self.assertRaisesRegex(TypeError, "sep= separator must be a string"):
@@ -617,3 +620,43 @@ class TestDataFrame(unittest.TestCase):
         result = df.combine(["foo", "bar"], sep="_", into="foo")
         expected = rf.DataFrame({"foo": ["1_4", "2_5", "3_6"]})
         self.assertEqual(result, expected)
+
+    def test_append_bad_type(self):
+        df = rf.DataFrame({"foo": [1, 2, 3]})
+        with self.assertRaisesRegex(TypeError, "df argument must be a rf.DataFrame"):
+            df.append(1)
+
+    def test_append_mismatched_single_columns(self):
+        df1 = rf.DataFrame({"foo": [1, 2, 3]})
+        df2 = rf.DataFrame({"bar": [4, 5, 6]})
+        result = df1.append(df2)
+        expected = rf.DataFrame(
+            {"foo": [1, 2, 3, None, None, None], "bar": [None, None, None, 4, 5, 6]}
+        )
+        self.assertEqual(result, expected)
+
+    def test_append_matched_single(self):
+        df1 = rf.DataFrame({"foo": [1, 2, 3]})
+        df2 = rf.DataFrame({"foo": [4, 5, 6]})
+        result = df1.append(df2)
+        expected = rf.DataFrame({"foo": [1, 2, 3, 4, 5, 6]})
+        self.assertEqual(result, expected)
+
+    def test_append_double_matched_columns(self):
+        df1 = rf.DataFrame({"foo": [1, 2], "bar": ["a", "b"]})
+        df2 = rf.DataFrame({"foo": [3, 4], "bar": ["c", "d"]})
+        result = df1.append(df2)
+        expected = rf.DataFrame({"foo": [1, 2, 3, 4], "bar": ["a", "b", "c", "d"]})
+        self.assertEqual(result, expected)
+
+    def test_append_double_matched_out_of_order_columns(self):
+        df1 = rf.DataFrame({"foo": [1, 2], "bar": ["a", "b"]})
+        df2 = rf.DataFrame({"bar": ["c", "d"], "foo": [3, 4]})
+        result = df1.append(df2)
+        expected = rf.DataFrame({"foo": [1, 2, 3, 4], "bar": ["a", "b", "c", "d"]})
+        self.assertEqual(result, expected)
+
+    def test_join_bad_rhs_type(self):
+        df = rf.DataFrame({"foo": [1, 2, 3]})
+        with self.assertRaisesRegex(TypeError, "rhs must be a rf.DataFrame"):
+            df.join(1, columns={"foo", "foo"})
