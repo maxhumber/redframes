@@ -8,39 +8,6 @@ import pandas as pd
 
 
 class DataFrame:
-    def filter(self, func):
-        """
-        >>> df = DataFrame({"foo": [1, 2, 2, 2, 2, 3], "bar": [1, 2, 3, 4, 5, 6]})
-        >>> df.filter(lambda d: d["bar"] >= 4)
-           foo  bar
-        3    2    4
-        4    2    5
-        5    3    6
-        >>> df.filter(lambda d: (d["foo"] == 2) & (d["bar"] <= 4))
-           foo  bar
-        1    2    2
-        2    2    3
-        3    2    4
-        """
-        return DataFrame(self._data.loc[func])
-        
-    def dedupe(self, columns=None):
-        """
-        >>> df = DataFrame({"foo": [1, 1, 1, 2, 2, 2], "bar": [1, 2, 3, 4, 5, 5]})
-        >>> df.dedupe(["foo"])
-           foo  bar
-        0    1    1
-        3    2    4
-        >>> df.dedupe()
-           foo  bar
-        0    1    1
-        1    1    2
-        2    1    3
-        3    2    4
-        4    2    5
-        """
-        return DataFrame(self._data.drop_duplicates(subset=columns))
-
     def keep(self, columns):
         """
         >>> df = DataFrame({"a": [1], "b": [2], "c": [3]})
@@ -82,21 +49,6 @@ class DataFrame:
         for column, mutation in mutations.items():
             data[column] = data.apply(mutation, axis=1)
         return DataFrame(data)
-
-    def dropna(self, columns=None):
-        """
-        >>> df = DataFrame({"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 1]})
-        >>> df.dropna()
-           foo  bar
-        0  0.0  1.0
-        4  0.0  1.0
-        >>> df.dropna(["foo"])
-           foo  bar
-        0  0.0  1.0
-        1  0.0  NaN
-        4  0.0  1.0
-        """
-        return DataFrame(self._data.dropna(subset=columns))
 
     def join(self, rhs, columns, *, how="left", suffixes=("_lhs", "_rhs")):
         if not isinstance(rhs, DataFrame):
@@ -157,15 +109,6 @@ class DataFrame:
         data = data.set_index(columns)
         data = data.reindex(index)
         data = data.reset_index()
-        return DataFrame(data)
-
-    def fill(self, columns=None, forward=True):
-        data = self._data.copy()
-        method = "ffill" if forward else "bfill"
-        if columns:
-            data[columns] = data[columns].fillna(method=method)
-        else:
-            data = data.fillna(method=method)
         return DataFrame(data)
 
     def aggregate(self, apropos, by=None):

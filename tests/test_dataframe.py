@@ -1,5 +1,3 @@
-from multiprocessing.sharedctypes import Value
-from sqlite3 import DatabaseError
 import unittest
 from pathlib import Path
 from shutil import rmtree as delete
@@ -215,21 +213,152 @@ class TestDataFrame(unittest.TestCase):
         df2 = df.sample(seed=24)
         self.assertNotEqual(df1, df2)
 
+    def test_sample_plus_float(self):
+        df = rf.DataFrame({"foo": range(100)})
+        with self.assertRaisesRegex(ValueError, "Rows argument must be an int if >= 1"):
+            df.sample(1.2)
 
-        """
-        >>> df = DataFrame({"foo": [1, 1, 2, 2, 3], "bar": [1, -7, 5, 4, 5]})
-        >>> df.sort(["bar"])
-           foo  bar
-        1    1   -7
-        0    1    1
-        3    2    4
-        2    2    5
-        4    3    5
-        >>> df.sort(["bar"], reverse=True)
-           foo  bar
-        2    2    5
-        4    3    5
-        3    2    4
-        0    1    1
-        1    1   -7
-        """
+    def test_shuffle(self):
+        df = rf.DataFrame({"foo": range(100)})
+        result = df.shuffle()
+        self.assertNotEqual(df, result)
+
+    def test_shuffle_seed(self):
+        df = rf.DataFrame({"foo": range(100)})
+        df1b = df.shuffle(seed=42)
+        df1a = df.shuffle(seed=42)
+        df2 = df.shuffle(seed=24)
+        self.assertEqual(df1a, df1b)
+        self.assertNotEqual(df1a, df2)
+
+    def test_sort_bad_columns(self):
+        df = rf.DataFrame({"foo": [1, 1, 2, 2, 3], "bar": [1, -7, 5, 4, 5]})
+        with self.assertRaisesRegex(TypeError, "Invalid columns argument *"):
+            df.sort("foo")
+
+    def test_sort_one_column(self):
+        df = rf.DataFrame({"foo": [1, 1, 2, 2, 3, -1], "bar": [1, -7, 5, 4, 5, 6]})
+        result = df.sort(["bar"])
+        expected = rf.DataFrame(
+            {"foo": [1, 1, 2, 2, 3, -1], "bar": [-7, 1, 4, 5, 5, 6]}
+        )
+        self.assertEqual(result, expected)
+
+    def test_sort_two_columns(self):
+        df = rf.DataFrame({"foo": [1, 1, 2, 2, 3, -1], "bar": [1, -7, 5, 4, 5, 6]})
+        result = df.sort(["bar", "foo"])
+        expected = rf.DataFrame(
+            {"foo": [1, 1, 2, 2, 3, -1], "bar": [-7, 1, 4, 5, 5, 6]}
+        )
+        self.assertEqual(result, expected)
+
+    def test_sort_two_columns_order(self):
+        df = rf.DataFrame({"foo": [1, 1, 2, 2, 3, -1], "bar": [1, -7, 5, 4, 5, 6]})
+        result = df.sort(["foo", "bar"])
+        expected = rf.DataFrame(
+            {"foo": [-1, 1, 1, 2, 2, 3], "bar": [6, -7, 1, 4, 5, 5]}
+        )
+        self.assertEqual(result, expected)
+
+    def test_sort_reverse(self):
+        df = rf.DataFrame({"foo": range(5)})
+        result = df.sort(["foo"], reverse=True)
+        expected = rf.DataFrame({"foo": [4, 3, 2, 1, 0]})
+        self.assertEqual(result, expected)
+
+    def test_filter_bad_type(self):
+        df = rf.DataFrame({"foo": range(10)})
+        with self.assertRaisesRegex(
+            TypeError, "Must be a 'rowwise' function that returns a bool"
+        ):
+            df.filter(">= 3")
+
+    def test_filter_bad_column_argument(self):
+        df = rf.DataFrame({"foo": range(10)})
+        with self.assertRaises(KeyError):
+            df.filter(lambda row: row["bar"] <= 3)
+
+    def test_filter_one_column(self):
+        df = rf.DataFrame({"foo": range(10)})
+        result = df.filter(lambda row: row["foo"] <= 3)
+        expected = rf.DataFrame({"foo": [0, 1, 2, 3]})
+        self.assertEqual(result, expected)
+
+    def test_filter_multiple_columns(self):
+        df = rf.DataFrame({"foo": [1, 2, 2, 2, 2, 3], "bar": [1, 2, 3, 4, 5, 6]})
+        result = df.filter(lambda d: (d["foo"] == 2) & (d["bar"] <= 4))
+        expected = rf.DataFrame({"foo": [2, 2, 2], "bar": [2, 3, 4]})
+        self.assertEqual(result, expected)
+
+    def test_dedupe_default(self):
+        df = rf.DataFrame({"foo": [1, 1, 1, 2, 2, 2], "bar": [1, 2, 3, 4, 5, 5]})
+        result = df.dedupe()
+        expected = rf.DataFrame({"foo": [1, 1, 1, 2, 2], "bar": [1, 2, 3, 4, 5]})
+        self.assertEqual(result, expected)
+
+    def test_dedupe_bad_type(self):
+        df = rf.DataFrame({"foo": range(10)})
+        with self.assertRaisesRegex(TypeError, "Invalid columns argument *"):
+            df.dedupe("foo")
+
+    def test_dedupe_bad_column(self):
+        df = rf.DataFrame({"foo": range(10)})
+        with self.assertRaises(KeyError):
+            df.dedupe(["bar"])
+
+    def test_dedupe_bad_keep_argument(self):
+        df = rf.DataFrame({"foo": range(10)})
+        with self.assertRaisesRegex(
+            ValueError, "keep argument must be one of {'first', 'last'}"
+        ):
+            df.dedupe(["foo"], keep="anything")
+
+    def test_dedupe_one_column(self):
+        df = rf.DataFrame({"foo": [1, 1, 1, 2, 2, 2], "bar": [1, 2, 3, 4, 5, 5]})
+        result = df.dedupe(["foo"])
+        expected = rf.DataFrame({"foo": [1, 2], "bar": [1, 4]})
+        self.assertEqual(result, expected)
+
+    def test_dedupe_keep_last(self):
+        df = rf.DataFrame({"foo": [1, 1, 1, 2, 2, 2], "bar": [1, 2, 3, 4, 5, 5]})
+        result = df.dedupe(["foo"], keep="last")
+        expected = rf.DataFrame({"foo": [1, 2], "bar": [3, 5]})
+        self.assertEqual(result, expected)
+
+    def test_sanitize_default(self):
+        df = rf.DataFrame(
+            {"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 2]}
+        )
+        result = df.sanitize()
+        # Annoying that pandas can't mix Nones + Ints
+        expected = rf.DataFrame({"foo": [0.0, 0], "bar": [1.0, 2]})
+        self.assertEqual(result, expected)
+
+    def test_sanitize_bad_type(self):
+        df = rf.DataFrame(
+            {"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 2]}
+        )
+        with self.assertRaisesRegex(TypeError, "Invalid columns argument *"):
+            df.sanitize("foo")
+
+    def test_sanitize_bad_column(self):
+        df = rf.DataFrame({"foo": [0, 0, None, None, 0]})
+        with self.assertRaises(KeyError):
+            df.sanitize(["bar"])
+
+    def test_sanitize_one_column(self):
+        df = rf.DataFrame(
+            {"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 2]}
+        )
+        result = df.sanitize(["foo"])
+        expected = rf.DataFrame({"foo": [0.0, 0, 0], "bar": [1, None, 2]})
+        self.assertEqual(result, expected)
+
+    def testXXXXXX(self):
+        df = rf.DataFrame({"foo": [1, None, None, 2, 3, None]})
+        df.fill(["foo"], strategy="constant", constant=0)
+        
+
+
+    def test_replace(self):
+        df.replace({"foo": {"bar": "baz"}})

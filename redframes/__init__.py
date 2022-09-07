@@ -1,6 +1,6 @@
-from __future__ import annotations  # remove at 3.10+
+from __future__ import annotations  # REMOVE: 3.10+
 
-from typing import Any
+from typing import Any, Callable, Literal
 
 import pandas as pd
 
@@ -41,7 +41,7 @@ class DataFrame:
 
     @property
     def types(self) -> dict[str, Any]:
-        data = self._data
+        data = self._data.copy()
         data = data.reset_index(drop=True)
         data = data.astype("object")
         types = {str(col): type(data.loc[0, col]) for col in data}  # type: ignore
@@ -62,7 +62,7 @@ class DataFrame:
     def take(self, /, rows: int = 1) -> DataFrame:
         if not isinstance(rows, int):
             raise TypeError(f"Invalid rows argument ({type(rows)})")
-        data = self._data
+        data = self._data.copy()
         if rows > data.shape[0]:
             raise ValueError("Rows argument exceeds total number of rows")
         if rows == 0:
@@ -75,16 +75,18 @@ class DataFrame:
         return DataFrame(data)
 
     def slice(self, /, start: int, end: int) -> DataFrame:
-        data = self._data
-        data = data.iloc[start:end]  # DEBATE: should this be +1?
+        data = self._data.copy()
+        data = data.iloc[start:end]  # DEBATE: end+1?
         data = data.reset_index(drop=True)
         return DataFrame(data)
 
-    def sample(self, /, rows: int | float = 1, *, seed: int = None) -> DataFrame:
+    def sample(self, /, rows: int | float = 1, *, seed: int | None = None) -> DataFrame:
         if type(rows) not in [int, float]:
             raise TypeError(f"Invalid rows argument ({type(rows)})")
-        data = self._data
+        data = self._data.copy()
         if rows >= 1:
+            if isinstance(rows, float):
+                raise ValueError("Rows argument must be an int if >= 1")
             data = data.sample(rows, random_state=seed)
         elif 0 < rows < 1:
             data = data.sample(frac=rows, random_state=seed)
@@ -93,10 +95,72 @@ class DataFrame:
         data = data.reset_index(drop=True)
         return DataFrame(data)
 
+    def shuffle(self, *, seed: int | None = None) -> DataFrame:
+        data = self._data.copy()
+        data = data.sample(frac=1, random_state=seed)
+        data.reset_index(drop=True)
+        return DataFrame(data)
+
     def sort(self, /, columns: list[str], *, reverse: bool = False) -> DataFrame:
         if not isinstance(columns, list):
             raise TypeError(f"Invalid columns argument ({type(columns)})")
-        data = self._data
+        data = self._data.copy()
         data = data.sort_values(by=columns, ascending=not reverse)
         data = data.reset_index(drop=True)
+        return DataFrame(data)
+
+    def filter(self, /, func: Callable[..., bool]) -> DataFrame:
+        if not callable(func):
+            raise TypeError("Must 'rowwise' function that returns a bool")
+        data = self._data.copy()
+        data = data.loc[func]  # type: ignore
+        data = data.reset_index(drop=True)
+        return DataFrame(data)
+
+    def dedupe(
+        self,
+        /,
+        columns: list[str] | None = None,
+        *,
+        keep: Literal["first", "last"] = "first",
+    ) -> DataFrame:
+        if not (isinstance(columns, list) or not columns):
+            raise TypeError(f"Invalid columns argument ({type(columns)})")
+        if keep not in ["first", "last"]:  # DEBATE: remove keep option?
+            raise ValueError("keep argument must be one of {'first', 'last'}")
+        data = self._data.copy()
+        data = data.drop_duplicates(subset=columns, keep=keep)
+        data = data.reset_index(drop=True)
+        return DataFrame(data)
+
+    def sanitize(self, /, columns: list[str] | None = None) -> DataFrame:
+        if not (isinstance(columns, list) or not columns):
+            raise TypeError(f"Invalid columns argument ({type(columns)})")
+        data = self._data.copy()
+        data = data.dropna(subset=columns)
+        data = data.reset_index(drop=True)
+        return DataFrame(data)
+
+    def fill(
+        self,
+        /,
+        columns: list[str] | None = None,
+        *,
+        strategy: Literal["down", "up", "constant"] = "down",
+        constant: str | int | float | None = None,
+    ) -> DataFrame:
+        if not (isinstance(columns, list) or not columns):
+            raise TypeError(f"Invalid columns argument ({type(columns)})")
+        try: 
+            method = {"down": "ffill", "up": "bfill", "constant": None}[strategy]
+        except KeyError:
+            raise ValueError("Invalid strategy, must be one of {'down', 'up', 'constant}")
+        if strategy == "constant" and not constant:
+            raise ValueError("strategy='constant' requires a corresponding constant= argument")
+        data = self._data.copy()
+        value = None if strategy in ["down", "up"] else constant
+        if columns:
+            data[columns] = data[columns].fillna(value=constant, method=method)
+        else:
+            data = data.fillna(value=value, method=method)
         return DataFrame(data)

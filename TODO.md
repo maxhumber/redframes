@@ -16,11 +16,13 @@
     - ✅ take (any number of rows from head or tail)
     - ✅ slice (any number of rows from a start index to an end)
     - ✅ sample (any rows by count or percent)
-    - sort (rows by column)
-    - fill
-    - filter (rows by condition)
-    - dedupe (rows by keeping only those that are unique)
-    - denull (rows with NA values)
+    - ✅ shuffle (all rows)
+    - ✅ sort (rows by column)
+    - ✅ filter (rows by column condition)
+    - ✅ dedupe (columns by keeping only those that are unique)
+    - ✅ sanitize (columns by droping rows that contain NA/Null/None)
+    - fill (with constant option)
+    - ⚠️ replace ???
 - column
     - rename (columns with dictionary)
     - select (columns to keep)
@@ -35,10 +37,26 @@
     - spread
     - complete
     - aggregate
-    - export
+    - ⚠️ export/save/write/dump
+
+- groupby
+    - 
 
 
+
+- docstrings
 - add datasets
 - make sure it works with fantasy
 - machine learning
 - visualization
+- cheat sheet
+- 10 minutes
+- readme
+
+to_pandas
+from_pandas
+convert
+
+SHOULD I INSTANTIATE OFF PANDAS? CONVERT FUNCTION OUTSIDE?
+WHAT ABOUT SQL?
+Instaniate from rows/columns?
