@@ -7,52 +7,46 @@ import pandas as pd
 
 
 def load(path: str) -> DataFrame:
+    if (not isinstance(path, str)) or (not path.endswith(".csv")):
+        raise TypeError(f"Invalid csv file at path ({path})")
     pdf = pd.read_csv(path)
-    df = pandas.wrap(pdf)
+    df = wrap(pdf)
     return df
 
 
-class pandas:
-    @classmethod
-    def wrap(cls, /, pdf: pd.DataFrame) -> DataFrame:
-        df = DataFrame()
-        df._data = pdf.copy()
-        return df
+def wrap(pdf: pd.DataFrame) -> DataFrame:
+    df = DataFrame()
+    df._data = pdf.copy()
+    return df
 
-    @classmethod
-    def unwrap(cls, /, df: DataFrame) -> pd.DataFrame:
-        return df._data.copy()
+
+def unwrap(df: DataFrame) -> pd.DataFrame:
+    return df._data.copy()
 
 
 class DataFrame:
-    def __init__(
-        self, /, data: str | dict[str, list[Any]] | pd.DataFrame = pd.DataFrame()
-    ):
-        if isinstance(data, str):
-            if not data.endswith(".csv"):
-                raise TypeError(f"'{data}' is not a '.csv'")
-            self._data = pd.read_csv(data)
+    def __init__(self, /, data: dict[str, list[Any]] | None = None):
+        if not data: 
+            self._data = pd.DataFrame()
         elif isinstance(data, dict):
             self._data = pd.DataFrame(data)
-        elif isinstance(data, pd.DataFrame):
-            self._data = data
         else:
-            raise TypeError(f"Invalid data input type ({type(data)})")
-
-    def __repr__(self) -> str:
-        return self._data.__repr__()
-
-    def _repr_html_(self) -> str:
-        return self._data._repr_html_()
-
-    def __getitem__(self, key: str) -> list[Any]:
-        return list(self._data[key])
+            raise TypeError(f"Invalid type for input data ({type(data)})")
 
     def __eq__(self, rhs: object) -> bool:
         if not isinstance(rhs, DataFrame):
             raise NotImplementedError("__eq__ only works on rf.DataFrame")
         lhs, rhs = self._data, rhs._data
         return lhs.equals(rhs)
+
+    def __getitem__(self, key: str) -> list[Any]:
+        return list(self._data[key])
+
+    def __repr__(self) -> str:
+        return self._data.__repr__()
+
+    def _repr_html_(self) -> str:
+        return self._data._repr_html_()
 
     @property
     def shape(self) -> dict[str, int]:
@@ -85,7 +79,7 @@ class DataFrame:
     def take(self, /, rows: int = 1) -> DataFrame:
         if not isinstance(rows, int):
             raise TypeError(f"Invalid rows argument ({type(rows)})")
-        data = self._data.copy()
+        data = self._data
         if rows > data.shape[0]:
             raise ValueError("Rows argument exceeds total number of rows")
         if rows == 0:
@@ -95,19 +89,18 @@ class DataFrame:
         else:
             data = data.head(rows)
         data = data.reset_index(drop=True)
-        return DataFrame(data)
+        return wrap(data)
 
     def slice(self, /, start: int, end: int) -> DataFrame:
-        data = self._data.copy()
+        data = self._data
         data = data.iloc[start:end]  # DEBATE: end+1?
         data = data.reset_index(drop=True)
-        return pandas.wrap(data)
-        # return DataFrame(data)
+        return wrap(data)
 
     def sample(self, /, rows: int | float = 1, *, seed: int | None = None) -> DataFrame:
         if type(rows) not in [int, float]:
             raise TypeError(f"Invalid rows argument ({type(rows)})")
-        data = self._data.copy()
+        data = self._data
         if rows >= 1:
             if isinstance(rows, float):
                 raise ValueError("Rows argument must be an int if >= 1")
@@ -117,29 +110,29 @@ class DataFrame:
         else:
             raise TypeError("rows must be a number >= 0")
         data = data.reset_index(drop=True)
-        return DataFrame(data)
+        return wrap(data)
 
     def shuffle(self, *, seed: int | None = None) -> DataFrame:
-        data = self._data.copy()
+        data = self._data
         data = data.sample(frac=1, random_state=seed)
         data.reset_index(drop=True)
-        return DataFrame(data)
+        return wrap(data)
 
     def sort(self, /, columns: list[str], *, reverse: bool = False) -> DataFrame:
         if not isinstance(columns, list):
             raise TypeError(f"Invalid columns argument ({type(columns)})")
-        data = self._data.copy()
+        data = self._data
         data = data.sort_values(by=columns, ascending=not reverse)
         data = data.reset_index(drop=True)
-        return DataFrame(data)
+        return wrap(data)
 
     def filter(self, /, func: Callable[..., bool]) -> DataFrame:
         if not callable(func):
             raise TypeError("Must be a 'rowwise' function that returns a bool")
-        data = self._data.copy()
+        data = self._data
         data = data.loc[func]  # type: ignore
         data = data.reset_index(drop=True)
-        return DataFrame(data)
+        return wrap(data)
 
     def dedupe(
         self,
@@ -152,18 +145,18 @@ class DataFrame:
             raise TypeError(f"Invalid columns argument ({type(columns)})")
         if keep not in ["first", "last"]:  # DEBATE: remove keep option?
             raise ValueError("keep argument must be one of {'first', 'last'}")
-        data = self._data.copy()
+        data = self._data
         data = data.drop_duplicates(subset=columns, keep=keep)
         data = data.reset_index(drop=True)
-        return DataFrame(data)
+        return wrap(data)
 
     def denix(self, /, columns: list[str] | None = None) -> DataFrame:
         if not (isinstance(columns, list) or not columns):
             raise TypeError(f"Invalid columns argument ({type(columns)})")
-        data = self._data.copy()
+        data = self._data
         data = data.dropna(subset=columns)
         data = data.reset_index(drop=True)
-        return DataFrame(data)
+        return wrap(data)
 
     def fill(
         self,
@@ -191,7 +184,7 @@ class DataFrame:
             data[columns] = data[columns].fillna(value=constant, method=method)  # type: ignore
         else:
             data = data.fillna(value=value, method=method)  # type: ignore
-        return DataFrame(data)
+        return wrap(data)
 
     def replace(self, /, rules: dict[str, dict[Any, Any]]) -> DataFrame:
         if not isinstance(rules, dict):
@@ -199,9 +192,9 @@ class DataFrame:
         bad_columns = list(set(rules.keys()) - set(self.columns))
         if bad_columns:
             raise KeyError(f"Invalid columns {bad_columns}")
-        data = self._data.copy()
+        data = self._data
         data = data.replace(rules)
-        return DataFrame(data)
+        return wrap(data)
 
     def rename(self, /, columns: dict[str, str]) -> DataFrame:
         if not isinstance(columns, dict):
@@ -209,9 +202,9 @@ class DataFrame:
         bad_columns = list(set(columns.keys()) - set(self.columns))
         if bad_columns:
             raise KeyError(f"Invalid columns {bad_columns}")
-        data = self._data.copy()
+        data = self._data
         data = data.rename(columns=columns)
-        return DataFrame(data)
+        return wrap(data)
 
     def select(self, /, columns: list[str]) -> DataFrame:
         if not isinstance(columns, list):
@@ -219,16 +212,16 @@ class DataFrame:
         bad_columns = list(set(columns) - set(self.columns))
         if bad_columns:
             raise KeyError(f"Invalid columns {bad_columns}")
-        data = self._data.copy()
+        data = self._data
         data = data[columns]
-        return DataFrame(data)
+        return wrap(data)
 
     def remove(self, /, columns: list[str]) -> DataFrame:
         if not isinstance(columns, list):
             raise TypeError(f"Invalid columns type ({type(columns)})")
-        data = self._data.copy()
+        data = self._data
         data = data.drop(columns, axis=1)
-        return DataFrame(data)
+        return wrap(data)
 
     def mutate(self, /, mutations: dict[str, Callable[..., Any]]) -> DataFrame:
         if not isinstance(mutations, dict):
@@ -236,7 +229,7 @@ class DataFrame:
         data = self._data.copy()
         for column, mutation in mutations.items():
             data[column] = data.apply(mutation, axis=1)
-        return DataFrame(data)
+        return wrap(data)
 
     def split(self, /, column: str, *, sep: str, into: list[str]) -> DataFrame:
         if not isinstance(column, str):
@@ -247,7 +240,7 @@ class DataFrame:
             raise TypeError("into= columns argument must be a list")
         data = self._data.copy()
         data[into] = data[column].str.split(sep, expand=True)
-        return DataFrame(data)
+        return wrap(data)
 
     def combine(self, /, columns: list[str], *, sep: str = "_", into: str) -> DataFrame:
         if not isinstance(columns, list):
@@ -263,15 +256,15 @@ class DataFrame:
         )
         data = data.drop(columns, axis=1)
         data = data.rename(columns={new: into})
-        return DataFrame(data)
+        return wrap(data)
 
     def append(self, /, df: DataFrame) -> DataFrame:
         if not isinstance(df, DataFrame):
             raise TypeError("df argument must be a rf.DataFrame")
-        top, bottom = self._data.copy(), df._data.copy()
+        top, bottom = self._data, df._data
         data = pd.concat([top, bottom])
         data = data.reset_index(drop=True)
-        return DataFrame(data)
+        return wrap(data)
 
     def join(
         self,
@@ -290,11 +283,11 @@ class DataFrame:
             raise TypeError(
                 "method= argument must be one of {'left', 'right', 'inner', 'full'}"
             )
-        method = "outer" if method == "full" else method
+        how = "outer" if method == "full" else method
         lon, ron = list(on.keys()), list(on.values())
-        lhs, rhs = self._data.copy(), rhs._data.copy()
+        ldf, rdf = self._data, rhs._data
         data = pd.merge(
-            lhs, rhs, left_on=lon, right_on=ron, how=method, suffixes=suffixes
+            ldf, rdf, left_on=lon, right_on=ron, how=how, suffixes=suffixes
         )
         data = data.reset_index(drop=True)
-        return DataFrame(data)
+        return wrap(data)
