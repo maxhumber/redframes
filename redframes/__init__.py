@@ -6,27 +6,33 @@ from typing import Any, Callable, Literal
 import pandas as pd
 
 
-def load(path: str) -> DataFrame:
+def load(path: str, **kwargs) -> DataFrame:
     if (not isinstance(path, str)) or (not path.endswith(".csv")):
         raise TypeError(f"Invalid csv file at path ({path})")
-    pdf = pd.read_csv(path)
-    df = wrap(pdf)
+    pdf = pd.read_csv(path, **kwargs)
+    df = wrap(pdf, copy=False)
     return df
 
 
-def wrap(pdf: pd.DataFrame) -> DataFrame:
+def wrap(pdf: pd.DataFrame, **kwargs) -> DataFrame:
     df = DataFrame()
-    df._data = pdf.copy()
+    if kwargs.get("copy") == False:
+        df._data = pdf
+    else:
+        df._data = pdf.copy()
     return df
 
 
-def unwrap(df: DataFrame) -> pd.DataFrame:
-    return df._data.copy()
+def unwrap(df: DataFrame, **kwargs) -> pd.DataFrame:
+    if kwargs.get("copy") == False:
+        return df._data
+    else:
+        return df._data.copy()
 
 
 class DataFrame:
     def __init__(self, /, data: dict[str, list[Any]] | None = None):
-        if not data: 
+        if not data:
             self._data = pd.DataFrame()
         elif isinstance(data, dict):
             self._data = pd.DataFrame(data)
@@ -53,8 +59,8 @@ class DataFrame:
         return dict(zip(["rows", "columns"], self._data.shape))
 
     @property
-    def types(self) -> dict[str, Any]:
-        data = self._data.copy()
+    def types(self) -> dict[str, type]:
+        data = self._data
         data = data.reset_index(drop=True)
         data = data.astype("object")
         types = {str(col): type(data.loc[0, col]) for col in data}  # type: ignore
@@ -69,17 +75,13 @@ class DataFrame:
         return self._data.values.tolist()
 
     @property
-    def data(self) -> dict[str, list[Any]]:
-        return self._data.to_dict(orient="list")
-
-    @property
     def empty(self) -> bool:
         return self._data.empty
 
     def take(self, /, rows: int = 1) -> DataFrame:
         if not isinstance(rows, int):
             raise TypeError(f"Invalid rows argument ({type(rows)})")
-        data = self._data
+        data = unwrap(self, copy=False)
         if rows > data.shape[0]:
             raise ValueError("Rows argument exceeds total number of rows")
         if rows == 0:
@@ -92,7 +94,7 @@ class DataFrame:
         return wrap(data)
 
     def slice(self, /, start: int, end: int) -> DataFrame:
-        data = self._data
+        data = unwrap(self, copy=False)
         data = data.iloc[start:end]  # DEBATE: end+1?
         data = data.reset_index(drop=True)
         return wrap(data)
@@ -100,7 +102,7 @@ class DataFrame:
     def sample(self, /, rows: int | float = 1, *, seed: int | None = None) -> DataFrame:
         if type(rows) not in [int, float]:
             raise TypeError(f"Invalid rows argument ({type(rows)})")
-        data = self._data
+        data = unwrap(self, copy=False)
         if rows >= 1:
             if isinstance(rows, float):
                 raise ValueError("Rows argument must be an int if >= 1")
@@ -113,7 +115,7 @@ class DataFrame:
         return wrap(data)
 
     def shuffle(self, *, seed: int | None = None) -> DataFrame:
-        data = self._data
+        data = unwrap(self, copy=False)
         data = data.sample(frac=1, random_state=seed)
         data.reset_index(drop=True)
         return wrap(data)
@@ -121,7 +123,7 @@ class DataFrame:
     def sort(self, /, columns: list[str], *, reverse: bool = False) -> DataFrame:
         if not isinstance(columns, list):
             raise TypeError(f"Invalid columns argument ({type(columns)})")
-        data = self._data
+        data = unwrap(self, copy=False)
         data = data.sort_values(by=columns, ascending=not reverse)
         data = data.reset_index(drop=True)
         return wrap(data)
@@ -129,7 +131,7 @@ class DataFrame:
     def filter(self, /, func: Callable[..., bool]) -> DataFrame:
         if not callable(func):
             raise TypeError("Must be a 'rowwise' function that returns a bool")
-        data = self._data
+        data = unwrap(self, copy=False)
         data = data.loc[func]  # type: ignore
         data = data.reset_index(drop=True)
         return wrap(data)
@@ -145,7 +147,7 @@ class DataFrame:
             raise TypeError(f"Invalid columns argument ({type(columns)})")
         if keep not in ["first", "last"]:  # DEBATE: remove keep option?
             raise ValueError("keep argument must be one of {'first', 'last'}")
-        data = self._data
+        data = unwrap(self, copy=False)
         data = data.drop_duplicates(subset=columns, keep=keep)
         data = data.reset_index(drop=True)
         return wrap(data)
@@ -153,7 +155,7 @@ class DataFrame:
     def denix(self, /, columns: list[str] | None = None) -> DataFrame:
         if not (isinstance(columns, list) or not columns):
             raise TypeError(f"Invalid columns argument ({type(columns)})")
-        data = self._data
+        data = unwrap(self, copy=False)
         data = data.dropna(subset=columns)
         data = data.reset_index(drop=True)
         return wrap(data)
@@ -178,7 +180,7 @@ class DataFrame:
             raise ValueError(
                 "strategy='constant' requires a corresponding constant= argument"
             )
-        data = self._data.copy()
+        data = unwrap(self)
         value = None if strategy in ["down", "up"] else constant
         if columns:
             data[columns] = data[columns].fillna(value=constant, method=method)  # type: ignore
@@ -192,7 +194,7 @@ class DataFrame:
         bad_columns = list(set(rules.keys()) - set(self.columns))
         if bad_columns:
             raise KeyError(f"Invalid columns {bad_columns}")
-        data = self._data
+        data = unwrap(self, copy=False)
         data = data.replace(rules)
         return wrap(data)
 
@@ -202,7 +204,7 @@ class DataFrame:
         bad_columns = list(set(columns.keys()) - set(self.columns))
         if bad_columns:
             raise KeyError(f"Invalid columns {bad_columns}")
-        data = self._data
+        data = unwrap(self, copy=False)
         data = data.rename(columns=columns)
         return wrap(data)
 
@@ -212,21 +214,21 @@ class DataFrame:
         bad_columns = list(set(columns) - set(self.columns))
         if bad_columns:
             raise KeyError(f"Invalid columns {bad_columns}")
-        data = self._data
+        data = unwrap(self, copy=False)
         data = data[columns]
         return wrap(data)
 
     def remove(self, /, columns: list[str]) -> DataFrame:
         if not isinstance(columns, list):
             raise TypeError(f"Invalid columns type ({type(columns)})")
-        data = self._data
+        data = unwrap(self, copy=False)
         data = data.drop(columns, axis=1)
         return wrap(data)
 
     def mutate(self, /, mutations: dict[str, Callable[..., Any]]) -> DataFrame:
         if not isinstance(mutations, dict):
             raise TypeError("Must be a dictionary of mutations")
-        data = self._data.copy()
+        data = unwrap(self)
         for column, mutation in mutations.items():
             data[column] = data.apply(mutation, axis=1)
         return wrap(data)
@@ -238,7 +240,7 @@ class DataFrame:
             raise TypeError("sep= separator must be a string")
         if not isinstance(into, list):
             raise TypeError("into= columns argument must be a list")
-        data = self._data.copy()
+        data = unwrap(self)
         data[into] = data[column].str.split(sep, expand=True)
         return wrap(data)
 
@@ -249,7 +251,7 @@ class DataFrame:
             raise TypeError("sep= separator must be a string")
         if not isinstance(into, str):
             raise TypeError("into= column argument must be a str")
-        data = self._data.copy()
+        data = unwrap(self)
         new = uuid.uuid4().hex
         data[new] = data[columns].apply(
             lambda row: sep.join(row.values.astype(str)), axis=1
@@ -261,7 +263,7 @@ class DataFrame:
     def append(self, /, df: DataFrame) -> DataFrame:
         if not isinstance(df, DataFrame):
             raise TypeError("df argument must be a rf.DataFrame")
-        top, bottom = self._data, df._data
+        top, bottom = unwrap(self, copy=False), unwrap(df, copy=False)
         data = pd.concat([top, bottom])
         data = data.reset_index(drop=True)
         return wrap(data)
@@ -285,9 +287,7 @@ class DataFrame:
             )
         how = "outer" if method == "full" else method
         lon, ron = list(on.keys()), list(on.values())
-        ldf, rdf = self._data, rhs._data
-        data = pd.merge(
-            ldf, rdf, left_on=lon, right_on=ron, how=how, suffixes=suffixes
-        )
+        ldf, rdf = unwrap(self, copy=False), unwrap(rhs, copy=False)
+        data = pd.merge(ldf, rdf, left_on=lon, right_on=ron, how=how, suffixes=suffixes)
         data = data.reset_index(drop=True)
         return wrap(data)
