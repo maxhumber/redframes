@@ -1,5 +1,5 @@
 import itertools
-
+import pandas as pd
 
 class DataFrame:
     def spread(self, column, using):
@@ -38,9 +38,6 @@ class DataFrame:
             data = data.groupby(by)
         data = data.agg(**apropos).reset_index()
         return DataFrame(data)
-
-    def convert(self):
-        return PandasDataFrame(self._data)
 
     def dump(self, path=None):
         data = self._data.copy()

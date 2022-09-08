@@ -8,7 +8,7 @@ import pandas as pd
 import redframes as rf
 
 
-class TestDataFrame(unittest.TestCase):
+class TestCore(unittest.TestCase):
     def setUp(self):
         self.tempdir = make_temp_dir()
 
