@@ -13,9 +13,13 @@ def join(
     suffixes=("_lhs", "_rhs"),
 ) -> pd.DataFrame:
     if not isinstance(on, dict):
-        raise TypeError("on type is invalid")
+        raise TypeError("on type is invalid, must be type dict[str, str]")
     if not method in ["left", "right", "inner", "full"]:
-        raise ValueError("method argument is invalid")
+        raise ValueError(
+            "method argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"
+        )
+    if not (isinstance(suffixes, tuple) and len(tuple) == 2):
+        raise TypeError("suffixes type is invalid, must be tuple[str, str]")
     how = "outer" if method == "full" else method
     left_on, right_on = list(on.keys()), list(on.values())
     df = pd.merge(

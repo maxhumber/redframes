@@ -12,11 +12,13 @@ def fill(
     constant: str | int | float | None = None,
 ) -> pd.DataFrame:
     if columns and not isinstance(columns, list):
-        raise TypeError("columns type is invalid")
+        raise TypeError("columns type is invalid, must be list[str]")
     if not (strategy in ["down", "up", "constant"]):
-        raise ValueError("strategy argument is invalid")
+        raise ValueError(
+            "strategy argument is invalid, must be one of {'down', 'up', 'constant'}"
+        )
     if strategy == "constant" and not constant:
-        raise ValueError("constant argument required")
+        raise ValueError("constant argument is required with strategy='constant'")
     method = {"down": "ffill", "up": "bfill", "constant": None}[strategy]
     value = None if strategy in ["down", "up"] else constant
     if columns:

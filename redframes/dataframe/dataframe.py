@@ -4,9 +4,7 @@ from typing import Any, Callable, Literal
 
 import pandas as pd
 
-from .magics import _eq, _getitem, _init, _repr, _repr_html
-from .properties import columns, empty, rows, shape, types
-from .verbs import (
+from ..verbs import (
     append,
     combine,
     complete,
@@ -29,6 +27,8 @@ from .verbs import (
     spread,
     take,
 )
+from .magics import _eq, _getitem, _init, _repr, _repr_html
+from .properties import columns, empty, rows, shape, types
 
 
 def _wrap(data: pd.DataFrame) -> DataFrame:
@@ -77,7 +77,7 @@ class DataFrame:
 
     def append(self, /, df: DataFrame) -> DataFrame:
         if not isinstance(df, DataFrame):
-            raise TypeError("df type is invalid")
+            raise TypeError("df type is invalid, must be rf.DataFrame")
         data = append(self._data, df._data)
         return _wrap(data)
 

@@ -2,6 +2,10 @@ import pandas as pd
 
 
 def gather(df: pd.DataFrame, columns: list[str], into: tuple[str, str]) -> pd.DataFrame:
+    if not isinstance(columns, str):
+        raise TypeError("columns type is invalid, must be list[str]")
+    if not (isinstance(into, tuple) and len(tuple) == 2):
+        raise TypeError("into type is invalid, must be tuple[str, str]")
     index = [col for col in df.columns if col not in columns]
     df = pd.melt(
         df,
@@ -10,5 +14,5 @@ def gather(df: pd.DataFrame, columns: list[str], into: tuple[str, str]) -> pd.Da
         var_name=into[0],
         value_name=into[1],
     )
-    df = df.dropna(subset=into[1]) # type: ignore
+    df = df.dropna(subset=into[1])  # type: ignore
     return df

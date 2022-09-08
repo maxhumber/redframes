@@ -11,9 +11,9 @@ def dedupe(
     keep: Literal["first", "last"] = "first",
 ) -> pd.DataFrame:
     if columns and not isinstance(columns, list):
-        raise TypeError("columns type is invalid")
+        raise TypeError("columns type is invalid, must be list[str]")
     if keep not in ["first", "last"]:
-        raise ValueError("keep argument is invalid")
+        raise ValueError("keep argument is invalid, must be one of {'first', 'last'}")
     df = df.drop_duplicates(subset=columns, keep=keep)
     df = df.reset_index(drop=True)
     return df

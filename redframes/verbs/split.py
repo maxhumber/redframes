@@ -3,11 +3,11 @@ import pandas as pd
 
 def split(df: pd.DataFrame, column: str, sep: str, into: list[str]) -> pd.DataFrame:
     if not isinstance(column, str):
-        raise TypeError("column type is invalid")
+        raise TypeError("column type is invalid, must be str")
     if not isinstance(sep, str):
-        raise TypeError("sep type is invalid")
+        raise TypeError("sep type is invalid, must be str")
     if not isinstance(into, list):
-        raise TypeError("into type is invalid")
+        raise TypeError("into type is invalid, must be list[str]")
     df = df.copy()
     df[into] = df[column].str.split(sep, expand=True)
     return df

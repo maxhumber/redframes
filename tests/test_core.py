@@ -9,27 +9,6 @@ import redframes as rf
 
 
 class TestCore(unittest.TestCase):
-    def setUp(self):
-        self.tempdir = make_temp_dir()
-
-    def tearDown(self):
-        delete(self.tempdir)
-
-    # def test_init_good_csv(self):
-    #     path = str(Path(self.tempdir) / "test_init_good.csv")
-    #     pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "b", "c"]}).to_csv(
-    #         path, index=False
-    #     )
-    #     df = rf.DataFrame(path)
-    #     self.assertIsNotNone(df)
-
-    # def test_init_bad_csv(self):
-    #     with self.assertRaises(FileNotFoundError):
-    #         rf.DataFrame("test_init_bad.csv")
-
-    # def test_init_bad_format(self):
-    #     with self.assertRaises(TypeError):
-    #         rf.DataFrame("test_init_bad_format.json")
 
     def test_init_good_dict(self):
         df = rf.DataFrame({"foo": [1, 2, 3]})
@@ -592,68 +571,6 @@ class TestCore(unittest.TestCase):
                 "jaz": [None, "6"],
             }
         )
-        self.assertEqual(result, expected)
-
-    def test_combine_bad_columns_type(self):
-        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        with self.assertRaisesRegex(TypeError, "columns argument must be a list"):
-            df.combine("foo", sep="-", into="foo")
-
-    def test_combine_bad_sep_type(self):
-        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        with self.assertRaisesRegex(TypeError, "sep= separator must be a string"):
-            df.combine(["foo", "bar"], sep=1, into="baz")
-
-    def test_combine_bad_into_type(self):
-        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        with self.assertRaisesRegex(TypeError, "into= column argument must be a str"):
-            df.combine(["foo", "bar"], sep="_", into=["baz"])
-
-    def test_combine_two(self):
-        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        result = df.combine(["foo", "bar"], sep="_", into="baz")
-        expected = rf.DataFrame({"baz": ["1_4", "2_5", "3_6"]})
-        self.assertEqual(result, expected)
-
-    def test_combine_two_overwrite(self):
-        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        result = df.combine(["foo", "bar"], sep="_", into="foo")
-        expected = rf.DataFrame({"foo": ["1_4", "2_5", "3_6"]})
-        self.assertEqual(result, expected)
-
-    def test_append_bad_type(self):
-        df = rf.DataFrame({"foo": [1, 2, 3]})
-        with self.assertRaisesRegex(TypeError, "df argument must be a rf.DataFrame"):
-            df.append(1)
-
-    def test_append_mismatched_single_columns(self):
-        df1 = rf.DataFrame({"foo": [1, 2, 3]})
-        df2 = rf.DataFrame({"bar": [4, 5, 6]})
-        result = df1.append(df2)
-        expected = rf.DataFrame(
-            {"foo": [1, 2, 3, None, None, None], "bar": [None, None, None, 4, 5, 6]}
-        )
-        self.assertEqual(result, expected)
-
-    def test_append_matched_single(self):
-        df1 = rf.DataFrame({"foo": [1, 2, 3]})
-        df2 = rf.DataFrame({"foo": [4, 5, 6]})
-        result = df1.append(df2)
-        expected = rf.DataFrame({"foo": [1, 2, 3, 4, 5, 6]})
-        self.assertEqual(result, expected)
-
-    def test_append_double_matched_columns(self):
-        df1 = rf.DataFrame({"foo": [1, 2], "bar": ["a", "b"]})
-        df2 = rf.DataFrame({"foo": [3, 4], "bar": ["c", "d"]})
-        result = df1.append(df2)
-        expected = rf.DataFrame({"foo": [1, 2, 3, 4], "bar": ["a", "b", "c", "d"]})
-        self.assertEqual(result, expected)
-
-    def test_append_double_matched_out_of_order_columns(self):
-        df1 = rf.DataFrame({"foo": [1, 2], "bar": ["a", "b"]})
-        df2 = rf.DataFrame({"bar": ["c", "d"], "foo": [3, 4]})
-        result = df1.append(df2)
-        expected = rf.DataFrame({"foo": [1, 2, 3, 4], "bar": ["a", "b", "c", "d"]})
         self.assertEqual(result, expected)
 
     def test_join_bad_rhs_type(self):
