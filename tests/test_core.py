@@ -15,21 +15,21 @@ class TestCore(unittest.TestCase):
     def tearDown(self):
         delete(self.tempdir)
 
-    def test_init_good_csv(self):
-        path = str(Path(self.tempdir) / "test_init_good.csv")
-        pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "b", "c"]}).to_csv(
-            path, index=False
-        )
-        df = rf.DataFrame(path)
-        self.assertIsNotNone(df)
+    # def test_init_good_csv(self):
+    #     path = str(Path(self.tempdir) / "test_init_good.csv")
+    #     pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "b", "c"]}).to_csv(
+    #         path, index=False
+    #     )
+    #     df = rf.DataFrame(path)
+    #     self.assertIsNotNone(df)
 
-    def test_init_bad_csv(self):
-        with self.assertRaises(FileNotFoundError):
-            rf.DataFrame("test_init_bad.csv")
+    # def test_init_bad_csv(self):
+    #     with self.assertRaises(FileNotFoundError):
+    #         rf.DataFrame("test_init_bad.csv")
 
-    def test_init_bad_format(self):
-        with self.assertRaises(TypeError):
-            rf.DataFrame("test_init_bad_format.json")
+    # def test_init_bad_format(self):
+    #     with self.assertRaises(TypeError):
+    #         rf.DataFrame("test_init_bad_format.json")
 
     def test_init_good_dict(self):
         df = rf.DataFrame({"foo": [1, 2, 3]})
@@ -45,10 +45,10 @@ class TestCore(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, message):
             rf.DataFrame({"foo": [0], "bar": [1, 2]})
 
-    def test_init_pandas_dataframe(self):
-        pdf = pd.DataFrame({"foo": [1, 2, 3]})
-        rdf = rf.DataFrame(pdf)
-        self.assertIsNotNone(rdf)
+    # def test_init_pandas_dataframe(self):
+    #     pdf = pd.DataFrame({"foo": [1, 2, 3]})
+    #     rdf = rf.DataFrame(pdf)
+    #     self.assertIsNotNone(rdf)
 
     def test_init_bad_type(self):
         with self.assertRaisesRegex(TypeError, r"Invalid data input type *"):

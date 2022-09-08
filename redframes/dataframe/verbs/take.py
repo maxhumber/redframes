@@ -1,7 +1,8 @@
 import pandas as pd
 
+
 def take(df, rows: int = 1) -> pd.DataFrame:
-    if not isinstance(rows, int): 
+    if not isinstance(rows, int):
         raise TypeError("rows must be int")
     if rows > df.shape[0]:
         raise ValueError("rows exceeds total size")
