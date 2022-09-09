@@ -1,5 +1,7 @@
 import pandas as pd
 
+# should gather be able to gather everything?
+
 
 def gather(df: pd.DataFrame, columns: list[str], into: tuple[str, str] = ("variable", "value")) -> pd.DataFrame:
     if not isinstance(columns, list):
