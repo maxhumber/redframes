@@ -1,1 +1,1 @@
-from .dataframe import DataFrame
+from .core import DataFrame

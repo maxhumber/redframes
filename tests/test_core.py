@@ -9,7 +9,6 @@ import redframes as rf
 
 
 class TestCore(unittest.TestCase):
-
     def test_init_good_dict(self):
         df = rf.DataFrame({"foo": [1, 2, 3]})
         self.assertIsNotNone(df)

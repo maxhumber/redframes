@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class compute:
     @classmethod
     def count(cls, X):
@@ -16,7 +17,7 @@ class compute:
     @classmethod
     def mean(cls, X):
         return np.mean(X)
-    
+
     @classmethod
     def median(cls, X):
         return np.median(X)

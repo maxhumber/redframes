@@ -28,5 +28,7 @@ class TestIOLoad(unittest.TestCase):
             rf.load("test_missing_file.csv")
 
     def test_bad_file_format(self):
-        with self.assertRaisesRegex(TypeError, "file at path is invalid, must be a csv"):
+        with self.assertRaisesRegex(
+            TypeError, "file at path is invalid, must be a csv"
+        ):
             rf.load("test_bad_file_format.json")

@@ -3,8 +3,11 @@ from __future__ import annotations
 from typing import Any, Callable, Literal
 
 import pandas as pd
+import pandas.core.groupby.generic as pg
 
 from ..verbs import (
+    accumulate,
+    aggregate,
     append,
     combine,
     complete,
@@ -13,8 +16,10 @@ from ..verbs import (
     fill,
     filter,
     gather,
+    group, 
     join,
     mutate,
+    rank,
     remove,
     rename,
     replace,
@@ -37,7 +42,47 @@ def _wrap(data: pd.DataFrame) -> DataFrame:
     return df
 
 
-class DataFrame:
+class CommonFrameMixin:
+    def accumulate(
+        self, /, column: str, *, method: Literal["min", "max", "sum"] = "sum", into: str
+    ) -> DataFrame:
+        data = accumulate(self._data, column, method, into)
+        return _wrap(data)
+
+    def aggregate(self, /, aggregations: dict[str, tuple[str, Callable[..., Any]]]) -> DataFrame:
+        data = aggregate(self._data, aggregations)
+        return _wrap(data)
+
+    def mutate(self, /, mutations: dict[str, Callable[..., Any]]) -> DataFrame:
+        data = mutate(self._data, mutations)
+        return _wrap(data)
+
+    def rank(
+        self,
+        /,
+        column: str,
+        *,
+        method: Literal["average", "min", "max", "first", "dense"] = "dense",
+        into: str,
+        reverse: bool = False,
+    ) -> DataFrame:
+        data = rank(self._data, column, method, into, reverse)
+        return _wrap(data)
+
+    def take(self, /, rows: int = 1) -> DataFrame:
+        data = take(self._data, rows)
+        return _wrap(data)
+
+
+class GroupedDataFrame(CommonFrameMixin):
+    def __init__(self, /, data: pg.DataFrameGroupBy):
+        self._data = data
+
+    def __repr__(self) -> str:
+        return "<GroupedDataFrame>"
+
+
+class DataFrame(CommonFrameMixin):
     def __eq__(self, rhs: object) -> bool:
         if not isinstance(rhs, DataFrame):
             raise NotImplementedError("rhs type is invalid")
@@ -124,6 +169,10 @@ class DataFrame:
         data = gather(self._data, columns, into)
         return _wrap(data)
 
+    def group(self, /, columns: list[str]) -> GroupedDataFrame:
+        data = group(self._data, columns)
+        return GroupedDataFrame(data)
+
     def join(
         self,
         /,
@@ -136,10 +185,6 @@ class DataFrame:
         if not isinstance(rhs, DataFrame):
             raise TypeError("rhs type is invalid")
         data = join(self._data, rhs._data, on, method, suffixes)
-        return _wrap(data)
-
-    def mutate(self, /, mutations: dict[str, Callable[..., Any]]) -> DataFrame:
-        data = mutate(self._data, mutations)
         return _wrap(data)
 
     def remove(self, /, columns: list[str]) -> DataFrame:
@@ -180,8 +225,4 @@ class DataFrame:
 
     def spread(self, /, column: str, using: str) -> DataFrame:
         data = spread(self._data, column, using)
-        return _wrap(data)
-
-    def take(self, /, rows: int = 1) -> DataFrame:
-        data = take(self._data, rows)
         return _wrap(data)

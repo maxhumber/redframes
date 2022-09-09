@@ -1,15 +1,18 @@
 ### todo
 
+- aggregate
+- Write more tests
+- Ensure every verb has no ensure no side effects
+- Ensure every verb creates/returns a valid df (index, columns)
+- .log method? (with print out like Untitled12)
+- docstrings
+- make sure it works in machine learning pipeline
+- make sure it works in visualization
+- cheat sheet
+- 10 minutes
+- readme
+- add datasets
 
-- tests/
-- ensure no side effects
-
-
-
-
-- dump/save/export/write
-
-### groupby
 
 ```
 def aggregate(self, apropos, by=None):
@@ -19,28 +22,3 @@ def aggregate(self, apropos, by=None):
     data = data.agg(**apropos).reset_index()
     return DataFrame(data)
 ```
-unique values
-value counts
-tally?
-
-what about common rowwise operators?
-what about common groupby operators?
-groupby dataframe type
-
-
-----
-
-- docstrings
-- add datasets
-- make sure it works with fantasy
-- machine learning
-- visualization
-- cheat sheet
-- 10 minutes
-- readme
-
-to_pandas
-from_pandas
-convert
-
-SHOULD I INSTANTIATE OFF PANDAS? CONVERT FUNCTION OUTSIDE?

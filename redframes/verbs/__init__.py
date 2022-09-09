@@ -1,3 +1,5 @@
+from .accumulate import accumulate
+from .aggregate import aggregate
 from .append import append
 from .combine import combine
 from .complete import complete
@@ -6,8 +8,10 @@ from .denix import denix
 from .fill import fill
 from .filter import filter
 from .gather import gather
+from .group import group
 from .join import join
 from .mutate import mutate
+from .rank import rank
 from .remove import remove
 from .rename import rename
 from .replace import replace
