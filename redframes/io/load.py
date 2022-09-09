@@ -1,7 +1,6 @@
 import pandas as pd
 
-from ..dataframe import DataFrame
-from ..dataframe import _wrap
+from ..dataframe import DataFrame, _wrap
 from ._validate import _validate
 
 

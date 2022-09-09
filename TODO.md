@@ -11,3 +11,31 @@
 - readme
 - cheat sheet
 - add datasets
+
+
+## stuff
+
+- accumulate.py
+- aggregate.py
+append.py
+combine.py
+dedupe.py
+denix.py
+fill.py
+filter.py
+gather.py
+group.py
+join.py
+mutate.py
+rank.py
+remove.py
+rename.py
+replace.py
+sample.py
+select.py
+shuffle.py
+slice.py
+sort.py
+split.py
+spread.py
+take.py

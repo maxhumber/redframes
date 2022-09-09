@@ -1,10 +1,10 @@
 import pandas as pd
 
 
-def gather(df: pd.DataFrame, columns: list[str], into: tuple[str, str]) -> pd.DataFrame:
-    if not isinstance(columns, str):
+def gather(df: pd.DataFrame, columns: list[str], into: tuple[str, str] = ("variable", "value")) -> pd.DataFrame:
+    if not isinstance(columns, list):
         raise TypeError("columns type is invalid, must be list[str]")
-    if not (isinstance(into, tuple) and len(tuple) == 2):
+    if not (isinstance(into, tuple) and len(into) == 2):
         raise TypeError("into type is invalid, must be tuple[str, str]")
     index = [col for col in df.columns if col not in columns]
     df = pd.melt(
