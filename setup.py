@@ -15,5 +15,5 @@ setup(
     license="BSD 2",
     packages=find_packages(),
     python_requires=">=3.9",
-    install_requires=["pandas>=1.4.4"]
+    install_requires=["pandas>=1.4.4"],
 )

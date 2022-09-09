@@ -40,13 +40,11 @@ def _wrap(data: pd.DataFrame) -> DataFrame:
 
 
 class _CommonFrameMixin:
-    def __init__(self, /, data: pd.DataFrame | pg.DataFrameGroupBy): 
+    def __init__(self, /, data: pd.DataFrame | pg.DataFrameGroupBy):
         self._data = data
 
-    def accumulate(
-        self, /, column: str, *, method: Literal["min", "max", "sum"] = "sum", into: str
-    ) -> DataFrame:
-        data = accumulate(self._data, column, method, into)
+    def accumulate(self, /, column: str, *, into: str) -> DataFrame:
+        data = accumulate(self._data, column, into)
         return _wrap(data)
 
     def aggregate(
@@ -85,7 +83,7 @@ class DataFrame(_CommonFrameMixin):
     def __eq__(self, rhs: object) -> bool:
         if not isinstance(rhs, DataFrame):
             raise NotImplementedError("rhs type is invalid")
-        return self._data.equals(self._data)    
+        return self._data.equals(self._data)
 
     def __getitem__(self, key: str) -> list[Any]:
         return list(self._data[key])
@@ -122,8 +120,7 @@ class DataFrame(_CommonFrameMixin):
 
     @property
     def types(self) -> dict[str, type]:
-        data = self._data
-        data = data.astype("object")
+        data = self._data.astype("object")
         types = {str(col): type(data.loc[0, col]) for col in data}  # type: ignore
         return types
 
@@ -137,14 +134,8 @@ class DataFrame(_CommonFrameMixin):
         data = combine(self._data, columns, sep, into)
         return _wrap(data)
 
-    def dedupe(
-        self,
-        /,
-        columns: list[str] | None = None,
-        *,
-        keep: Literal["first", "last"] = "first",
-    ) -> DataFrame:
-        data = dedupe(self._data, columns, keep)
+    def dedupe(self, /, columns: list[str] | None = None) -> DataFrame:
+        data = dedupe(self._data, columns)
         return _wrap(data)
 
     def denix(self, /, columns: list[str] | None = None) -> DataFrame:
@@ -156,10 +147,10 @@ class DataFrame(_CommonFrameMixin):
         /,
         columns: list[str] | None = None,
         *,
-        strategy: Literal["down", "up", "constant"] = "down",
+        direction: Literal["down", "up"] | None = "down",
         constant: str | int | float | None = None,
     ) -> DataFrame:
-        data = fill(self._data, columns, strategy, constant)
+        data = fill(self._data, columns, direction, constant)
         return _wrap(data)
 
     def filter(self, /, func: Callable[..., bool]) -> DataFrame:
@@ -182,12 +173,11 @@ class DataFrame(_CommonFrameMixin):
         rhs: DataFrame,
         *,
         on: dict[str, str],
-        method: Literal["left", "right", "inner", "full"] = "left",
-        suffixes: tuple[str, str] = ("_lhs", "_rhs"),
+        how: Literal["left", "right", "inner", "full"] = "left",
     ) -> DataFrame:
         if not isinstance(rhs, DataFrame):
             raise TypeError("rhs type is invalid")
-        data = join(self._data, rhs._data, on, method, suffixes)
+        data = join(self._data, rhs._data, on, how)
         return _wrap(data)
 
     def remove(self, /, columns: list[str]) -> DataFrame:

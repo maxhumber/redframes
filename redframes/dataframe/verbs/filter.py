@@ -2,8 +2,6 @@ from typing import Callable
 
 import pandas as pd
 
-# should include a suped up list?
-
 
 def filter(df: pd.DataFrame, func: Callable[..., bool]) -> pd.DataFrame:
     if not callable(func):

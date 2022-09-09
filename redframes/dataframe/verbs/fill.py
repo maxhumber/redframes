@@ -8,21 +8,27 @@ import pandas as pd
 def fill(
     df: pd.DataFrame,
     columns: list[str] | None = None,
-    strategy: Literal["down", "up", "constant"] = "down",
+    direction: Literal["down", "up"] | None = "down",
     constant: str | int | float | None = None,
 ) -> pd.DataFrame:
     if columns and not isinstance(columns, list):
         raise TypeError("columns type is invalid, must be list[str]")
-    if not (strategy in ["down", "up", "constant"]):
-        raise ValueError(
-            "strategy argument is invalid, must be one of {'down', 'up', 'constant'}"
-        )
-    if strategy == "constant" and not constant:
-        raise ValueError("constant argument is required with strategy='constant'")
-    method = {"down": "ffill", "up": "bfill", "constant": None}[strategy]
-    value = None if strategy in ["down", "up"] else constant
+    if direction and constant:
+        raise ValueError("direction OR constant arugment must be None")
+    if (not direction) and (not constant):
+        raise ValueError("direction OR constant arugment must not be None")
+    if direction:
+        if not (direction in ["down", "up"]):
+            raise ValueError(
+                "direction argument is invalid, must be one of {'down', 'up'}"
+            )
+        method = {"down": "ffill", "up": "bfill"}.get(direction)
+        value = None
+    if constant:
+        value = constant
+        method = None
     if columns:
-        df[columns] = df[columns].fillna(value=constant, method=method)  # type: ignore
+        df[columns] = df[columns].fillna(value=value, method=method)  # type: ignore
     else:
         df = df.fillna(value=value, method=method)  # type: ignore
     return df

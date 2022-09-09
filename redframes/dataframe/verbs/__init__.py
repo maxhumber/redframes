@@ -2,7 +2,6 @@ from .accumulate import accumulate
 from .aggregate import aggregate
 from .append import append
 from .combine import combine
-from .complete import complete
 from .dedupe import dedupe
 from .denix import denix
 from .fill import fill
