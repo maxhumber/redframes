@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="redframes",
-    version="0.0",
+    version="1.0b1",
     url="https://github.com/maxhumber/redframes",
     description="[re]ctangular[d]ata[frames]",
     long_description=long_description,
@@ -15,6 +15,5 @@ setup(
     license="BSD 2",
     packages=find_packages(),
     python_requires=">=3.9",
-    install_requires=["pandas>=1.4.4"],
-    setup_requires=["setuptools>=65.3.0"],
+    install_requires=["pandas>=1.4.4"]
 )
