@@ -2,6 +2,9 @@ import itertools
 
 import pandas as pd
 
+# name of this?
+# get rid of all together?
+
 
 def complete(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
     if not isinstance(columns, list):

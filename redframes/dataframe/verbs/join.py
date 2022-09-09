@@ -10,7 +10,7 @@ def join(
     rhs: pd.DataFrame,
     on: dict[str, str],
     method: Literal["left", "right", "inner", "full"] = "left",
-    suffixes=("_lhs", "_rhs"),
+    suffixes: tuple[str, str] = ("_lhs", "_rhs"),
 ) -> pd.DataFrame:
     if not isinstance(on, dict):
         raise TypeError("on type is invalid, must be type dict[str, str]")
@@ -18,7 +18,7 @@ def join(
         raise ValueError(
             "method argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"
         )
-    if not (isinstance(suffixes, tuple) and len(tuple) == 2):
+    if not (isinstance(suffixes, tuple) and len(suffixes) == 2):
         raise TypeError("suffixes type is invalid, must be tuple[str, str]")
     how = "outer" if method == "full" else method
     left_on, right_on = list(on.keys()), list(on.values())

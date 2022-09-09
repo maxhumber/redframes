@@ -4,6 +4,10 @@ import uuid
 
 import pandas as pd
 
+# name of this?
+# order of columns, sep, into
+# name of sep, into?
+
 
 def combine(df: pd.DataFrame, columns: list[str], sep: str, into: str) -> pd.DataFrame:
     if not isinstance(columns, list):

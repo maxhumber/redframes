@@ -5,7 +5,9 @@ from typing import Any, Callable, Literal
 import pandas as pd
 import pandas.core.groupby.generic as pg
 
-from ..verbs import (
+from .magics import _eq, _getitem, _init, _repr, _repr_html
+from .properties import columns, empty, rows, shape, types
+from .verbs import (
     accumulate,
     aggregate,
     append,
@@ -16,7 +18,7 @@ from ..verbs import (
     fill,
     filter,
     gather,
-    group, 
+    group,
     join,
     mutate,
     rank,
@@ -32,8 +34,6 @@ from ..verbs import (
     spread,
     take,
 )
-from .magics import _eq, _getitem, _init, _repr, _repr_html
-from .properties import columns, empty, rows, shape, types
 
 
 def _wrap(data: pd.DataFrame) -> DataFrame:
@@ -43,13 +43,23 @@ def _wrap(data: pd.DataFrame) -> DataFrame:
 
 
 class CommonFrameMixin:
+    @property
+    def _data(self):
+        pass
+
+    @_data.setter
+    def _data(self, _):
+        pass
+
     def accumulate(
         self, /, column: str, *, method: Literal["min", "max", "sum"] = "sum", into: str
     ) -> DataFrame:
         data = accumulate(self._data, column, method, into)
         return _wrap(data)
 
-    def aggregate(self, /, aggregations: dict[str, tuple[str, Callable[..., Any]]]) -> DataFrame:
+    def aggregate(
+        self, /, aggregations: dict[str, tuple[str, Callable[..., Any]]]
+    ) -> DataFrame:
         data = aggregate(self._data, aggregations)
         return _wrap(data)
 
@@ -180,7 +190,7 @@ class DataFrame(CommonFrameMixin):
         *,
         on: dict[str, str],
         method: Literal["left", "right", "inner", "full"] = "left",
-        suffixes=("_lhs", "_rhs"),
+        suffixes: tuple[str, str] = ("_lhs", "_rhs"),
     ) -> DataFrame:
         if not isinstance(rhs, DataFrame):
             raise TypeError("rhs type is invalid")

@@ -5,9 +5,17 @@ from typing import Literal
 import pandas as pd
 import pandas.core.groupby.generic as pg
 
+# mean? product? others?
+# order of column and into?
+# should column be a list?
+# method argument name?
+
 
 def accumulate(
-    df: pd.DataFrame | pg.DataFrameGroupBy, column: str, method: Literal["min", "max", "sum"], into: str
+    df: pd.DataFrame | pg.DataFrameGroupBy,
+    column: str,
+    method: Literal["min", "max", "sum"],
+    into: str,
 ) -> pd.DataFrame:
     df = df.copy()
     if method == "min":
