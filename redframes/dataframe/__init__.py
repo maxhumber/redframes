@@ -24,7 +24,6 @@ from .verbs import (
     sample,
     select,
     shuffle,
-    slice,
     sort,
     split,
     spread,
@@ -205,10 +204,6 @@ class DataFrame(_CommonFrameMixin):
 
     def shuffle(self, *, seed: int | None = None) -> DataFrame:
         data = shuffle(self._data, seed)
-        return _wrap(data)
-
-    def slice(self, /, start: int, end: int) -> DataFrame:
-        data = slice(self._data, start, end)
         return _wrap(data)
 
     def sort(self, /, columns: list[str], *, reverse: bool = False) -> DataFrame:

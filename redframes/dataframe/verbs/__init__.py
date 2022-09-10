@@ -17,7 +17,6 @@ from .replace import replace
 from .sample import sample
 from .select import select
 from .shuffle import shuffle
-from .slice import slice
 from .sort import sort
 from .split import split
 from .spread import spread
