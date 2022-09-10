@@ -1,9 +1,9 @@
 from .accumulate import accumulate
-from .aggregate import aggregate
 from .append import append
 from .combine import combine
 from .dedupe import dedupe
 from .denix import denix
+from .drop import drop
 from .fill import fill
 from .filter import filter
 from .gather import gather
@@ -11,8 +11,7 @@ from .group import group
 from .join import join
 from .mutate import mutate
 from .rank import rank
-from .remove import remove
-from .drop import drop
+from .rename import rename
 from .replace import replace
 from .sample import sample
 from .select import select
@@ -20,4 +19,5 @@ from .shuffle import shuffle
 from .sort import sort
 from .split import split
 from .spread import spread
+from .summarize import summarize
 from .take import take

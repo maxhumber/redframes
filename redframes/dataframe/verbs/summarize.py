@@ -5,8 +5,10 @@ from typing import Any, Callable
 import pandas as pd
 import pandas.core.groupby.generic as pg
 
+# call this aggregate or summarize?
 
-def aggregate(
+
+def summarize(
     df: pd.DataFrame | pg.DataFrameGroupBy,
     into_over_funcs: dict[str, tuple[str, Callable[..., Any]]],
 ) -> pd.DataFrame:

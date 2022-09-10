@@ -7,7 +7,6 @@ import pandas.core.groupby.generic as pg
 
 from .verbs import (
     accumulate,
-    aggregate,
     append,
     combine,
     dedupe,
@@ -21,12 +20,14 @@ from .verbs import (
     mutate,
     rank,
     replace,
+    rename,
     sample,
     select,
     shuffle,
     sort,
     split,
     spread,
+    summarize,
     take,
 )
 
@@ -45,12 +46,6 @@ class _CommonFrameMixin:
         data = accumulate(self._data, column, into)
         return _wrap(data)
 
-    def aggregate(
-        self, /, aggregations: dict[str, tuple[str, Callable[..., Any]]]
-    ) -> DataFrame:
-        data = aggregate(self._data, aggregations)
-        return _wrap(data)
-
     def mutate(self, /, mutations: dict[str, Callable[..., Any]]) -> DataFrame:
         data = mutate(self._data, mutations)
         return _wrap(data)
@@ -65,6 +60,12 @@ class _CommonFrameMixin:
         reverse: bool = False,
     ) -> DataFrame:
         data = rank(self._data, column, method, into, reverse)
+        return _wrap(data)
+
+    def summarize(
+        self, /, into_over_funcs: dict[str, tuple[str, Callable[..., Any]]]
+    ) -> DataFrame:
+        data = summarize(self._data, into_over_funcs)
         return _wrap(data)
 
     def take(self, /, rows: int = 1) -> DataFrame:
@@ -187,7 +188,7 @@ class DataFrame(_CommonFrameMixin):
         return _wrap(data)
 
     def rename(self, /, columns: dict[str, str]) -> DataFrame:
-        data = drop(self._data, columns)
+        data = rename(self._data, columns)
         return _wrap(data)
 
     def replace(self, /, rules: dict[str, dict[Any, Any]]) -> DataFrame:
