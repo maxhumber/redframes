@@ -5,6 +5,8 @@ from typing import Literal
 import pandas as pd
 import pandas.core.groupby.generic as pg
 
+# need to rename the name methods?
+# ascending? descending? reverse?
 
 def rank(
     df: pd.DataFrame | pg.DataFrameGroupBy,

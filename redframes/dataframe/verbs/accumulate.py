@@ -6,6 +6,9 @@ import pandas as pd
 import pandas.core.groupby.generic as pg
 
 
+# mean, max, min, product?
+
+
 def accumulate(
     df: pd.DataFrame | pg.DataFrameGroupBy, column: str, into: str
 ) -> pd.DataFrame:

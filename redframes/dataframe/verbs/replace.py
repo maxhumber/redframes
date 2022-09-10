@@ -2,6 +2,8 @@ from typing import Any
 
 import pandas as pd
 
+# reverse the direction of the dictionary?
+
 
 def replace(df: pd.DataFrame, rules: dict[str, dict[Any, Any]]) -> pd.DataFrame:
     if not isinstance(rules, dict):

@@ -7,6 +7,7 @@ import pandas as pd
 # name of this?
 # order of columns, sep, into
 # name of sep, into?
+# drop/remove=True?
 
 
 def combine(df: pd.DataFrame, columns: list[str], sep: str, into: str) -> pd.DataFrame:

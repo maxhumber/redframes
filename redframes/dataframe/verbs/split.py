@@ -1,5 +1,6 @@
 import pandas as pd
 
+# sep argument at the end?
 
 def split(df: pd.DataFrame, column: str, sep: str, into: list[str]) -> pd.DataFrame:
     if not isinstance(column, str):
@@ -10,4 +11,5 @@ def split(df: pd.DataFrame, column: str, sep: str, into: list[str]) -> pd.DataFr
         raise TypeError("into type is invalid, must be list[str]")
     df = df.copy()
     df[into] = df[column].str.split(sep, expand=True)
+    df = df.drop(column, axis=1)
     return df

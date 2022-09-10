@@ -1,5 +1,8 @@
 import pandas as pd
 
+# reverse the direction of the dictionary?
+# ensure that there's no duplicate names here
+
 
 def rename(df: pd.DataFrame, columns: dict[str, str]) -> pd.DataFrame:
     if not isinstance(columns, dict):

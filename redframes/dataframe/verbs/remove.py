@@ -1,5 +1,7 @@
 import pandas as pd
 
+# call this drop??
+
 
 def remove(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
     if not isinstance(columns, list):

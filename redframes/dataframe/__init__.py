@@ -107,6 +107,10 @@ class DataFrame(_CommonFrameMixin):
         return list(self._data.columns)
 
     @property
+    def dict(self) -> dict[str, list[Any]]:
+        return self._data.to_dict(orient="list")
+
+    @property
     def empty(self) -> bool:
         return self._data.empty
 
@@ -158,7 +162,11 @@ class DataFrame(_CommonFrameMixin):
         return _wrap(data)
 
     def gather(
-        self, /, columns: list[str], *, into: tuple[str, str] = ("variable", "value")
+        self,
+        /,
+        columns: list[str] | None = None,
+        *,
+        into: tuple[str, str] = ("variable", "value"),
     ):
         data = gather(self._data, columns, into)
         return _wrap(data)
