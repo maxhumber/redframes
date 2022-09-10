@@ -1,5 +1,6 @@
-import pandas as pd
 import uuid
+
+import pandas as pd
 
 
 def spread(df: pd.DataFrame, column: str, using: str) -> pd.DataFrame:

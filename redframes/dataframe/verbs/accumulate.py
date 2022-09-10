@@ -1,12 +1,7 @@
 from __future__ import annotations
 
-from typing import Literal
-
 import pandas as pd
 import pandas.core.groupby.generic as pg
-
-
-# mean, max, min, product?
 
 
 def accumulate(
