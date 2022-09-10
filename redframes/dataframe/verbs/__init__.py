@@ -12,7 +12,7 @@ from .join import join
 from .mutate import mutate
 from .rank import rank
 from .remove import remove
-from .rename import rename
+from .drop import drop
 from .replace import replace
 from .sample import sample
 from .select import select

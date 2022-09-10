@@ -12,7 +12,7 @@ def gather(
     if not (isinstance(into, tuple) and len(into) == 2):
         raise TypeError("into type is invalid, must be tuple[str, str]")
     if not columns:
-        columns = df.columns
+        columns = list(df.columns)
     index = [col for col in df.columns if col not in columns]
     df = pd.melt(
         df,

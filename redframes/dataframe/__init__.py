@@ -12,6 +12,7 @@ from .verbs import (
     combine,
     dedupe,
     denix,
+    drop,
     fill,
     filter,
     gather,
@@ -19,8 +20,6 @@ from .verbs import (
     join,
     mutate,
     rank,
-    remove,
-    rename,
     replace,
     sample,
     select,
@@ -107,10 +106,6 @@ class DataFrame(_CommonFrameMixin):
         return list(self._data.columns)
 
     @property
-    def dict(self) -> dict[str, list[Any]]:
-        return self._data.to_dict(orient="list")
-
-    @property
     def empty(self) -> bool:
         return self._data.empty
 
@@ -144,6 +139,10 @@ class DataFrame(_CommonFrameMixin):
 
     def denix(self, /, columns: list[str] | None = None) -> DataFrame:
         data = denix(self._data, columns)
+        return _wrap(data)
+
+    def drop(self, /, columns: list[str]) -> DataFrame:
+        data = drop(self._data, columns)
         return _wrap(data)
 
     def fill(
@@ -188,12 +187,8 @@ class DataFrame(_CommonFrameMixin):
         data = join(self._data, rhs._data, on, how)
         return _wrap(data)
 
-    def remove(self, /, columns: list[str]) -> DataFrame:
-        data = remove(self._data, columns)
-        return _wrap(data)
-
     def rename(self, /, columns: dict[str, str]) -> DataFrame:
-        data = rename(self._data, columns)
+        data = drop(self._data, columns)
         return _wrap(data)
 
     def replace(self, /, rules: dict[str, dict[Any, Any]]) -> DataFrame:
