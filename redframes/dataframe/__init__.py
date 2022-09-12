@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pprint
 from typing import Any, Callable, Literal
 
 import pandas as pd
@@ -108,7 +109,14 @@ class DataFrame(_CommonFrameMixin):
         return self._data._repr_html_()
 
     def __str__(self) -> str:
-        return f"{self._data.to_dict(orient='list')}"
+        data = self._data.to_dict(orient='list')
+        string = pprint.pformat(data, indent=4, sort_dicts=False, compact=True)
+        if "\n" in string:
+            string = " " + string[1:-1]
+            string = f"rf.DataFrame({{\n{string}\n}})"
+        else: 
+            string = f"rf.DataFrame({string})" 
+        return string
 
     @property
     def columns(self) -> list[str]:
