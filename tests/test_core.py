@@ -263,40 +263,6 @@ class TestCore(unittest.TestCase):
         expected = rf.DataFrame({"foo": [2, 2, 2], "bar": [2, 3, 4]})
         self.assertEqual(result, expected)
 
-    def test_dedupe_default(self):
-        df = rf.DataFrame({"foo": [1, 1, 1, 2, 2, 2], "bar": [1, 2, 3, 4, 5, 5]})
-        result = df.dedupe()
-        expected = rf.DataFrame({"foo": [1, 1, 1, 2, 2], "bar": [1, 2, 3, 4, 5]})
-        self.assertEqual(result, expected)
-
-    def test_dedupe_bad_type(self):
-        df = rf.DataFrame({"foo": range(10)})
-        with self.assertRaisesRegex(TypeError, "Invalid columns argument *"):
-            df.dedupe("foo")
-
-    def test_dedupe_bad_column(self):
-        df = rf.DataFrame({"foo": range(10)})
-        with self.assertRaises(KeyError):
-            df.dedupe(["bar"])
-
-    def test_dedupe_bad_keep_argument(self):
-        df = rf.DataFrame({"foo": range(10)})
-        message = "keep argument must be one of {'first', 'last'}"
-        with self.assertRaisesRegex(ValueError, message):
-            df.dedupe(["foo"], keep="anything")
-
-    def test_dedupe_one_column(self):
-        df = rf.DataFrame({"foo": [1, 1, 1, 2, 2, 2], "bar": [1, 2, 3, 4, 5, 5]})
-        result = df.dedupe(["foo"])
-        expected = rf.DataFrame({"foo": [1, 2], "bar": [1, 4]})
-        self.assertEqual(result, expected)
-
-    def test_dedupe_keep_last(self):
-        df = rf.DataFrame({"foo": [1, 1, 1, 2, 2, 2], "bar": [1, 2, 3, 4, 5, 5]})
-        result = df.dedupe(["foo"], keep="last")
-        expected = rf.DataFrame({"foo": [1, 2], "bar": [3, 5]})
-        self.assertEqual(result, expected)
-
     def test_denix_default(self):
         data = {"foo": [0, 0, None, None, 0], "bar": [1, None, None, None, 2]}
         df = rf.DataFrame(data)

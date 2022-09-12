@@ -79,6 +79,9 @@ class GroupedDataFrame(_CommonFrameMixin):
 
 
 class DataFrame(_CommonFrameMixin):
+    def __array__(self):
+        return self._data.__array__()
+
     def __eq__(self, rhs: object) -> bool:
         if not isinstance(rhs, DataFrame):
             raise NotImplementedError("rhs type is invalid")
@@ -95,15 +98,25 @@ class DataFrame(_CommonFrameMixin):
         else:
             raise TypeError("data type is invalid")
 
+    def __len__(self) -> int: 
+        return self._data.__len__()
+
     def __repr__(self) -> str:
         return self._data.__repr__()
 
     def _repr_html_(self) -> str:
         return self._data._repr_html_()
 
+    def __str__(self) -> str:
+        return f"{self._data.to_dict(orient='list')}"
+
     @property
     def columns(self) -> list[str]:
         return list(self._data.columns)
+
+    @property
+    def dimensions(self) -> dict[str, int]:
+        return dict(zip(["rows", "columns"], self._data.shape))
 
     @property
     def empty(self) -> bool:
@@ -112,10 +125,6 @@ class DataFrame(_CommonFrameMixin):
     @property
     def rows(self) -> list[list[Any]]:
         return self._data.values.tolist()
-
-    @property
-    def shape(self) -> dict[str, int]:
-        return dict(zip(["rows", "columns"], self._data.shape))
 
     @property
     def types(self) -> dict[str, type]:
