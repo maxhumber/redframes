@@ -2,6 +2,7 @@ import pandas as pd
 
 import uuid
 
+
 def split(
     df: pd.DataFrame, column: str, into: list[str], sep: str, drop: bool = True
 ) -> pd.DataFrame:

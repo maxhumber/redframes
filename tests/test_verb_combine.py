@@ -31,21 +31,29 @@ class TestVerbCombine(unittest.TestCase):
             df.combine(["foo", "bar"], into="baz", sep="_", drop=2)
 
     def test_bad_duplicate_columns_1(self):
-        df = rf.DataFrame({
-            "foo": [1, 2, 3, 4],
-            "bar": ["a", "b", "c", "d"],
-            "baz": ["!", "@", "#", "$"]
-        })
-        with self.assertRaisesRegex(ValueError, "into column argument is invalid, must be unique"):
+        df = rf.DataFrame(
+            {
+                "foo": [1, 2, 3, 4],
+                "bar": ["a", "b", "c", "d"],
+                "baz": ["!", "@", "#", "$"],
+            }
+        )
+        with self.assertRaisesRegex(
+            ValueError, "into column argument is invalid, must be unique"
+        ):
             df.combine(["foo", "bar"], into="baz")
-    
+
     def test_bad_duplicate_columns_2(self):
-        df = rf.DataFrame({
-            "foo": [1, 2, 3, 4],
-            "bar": ["a", "b", "c", "d"],
-            "baz": ["!", "@", "#", "$"]
-        })
-        with self.assertRaisesRegex(ValueError, "into column argument is invalid, must be unique"):
+        df = rf.DataFrame(
+            {
+                "foo": [1, 2, 3, 4],
+                "bar": ["a", "b", "c", "d"],
+                "baz": ["!", "@", "#", "$"],
+            }
+        )
+        with self.assertRaisesRegex(
+            ValueError, "into column argument is invalid, must be unique"
+        ):
             df.combine(["foo", "bar"], into="foo", drop=False)
 
     def test_two_columns(self):

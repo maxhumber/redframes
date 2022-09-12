@@ -4,7 +4,13 @@ import pandas as pd
 import pandas.core.groupby.generic as pg
 
 
-def take(df: pd.DataFrame | pg.DataFrameGroupBy, rows: int = 1) -> pd.DataFrame:
+def take(
+    df: pd.DataFrame | pg.DataFrameGroupBy, rows: int = 1, **kwargs
+) -> pd.DataFrame:
+    if kwargs:  # sklearn.model_selection_train_test_split requirement
+        df = df.take(rows, **kwargs)  # type: ignore
+        df = df.reset_index(drop=True)
+        return df
     if not isinstance(rows, int):
         raise TypeError("rows type is invalid, must be str")
     if isinstance(df, pd.DataFrame):

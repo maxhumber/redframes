@@ -69,8 +69,8 @@ class _CommonFrameMixin:
         data = summarize(self._data, into_over_funcs)
         return _wrap(data)
 
-    def take(self, /, rows: int = 1) -> DataFrame:
-        data = take(self._data, rows)
+    def take(self, /, rows: int = 1, **kwargs) -> DataFrame:
+        data = take(self._data, rows, **kwargs)
         return _wrap(data)
 
 
@@ -80,7 +80,7 @@ class GroupedDataFrame(_CommonFrameMixin):
 
 
 class DataFrame(_CommonFrameMixin):
-    def __array__(self):
+    def __array__(self):  # sklearn.* requirement
         return self._data.__array__()
 
     def __eq__(self, rhs: object) -> bool:
@@ -99,7 +99,7 @@ class DataFrame(_CommonFrameMixin):
         else:
             raise TypeError("data type is invalid")
 
-    def __len__(self) -> int: 
+    def __len__(self) -> int:
         return self._data.__len__()
 
     def __repr__(self) -> str:
@@ -109,13 +109,13 @@ class DataFrame(_CommonFrameMixin):
         return self._data._repr_html_()
 
     def __str__(self) -> str:
-        data = self._data.to_dict(orient='list')
+        data = self._data.to_dict(orient="list")
         string = pprint.pformat(data, indent=4, sort_dicts=False, compact=True)
         if "\n" in string:
             string = " " + string[1:-1]
             string = f"rf.DataFrame({{\n{string}\n}})"
-        else: 
-            string = f"rf.DataFrame({string})" 
+        else:
+            string = f"rf.DataFrame({string})"
         return string
 
     @property
@@ -129,6 +129,11 @@ class DataFrame(_CommonFrameMixin):
     @property
     def empty(self) -> bool:
         return self._data.empty
+
+    # TODO: HIDE THIS
+    @property
+    def iloc(self):
+        return self._data.iloc  # sklearn.model_selection.train_test_split requirement
 
     @property
     def rows(self) -> list[list[Any]]:
