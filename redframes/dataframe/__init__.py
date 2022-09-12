@@ -129,8 +129,10 @@ class DataFrame(_CommonFrameMixin):
         data = append(self._data, df._data)
         return _wrap(data)
 
-    def combine(self, /, columns: list[str], *, sep: str = "_", into: str) -> DataFrame:
-        data = combine(self._data, columns, sep, into)
+    def combine(
+        self, /, columns: list[str], *, into: str, sep: str = "_", drop: bool = True
+    ) -> DataFrame:
+        data = combine(self._data, columns, into, sep, drop)
         return _wrap(data)
 
     def dedupe(self, /, columns: list[str] | None = None) -> DataFrame:
@@ -211,8 +213,10 @@ class DataFrame(_CommonFrameMixin):
         data = sort(self._data, columns, reverse)
         return _wrap(data)
 
-    def split(self, /, column: str, *, sep: str, into: list[str]) -> DataFrame:
-        data = split(self._data, column, sep, into)
+    def split(
+        self, /, column: str, *, into: list[str], sep: str, drop: bool = True
+    ) -> DataFrame:
+        data = split(self._data, column, into, sep, drop)
         return _wrap(data)
 
     def spread(self, /, column: str, using: str) -> DataFrame:
