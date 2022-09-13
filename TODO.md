@@ -1,15 +1,21 @@
 ### todo
 
-- tuesday: all tests
-    - no side effects
+- tuesday: tests
     - unique columns
-    - good index
-- wednesday: nothing
+    - sklearn tests
+- wednesday: (HP)
 - thursday: all docs
     - docstrings
     - readme
     - cheat sheet
 - friday: launch
+    - logo
+    - LI, HN, Twitter
+
+### Undecided
+
+- Sets?
+- save as a verb?
 
 ### Later
 

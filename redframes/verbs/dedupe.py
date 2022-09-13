@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from ..checks import enforce
+from ..checks import enforce, enforce_keys
 from ..types import LazyColumns, PandasDataFrame
-from ._validate import _validate_columns_keys
 
 # ✅ No "Bad" Types
 # ✅ No Side Effects
@@ -12,7 +11,7 @@ from ._validate import _validate_columns_keys
 
 def dedupe(df: PandasDataFrame, columns: LazyColumns | None = None) -> PandasDataFrame:
     enforce(columns, {list, str, None})
-    _validate_columns_keys(columns, df.columns)
+    enforce_keys(columns, df.columns)
     df = df.drop_duplicates(subset=columns, keep="first")
     df = df.reset_index(drop=True)
     return df

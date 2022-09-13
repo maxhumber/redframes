@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from ..checks import enforce
+from ..checks import enforce, enforce_keys
 from ..types import LazyColumns, PandasDataFrame
-from ._validate import _validate_columns_keys
 
 # ✅ No "Bad" Types
 # ✅ No Side Effects
@@ -15,7 +14,7 @@ def sort(
 ) -> PandasDataFrame:
     enforce(columns, {list, str})
     enforce(descending, bool)
-    _validate_columns_keys(columns, df.columns)
+    enforce_keys(columns, df.columns)
     df = df.sort_values(by=columns, ascending=not descending)
     df = df.reset_index(drop=True)
     return df

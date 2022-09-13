@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pprint
 
-from ..checks import enforce
-from ..types import (
+from .checks import enforce
+from .types import (
     Any,
     Column,
     Columns,
@@ -16,7 +16,7 @@ from ..types import (
     Value,
     Values,
 )
-from ..verbs import (
+from .verbs import (
     accumulate,
     append,
     combine,

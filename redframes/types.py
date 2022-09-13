@@ -14,5 +14,6 @@ Join = Literal["left", "right", "inner", "full"]
 LazyColumns = Union[Column, Columns]
 PandasDataFrame = pd.DataFrame
 PandasGroupedFrame = pg.DataFrameGroupBy
+PandasIndex = pd.Index
 Value = Any
 Values = list[Value]
