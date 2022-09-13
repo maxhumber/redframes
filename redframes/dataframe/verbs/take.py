@@ -7,7 +7,7 @@ import pandas.core.groupby.generic as pg
 def take(
     df: pd.DataFrame | pg.DataFrameGroupBy, rows: int = 1, **kwargs
 ) -> pd.DataFrame:
-    if kwargs:  # sklearn.model_selection_train_test_split requirement
+    if kwargs:  # compatibility: sklearn.model_selection_train_test_split
         df = df.take(rows, **kwargs)  # type: ignore
         df = df.reset_index(drop=True)
         return df

@@ -86,7 +86,7 @@ class DataFrame(_CommonFrameMixin):
     def __eq__(self, rhs: object) -> bool:
         if not isinstance(rhs, DataFrame):
             raise NotImplementedError("rhs type is invalid")
-        return self._data.equals(self._data)
+        return self._data.equals(rhs._data)
 
     def __getitem__(self, key: str) -> list[Any]:
         return list(self._data[key])
