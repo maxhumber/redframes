@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from ..types import Direction, LazyColumns, PandasDataFrame, Value
+from ._validate import _validate_columns_type_list_str_none
 
 
 def fill(
@@ -9,8 +10,9 @@ def fill(
     direction: Direction | None = "down",
     constant: Value | None = None,
 ) -> PandasDataFrame:
-    if columns and not isinstance(columns, list):
-        raise TypeError("columns type is invalid, must be list[str]")
+    _validate_columns_type_list_str_none(columns)
+    if isinstance(columns, str):
+        columns = [columns]
     if direction and constant:
         raise ValueError("direction OR constant arugment must be None")
     if (not direction) and (not constant):
@@ -25,6 +27,7 @@ def fill(
     if constant:
         value = constant
         method = None
+    df = df.copy()
     if columns:
         df[columns] = df[columns].fillna(value=value, method=method)  # type: ignore
     else:

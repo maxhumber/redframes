@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 
 from ..types import Join, LazyColumns, PandasDataFrame
-
+from ._validate import _validate_columns_type_list_str
 
 def join(
     lhs: PandasDataFrame,
@@ -11,8 +11,7 @@ def join(
     on: LazyColumns,
     how: Join = "left",
 ) -> PandasDataFrame:
-    if not isinstance(on, dict):
-        raise TypeError("on type is invalid, must be type dict[str, str]")
+    _validate_columns_type_list_str(on)
     if not how in ["left", "right", "inner", "full"]:
         raise ValueError(
             "method argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"

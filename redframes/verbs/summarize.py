@@ -15,7 +15,7 @@ def summarize(
         df = df.agg(**over)
         df = df.reset_index()
     else:
-        df = df.agg(**into_over_funcs)  # type: ignore
+        df = df.agg(**over)  # type: ignore
         df = df.T  # type: ignore
         df = df.reset_index(drop=True)  # type: ignore
         df = df.fillna(method="ffill")  # type: ignore

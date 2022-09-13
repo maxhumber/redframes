@@ -16,7 +16,7 @@ from ..types import (
     Values,
 )
 
-from .verbs import (
+from ..verbs import (
     accumulate,
     append,
     combine,
@@ -53,6 +53,7 @@ class _TakeMixin:
     def __init__(self, data: PandasDataFrame | PandasGroupedFrame):
         self._data = data
 
+    # sklearn + GroupedFrame compatibility
     def take(self, rows: int, **kwargs) -> DataFrame:
         return _wrap(take(self._data, rows, **kwargs))
 
