@@ -3,7 +3,6 @@ from __future__ import annotations
 import pprint
 
 from ..checks import enforce
-
 from ..types import (
     Any,
     Column,
@@ -17,7 +16,6 @@ from ..types import (
     Value,
     Values,
 )
-
 from ..verbs import (
     accumulate,
     append,

@@ -2,8 +2,14 @@ from __future__ import annotations
 
 import pandas as pd
 
-from ..types import Column, Columns, PandasDataFrame
 from ..checks import enforce
+from ..types import Column, Columns, PandasDataFrame
+
+# ✅ No "Bad" Types
+# ✅ No Side Effects
+# ✅ No "Weird" Indexes
+# ⚠️ checks.unique
+# ❓ No Duplicate Columns
 
 def gather(
     df: PandasDataFrame,
@@ -11,7 +17,7 @@ def gather(
     into: tuple[Column, Column] = ("variable", "value"),
 ) -> PandasDataFrame:
     enforce(columns, {list, None})
-    enforce(into, {tuple})
+    enforce(into, tuple)
     if not (isinstance(into, tuple) and len(into) == 2):
         raise TypeError("into type is invalid, must be tuple[str, str]")
     if not columns:

@@ -1,7 +1,13 @@
 from __future__ import annotations
 
-from ..types import PandasDataFrame, PandasGroupedFrame
 from ..checks import enforce
+from ..types import PandasDataFrame, PandasGroupedFrame
+
+# ✅ No "Bad" Types
+# ✅ No Side Effects
+# ✅ No "Weird" Indexes
+# ⚠️ checks.unique
+# ❓ No Duplicate Columns
 
 # compatibility: sklearn / train_test_split
 def take(
@@ -11,7 +17,7 @@ def take(
         df = df.take(rows, **kwargs)  # type: ignore
         df = df.reset_index(drop=True)
         return df
-    enforce(rows, {int})
+    enforce(rows, int)
     if isinstance(df, PandasDataFrame):
         if rows > df.shape[0]:
             raise ValueError("rows argument is invalid, exceeds total size")

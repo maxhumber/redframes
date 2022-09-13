@@ -3,11 +3,17 @@ from __future__ import annotations
 from ..types import Column, Func, PandasDataFrame, PandasGroupedFrame
 from ..checks import enforce
 
+# ✅ No "Bad" Types
+# ✅ No Side Effects
+# ✅ No "Weird" Indexes
+# ⚠️ checks.unique
+# ❓ No Duplicate Columns
+
 def summarize(
     df: PandasDataFrame | PandasGroupedFrame,
     over: dict[Column, tuple[Column, Func]],
 ) -> PandasDataFrame:
-    enforce(over, {dict})
+    enforce(over, dict)
     if isinstance(df, PandasGroupedFrame):
         df = df.agg(**over)
         df = df.reset_index()

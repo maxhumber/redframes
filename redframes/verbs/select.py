@@ -1,8 +1,13 @@
 import pandas as pd
 
-from ..types import LazyColumns, PandasDataFrame
 from ..checks import enforce
+from ..types import LazyColumns, PandasDataFrame
 
+# ✅ No "Bad" Types
+# ✅ No Side Effects
+# ✅ No "Weird" Indexes
+# ⚠️ checks.unique
+# ❓ No Duplicate Columns
 
 def select(df: PandasDataFrame, columns: LazyColumns) -> PandasDataFrame:
     enforce(columns, {list, str})

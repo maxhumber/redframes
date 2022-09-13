@@ -1,15 +1,21 @@
 import uuid
 
-from ..types import Column, Columns, PandasDataFrame
 from ..checks import enforce
+from ..types import Column, Columns, PandasDataFrame
+
+# ✅ No "Bad" Types
+# ✅ No Side Effects
+# ✅ No "Weird" Indexes
+# ⚠️ checks.unique
+# ❓ No Duplicate Columns
 
 def split(
     df: PandasDataFrame, column: Column, into: Columns, sep: str, drop: bool = True
 ) -> PandasDataFrame:
-    enforce(column, {str})
-    enforce(into, {list})
-    enforce(sep, {str})
-    enforce(drop, {bool})
+    enforce(column, str)
+    enforce(into, list)
+    enforce(sep, str)
+    enforce(drop, bool)
     if (column in into) and (not drop):
         raise ValueError("into columns argument is invalid, keys must be unique")
     bad_keys = set(df.columns).difference(set([column])).intersection(set(into))

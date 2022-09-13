@@ -1,7 +1,13 @@
 from __future__ import annotations
 
-from ..types import Direction, LazyColumns, PandasDataFrame, Value
 from ..checks import enforce
+from ..types import Direction, LazyColumns, PandasDataFrame, Value
+
+# ✅ No "Bad" Types
+# ✅ No Side Effects
+# ✅ No "Weird" Indexes
+# ⚠️ checks.unique
+# ❓ No Duplicate Columns
 
 
 def fill(
@@ -11,6 +17,7 @@ def fill(
     constant: Value | None = None,
 ) -> PandasDataFrame:
     enforce(columns, {list, str, None})
+    enforce(direction, {str, None})
     if isinstance(columns, str):
         columns = [columns]
     if direction and constant:

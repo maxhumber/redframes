@@ -1,7 +1,13 @@
 from __future__ import annotations
 
-from ..types import LazyColumns, PandasDataFrame
 from ..checks import enforce
+from ..types import LazyColumns, PandasDataFrame
+
+# ✅ No "Bad" Types
+# ✅ No Side Effects
+# ✅ No "Weird" Indexes
+# ⚠️ checks.unique
+# ❓ No Duplicate Columns
 
 def denix(df: PandasDataFrame, columns: LazyColumns | None = None) -> PandasDataFrame:
     enforce(columns, {list, str, None})

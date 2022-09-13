@@ -2,8 +2,14 @@ from __future__ import annotations
 
 import pandas as pd
 
-from ..types import Join, LazyColumns, PandasDataFrame
 from ..checks import enforce
+from ..types import Join, LazyColumns, PandasDataFrame
+
+# ✅ No "Bad" Types
+# ✅ No Side Effects
+# ✅ No "Weird" Indexes
+# ⚠️ checks.unique
+# ❓ No Duplicate Columns
 
 def join(
     lhs: PandasDataFrame,
@@ -12,7 +18,7 @@ def join(
     how: Join = "left",
 ) -> PandasDataFrame:
     enforce(on, {list, str})
-    enforce(how, {str})
+    enforce(how, str)
     if not how in ["left", "right", "inner", "full"]:
         raise ValueError(
             "method argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"

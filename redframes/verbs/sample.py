@@ -1,7 +1,14 @@
 from __future__ import annotations
 
-from ..types import PandasDataFrame
 from ..checks import enforce
+from ..types import PandasDataFrame
+
+
+# ✅ No "Bad" Types
+# ✅ No Side Effects
+# ✅ No "Weird" Indexes
+# ⚠️ checks.unique
+# ❓ No Duplicate Columns
 
 def sample(
     df: PandasDataFrame, rows: int | float = 1, seed: int | None = None

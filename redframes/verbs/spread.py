@@ -5,10 +5,15 @@ import pandas as pd
 from ..types import Column, PandasDataFrame
 from ..checks import enforce
 
+# ✅ No "Bad" Types
+# ✅ No Side Effects
+# ✅ No "Weird" Indexes
+# ⚠️ checks.unique
+# ❓ No Duplicate Columns
 
 def spread(df: PandasDataFrame, column: Column, using: Column) -> PandasDataFrame:
-    enforce(column, {str})
-    enforce(using, {str})
+    enforce(column, str)
+    enforce(using, str)
     original_shape = df.shape[1]
     if original_shape == 2:
         temp = uuid.uuid4().hex
