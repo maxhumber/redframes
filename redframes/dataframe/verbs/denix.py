@@ -16,7 +16,7 @@ def denix(df: pd.DataFrame, columns: list[str] | str | None = None) -> pd.DataFr
         if bad_keys:
             if len(bad_keys) == 1:
                 message = f"columns argument contains invalid key {bad_keys}"
-            else: 
+            else:
                 message = f"columns argument contains invalid keys {bad_keys}"
             raise KeyError(message)
     df = df.dropna(subset=columns)

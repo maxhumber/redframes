@@ -1,17 +1,15 @@
 ### todo
 
 - tuesday: all tests
+    - no side effects
+    - unique columns
+    - good index
 - wednesday: nothing
 - thursday: all docs
+    - docstrings
+    - readme
+    - cheat sheet
 - friday: launch
-
-- make sure it works in machine learning pipeline
-- Write more tests
-    - Ensure every verb has no ensure no side effects
-    - Ensure every verb creates/returns a valid df (index, columns)
-- docstrings
-- readme
-- cheat sheet
 
 ### Later
 
@@ -22,6 +20,33 @@
 
 ## verbs
 
-rows
-dedupe
-denix
+📝 redframes/dataframe/verbs/sort.py
+redframes/dataframe/verbs/shuffle.py
+redframes/dataframe/verbs/sample.py
+redframes/dataframe/verbs/filter.py
+---
+redframes/dataframe/verbs/dedupe.py
+redframes/dataframe/verbs/denix.py
+---
+redframes/dataframe/verbs/select.py
+redframes/dataframe/verbs/drop.py
+redframes/dataframe/verbs/rename.py
+---
+redframes/dataframe/verbs/append.py
+redframes/dataframe/verbs/join.py
+---
+redframes/dataframe/verbs/replace.py
+redframes/dataframe/verbs/fill.py
+---
+redframes/dataframe/verbs/combine.py
+redframes/dataframe/verbs/split.py
+---
+redframes/dataframe/verbs/gather.py
+redframes/dataframe/verbs/spread.py
+---
+redframes/dataframe/verbs/group.py
+redframes/dataframe/verbs/accumulate.py
+redframes/dataframe/verbs/summarize.py
+redframes/dataframe/verbs/mutate.py
+redframes/dataframe/verbs/rank.py
+redframes/dataframe/verbs/take.py

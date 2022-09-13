@@ -1,10 +1,24 @@
 from __future__ import annotations
 
 import pprint
-from typing import Any, Callable, Literal
 
-import pandas as pd
-import pandas.core.groupby.generic as pg
+from ..types import (
+    Any,
+    Column,
+    Columns,
+    ColumnsU,
+    Data,
+    Dimensions,
+    Direction,
+    Func,
+    Join,
+    PandasCommonFrame,
+    PandasDataFrame,
+    Percent,
+    Rank,
+    Rows,
+    Values,
+)
 
 from .verbs import (
     accumulate,
@@ -33,71 +47,73 @@ from .verbs import (
 )
 
 
-def _wrap(data: pd.DataFrame) -> DataFrame:
+def _wrap(data: PandasDataFrame) -> DataFrame:
     df = DataFrame()
     df._data = data
     return df
 
 
-class _CommonFrameMixin:
-    def __init__(self, /, data: pd.DataFrame | pg.DataFrameGroupBy):
+class _SKLearnMixin:
+    def __init__(self, data: PandasDataFrame):
         self._data = data
 
-    def accumulate(self, /, column: str, *, into: str) -> DataFrame:
-        data = accumulate(self._data, column, into)
-        return _wrap(data)
+    def __array__(self):
+        return self._data.__array__()
 
-    def mutate(self, /, mutations: dict[str, Callable[..., Any]]) -> DataFrame:
-        data = mutate(self._data, mutations)
-        return _wrap(data)
+    @property
+    def iloc(self):
+        return self._data.iloc
+
+
+class _CommonFrameMixin:
+    def __init__(self, data: PandasCommonFrame):
+        self._data = data
+
+    def accumulate(self, column: Column, into: Column) -> DataFrame:
+        return _wrap(accumulate(self._data, column, into))
+
+    def mutate(self, mutations: dict[Column, Func]) -> DataFrame:
+        return _wrap(mutate(self._data, mutations))
 
     def rank(
         self,
-        /,
-        column: str,
-        *,
-        into: str,
-        method: Literal["min", "first", "dense"] = "dense",
+        column: Column,
+        into: Column,
+        method: Rank = "dense",
         descending: bool = False,
     ) -> DataFrame:
-        data = rank(self._data, column, into, method, descending)
-        return _wrap(data)
+        return _wrap(rank(self._data, column, into, method, descending))
 
     def summarize(
-        self, /, into_over_funcs: dict[str, tuple[str, Callable[..., Any]]]
+        self, into_over_funcs: dict[Column, tuple[Column, Func]]
     ) -> DataFrame:
-        data = summarize(self._data, into_over_funcs)
-        return _wrap(data)
+        return _wrap(summarize(self._data, into_over_funcs))
 
-    def take(self, /, rows: int = 1, **kwargs) -> DataFrame:
-        data = take(self._data, rows, **kwargs)
-        return _wrap(data)
+    def take(self, rows: Rows = 1, **kwargs) -> DataFrame:
+        return _wrap(take(self._data, rows, **kwargs))
 
 
-class GroupedDataFrame(_CommonFrameMixin):
+class GroupedFrame(_CommonFrameMixin):
     def __repr__(self) -> str:
-        return "GroupedDataFrame()"
+        return "GroupedFrame()"
 
 
-class DataFrame(_CommonFrameMixin):
-    def __array__(self):  # compatibility: sklearn 
-        return self._data.__array__()
+class DataFrame(_CommonFrameMixin, _SKLearnMixin):
+    def __init__(self, data: dict[Column, Values] | None = None):
+        if not data:
+            self._data = PandasDataFrame()
+        elif isinstance(data, dict):
+            self._data = PandasDataFrame(data)
+        else:
+            raise TypeError("must be dict[str, list[Any]] | None")
 
-    def __eq__(self, rhs: object) -> bool:
+    def __eq__(self, rhs: Any) -> bool:
         if not isinstance(rhs, DataFrame):
-            raise NotImplementedError("rhs type is invalid")
+            raise TypeError("must be rf.DataFrame")
         return self._data.equals(rhs._data)
 
-    def __getitem__(self, key: str) -> list[Any]:
+    def __getitem__(self, key: Column) -> Values:
         return list(self._data[key])
-
-    def __init__(self, /, data: dict[str, list[Any]] | None = None):
-        if not data:
-            self._data = pd.DataFrame()
-        elif isinstance(data, dict):
-            self._data = pd.DataFrame(data)
-        else:
-            raise TypeError("data type is invalid")
 
     def __len__(self) -> int:
         return self._data.__len__()
@@ -119,128 +135,94 @@ class DataFrame(_CommonFrameMixin):
         return string
 
     @property
-    def columns(self) -> list[str]:
+    def columns(self) -> Columns:
         return list(self._data.columns)
 
     @property
-    def dimensions(self) -> dict[str, int]:
+    def dimensions(self) -> Dimensions:
         return dict(zip(["rows", "columns"], self._data.shape))
 
     @property
     def empty(self) -> bool:
         return self._data.empty
 
-    # TODO: HIDE THIS
     @property
-    def iloc(self):
-        return self._data.iloc  # compatibility: sklearn.model_selection.train_test_split
-
-    @property
-    def rows(self) -> list[list[Any]]:
-        return self._data.values.tolist()
-
-    @property
-    def types(self) -> dict[str, type]:
+    def types(self) -> dict[Column, type]:
         data = self._data.astype("object")
         types = {str(col): type(data.loc[0, col]) for col in data}  # type: ignore
         return types
 
-    def append(self, /, df: DataFrame) -> DataFrame:
-        if not isinstance(df, DataFrame):
-            raise TypeError("df type is invalid, must be rf.DataFrame")
-        data = append(self._data, df._data)
-        return _wrap(data)
+    def append(self, other: DataFrame) -> DataFrame:
+        assert isinstance(other, DataFrame), "must be DataFrame"
+        return _wrap(append(self._data, other._data))
 
     def combine(
-        self, /, columns: list[str], *, into: str, sep: str = "_", drop: bool = True
+        self, columns: Columns, into: Column, sep: str = "_", drop: bool = True
     ) -> DataFrame:
-        data = combine(self._data, columns, into, sep, drop)
-        return _wrap(data)
+        return _wrap(combine(self._data, columns, into, sep, drop))
 
-    def dedupe(self, /, columns: list[str] | str | None = None) -> DataFrame:
-        data = dedupe(self._data, columns)
-        return _wrap(data)
+    def dedupe(self, columns: ColumnsU | None = None) -> DataFrame:
+        return _wrap(dedupe(self._data, columns))
 
-    def denix(self, /, columns: list[str] | None = None) -> DataFrame:
-        data = denix(self._data, columns)
-        return _wrap(data)
+    def denix(self, columns: ColumnsU | None = None) -> DataFrame:
+        return _wrap(denix(self._data, columns))
 
-    def drop(self, /, columns: list[str]) -> DataFrame:
-        data = drop(self._data, columns)
-        return _wrap(data)
+    def drop(self, columns: ColumnsU) -> DataFrame:
+        return _wrap(drop(self._data, columns))
 
     def fill(
         self,
-        /,
-        columns: list[str] | None = None,
-        *,
-        direction: Literal["down", "up"] | None = "down",
-        constant: str | int | float | None = None,
+        columns: ColumnsU | None = None,
+        direction: Direction | None = "down",
+        constant: Any | None = None,
     ) -> DataFrame:
-        data = fill(self._data, columns, direction, constant)
-        return _wrap(data)
+        return _wrap(fill(self._data, columns, direction, constant))
 
-    def filter(self, /, func: Callable[..., bool]) -> DataFrame:
-        data = filter(self._data, func)
-        return _wrap(data)
+    def filter(self, func: Func) -> DataFrame:
+        return _wrap(filter(self._data, func))
 
     def gather(
         self,
-        /,
-        columns: list[str] | None = None,
-        *,
-        into: tuple[str, str] = ("variable", "value"),
+        columns: Columns | None = None,
+        into: tuple[Column, Column] = ("variable", "value"),
     ):
-        data = gather(self._data, columns, into)
-        return _wrap(data)
+        return _wrap(gather(self._data, columns, into))
 
-    def group(self, /, columns: str | list[str]) -> GroupedDataFrame:
-        data = group(self._data, columns)
-        return GroupedDataFrame(data)
+    def group(self, by: ColumnsU) -> GroupedFrame:
+        return GroupedFrame(group(self._data, by))
 
     def join(
         self,
-        /,
         rhs: DataFrame,
-        *,
-        on: dict[str, str],
-        how: Literal["left", "right", "inner", "full"] = "left",
+        on: dict[Column, Column],
+        how: Join = "left",
     ) -> DataFrame:
         if not isinstance(rhs, DataFrame):
             raise TypeError("rhs type is invalid")
-        data = join(self._data, rhs._data, on, how)
-        return _wrap(data)
+        return _wrap(join(self._data, rhs._data, on, how))
 
-    def rename(self, /, columns: dict[str, str]) -> DataFrame:
-        data = rename(self._data, columns)
-        return _wrap(data)
+    def rename(self, columns: dict[Column, Column]) -> DataFrame:
+        return _wrap(rename(self._data, columns))
 
-    def replace(self, /, rules: dict[str, dict[Any, Any]]) -> DataFrame:
-        data = replace(self._data, rules)
-        return _wrap(data)
+    def replace(self, rules: dict[Column, dict[Any, Any]]) -> DataFrame:
+        return _wrap(replace(self._data, rules))
 
-    def sample(self, /, rows: int | float = 1, *, seed: int | None = None) -> DataFrame:
-        data = sample(self._data, rows, seed)
-        return _wrap(data)
+    def sample(self, rows: Rows | Percent = 1, seed: int | None = None) -> DataFrame:
+        return _wrap(sample(self._data, rows, seed))
 
-    def select(self, /, columns: list[str]) -> DataFrame:
-        data = select(self._data, columns)
-        return _wrap(data)
+    def select(self, columns: ColumnsU) -> DataFrame:
+        return _wrap(select(self._data, columns))
 
-    def shuffle(self, *, seed: int | None = None) -> DataFrame:
-        data = shuffle(self._data, seed)
-        return _wrap(data)
+    def shuffle(self, seed: int | None = None) -> DataFrame:
+        return _wrap(shuffle(self._data, seed))
 
-    def sort(self, /, columns: list[str], *, descending: bool = False) -> DataFrame:
-        data = sort(self._data, columns, descending)
-        return _wrap(data)
+    def sort(self, columns: ColumnsU, descending: bool = False) -> DataFrame:
+        return _wrap(sort(self._data, columns, descending))
 
     def split(
-        self, /, column: str, *, into: list[str], sep: str, drop: bool = True
+        self, column: Column, into: Columns, sep: str, drop: bool = True
     ) -> DataFrame:
-        data = split(self._data, column, into, sep, drop)
-        return _wrap(data)
+        return _wrap(split(self._data, column, into, sep, drop))
 
-    def spread(self, /, column: str, using: str) -> DataFrame:
-        data = spread(self._data, column, using)
-        return _wrap(data)
+    def spread(self, column: Column, using: Column) -> DataFrame:
+        return _wrap(spread(self._data, column, using))

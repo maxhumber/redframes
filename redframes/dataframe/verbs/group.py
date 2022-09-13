@@ -3,9 +3,10 @@ from __future__ import annotations
 import pandas as pd
 import pandas.core.groupby.generic as pg
 
+from ._validate import _validate_columns_type_list_str
 
-def group(df: pd.DataFrame, columns: list[str] | str) -> pg.DataFrameGroupBy:
-    if not (isinstance(columns, list) or isinstance(columns, str)):
-        raise TypeError("columns type is invalid, must be list[str] | str")
-    gdf = df.groupby(columns)
+
+def group(df: pd.DataFrame, by: list[str] | str) -> pg.DataFrameGroupBy:
+    _validate_columns_type_list_str(by)
+    gdf = df.groupby(by)
     return gdf

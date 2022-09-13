@@ -205,41 +205,6 @@ class TestCore(unittest.TestCase):
         self.assertEqual(df1a, df1b)
         self.assertNotEqual(df1a, df2)
 
-    def test_sort_bad_columns(self):
-        df = rf.DataFrame({"foo": [1, 1, 2, 2, 3], "bar": [1, -7, 5, 4, 5]})
-        with self.assertRaisesRegex(TypeError, "Invalid columns argument *"):
-            df.sort("foo")
-
-    def test_sort_one_column(self):
-        df = rf.DataFrame({"foo": [1, 1, 2, 2, 3, -1], "bar": [1, -7, 5, 4, 5, 6]})
-        result = df.sort(["bar"])
-        expected = rf.DataFrame(
-            {"foo": [1, 1, 2, 2, 3, -1], "bar": [-7, 1, 4, 5, 5, 6]}
-        )
-        self.assertEqual(result, expected)
-
-    def test_sort_two_columns(self):
-        df = rf.DataFrame({"foo": [1, 1, 2, 2, 3, -1], "bar": [1, -7, 5, 4, 5, 6]})
-        result = df.sort(["bar", "foo"])
-        expected = rf.DataFrame(
-            {"foo": [1, 1, 2, 2, 3, -1], "bar": [-7, 1, 4, 5, 5, 6]}
-        )
-        self.assertEqual(result, expected)
-
-    def test_sort_two_columns_order(self):
-        df = rf.DataFrame({"foo": [1, 1, 2, 2, 3, -1], "bar": [1, -7, 5, 4, 5, 6]})
-        result = df.sort(["foo", "bar"])
-        expected = rf.DataFrame(
-            {"foo": [-1, 1, 1, 2, 2, 3], "bar": [6, -7, 1, 4, 5, 5]}
-        )
-        self.assertEqual(result, expected)
-
-    def test_sort_reverse(self):
-        df = rf.DataFrame({"foo": range(5)})
-        result = df.sort(["foo"], reverse=True)
-        expected = rf.DataFrame({"foo": [4, 3, 2, 1, 0]})
-        self.assertEqual(result, expected)
-
     def test_filter_bad_type(self):
         df = rf.DataFrame({"foo": range(10)})
         message = "Must be a 'rowwise' function that returns a bool"

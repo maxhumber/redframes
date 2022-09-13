@@ -7,6 +7,7 @@ import pandas.core.groupby.generic as pg
 
 # need to rename the name methods?
 
+
 def rank(
     df: pd.DataFrame | pg.DataFrameGroupBy,
     column: str,
