@@ -1,20 +1,13 @@
 from __future__ import annotations
 
-from typing import Literal
-
-import pandas as pd
-import pandas.core.groupby.generic as pg
-
-# need to rename the name methods?
-
+from ...types import PandasDataFrame, PandasGroupedFrame, Column
 
 def rank(
-    df: pd.DataFrame | pg.DataFrameGroupBy,
-    column: str,
-    into: str,
-    method: Literal["min", "first", "dense"] = "dense",
+    df: PandasDataFrame | PandasGroupedFrame,
+    column: Column,
+    into: Column,
     descending: bool = False,
-) -> pd.DataFrame:
+) -> PandasDataFrame:
     df = df.copy()
-    df[into] = df[column].rank(method=method, ascending=not descending)
+    df[into] = df[column].rank(method="dense", ascending=not descending)
     return df

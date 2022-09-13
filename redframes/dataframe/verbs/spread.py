@@ -1,9 +1,8 @@
 import uuid
 
-import pandas as pd
+from ...types import Column, PandasDataFrame
 
-
-def spread(df: pd.DataFrame, column: str, using: str) -> pd.DataFrame:
+def spread(df: PandasDataFrame, column: Column, using: Column) -> PandasDataFrame:
     if not isinstance(column, str):
         raise TypeError("column type is invalid, must be str")
     if not isinstance(using, str):

@@ -1,9 +1,12 @@
 import pandas as pd
 
+from ...types import LazyColumns, PandasDataFrame
+from ._validate import _validate_columns_type_list_str
 
-def select(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
-    if not isinstance(columns, list):
-        raise TypeError("columns type is invalid, must be list[str]")
+def select(df: PandasDataFrame, columns: LazyColumns) -> PandasDataFrame:
+    _validate_columns_type_list_str(columns)
+    if isinstance(columns, str):
+        columns = [columns]
     bad_columns = list(set(columns) - set(df.columns))
     if bad_columns and len(bad_columns) == 1:
         raise KeyError(f"column key: {bad_columns} is invalid")

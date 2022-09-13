@@ -6,17 +6,13 @@ from ..types import (
     Any,
     Column,
     Columns,
-    ColumnsU,
-    Data,
-    Dimensions,
     Direction,
     Func,
     Join,
-    PandasCommonFrame,
+    LazyColumns,
     PandasDataFrame,
-    Percent,
-    Rank,
-    Rows,
+    PandasGroupedFrame,
+    Value,
     Values,
 )
 
@@ -53,70 +49,71 @@ def _wrap(data: PandasDataFrame) -> DataFrame:
     return df
 
 
-class _SKLearnMixin:
+class _TakeMixin:
+    def __init__(self, data: PandasDataFrame | PandasGroupedFrame):
+        self._data = data
+
+    def take(self, rows: int, **kwargs) -> DataFrame:
+        return _wrap(take(self._data, rows, **kwargs))
+
+
+class _SKLearnMixin(_TakeMixin):
     def __init__(self, data: PandasDataFrame):
         self._data = data
 
     def __array__(self):
         return self._data.__array__()
 
+    def __len__(self) -> int:
+        return self._data.__len__()
+
     @property
     def iloc(self):
         return self._data.iloc
 
 
-class _CommonFrameMixin:
-    def __init__(self, data: PandasCommonFrame):
+class _CommonMixin(_TakeMixin):
+    def __init__(self, data: PandasDataFrame | PandasGroupedFrame):
         self._data = data
 
     def accumulate(self, column: Column, into: Column) -> DataFrame:
         return _wrap(accumulate(self._data, column, into))
 
-    def mutate(self, mutations: dict[Column, Func]) -> DataFrame:
-        return _wrap(mutate(self._data, mutations))
+    def mutate(self, over: dict[Column, Func]) -> DataFrame:
+        return _wrap(mutate(self._data, over))
 
     def rank(
         self,
         column: Column,
         into: Column,
-        method: Rank = "dense",
         descending: bool = False,
     ) -> DataFrame:
-        return _wrap(rank(self._data, column, into, method, descending))
+        return _wrap(rank(self._data, column, into, descending))
 
-    def summarize(
-        self, into_over_funcs: dict[Column, tuple[Column, Func]]
-    ) -> DataFrame:
-        return _wrap(summarize(self._data, into_over_funcs))
-
-    def take(self, rows: Rows = 1, **kwargs) -> DataFrame:
-        return _wrap(take(self._data, rows, **kwargs))
+    def summarize(self, over: dict[Column, tuple[Column, Func]]) -> DataFrame:
+        return _wrap(summarize(self._data, over))
 
 
-class GroupedFrame(_CommonFrameMixin):
+class GroupedFrame(_CommonMixin):
     def __repr__(self) -> str:
         return "GroupedFrame()"
 
 
-class DataFrame(_CommonFrameMixin, _SKLearnMixin):
+class DataFrame(_CommonMixin, _SKLearnMixin):
     def __init__(self, data: dict[Column, Values] | None = None):
         if not data:
             self._data = PandasDataFrame()
         elif isinstance(data, dict):
             self._data = PandasDataFrame(data)
         else:
-            raise TypeError("must be dict[str, list[Any]] | None")
+            raise TypeError("must be dict[Column, Values] | None")
 
     def __eq__(self, rhs: Any) -> bool:
-        if not isinstance(rhs, DataFrame):
-            raise TypeError("must be rf.DataFrame")
+        assert isinstance(rhs, DataFrame), "must be DataFrame"
         return self._data.equals(rhs._data)
 
     def __getitem__(self, key: Column) -> Values:
         return list(self._data[key])
-
-    def __len__(self) -> int:
-        return self._data.__len__()
 
     def __repr__(self) -> str:
         return self._data.__repr__()
@@ -139,7 +136,7 @@ class DataFrame(_CommonFrameMixin, _SKLearnMixin):
         return list(self._data.columns)
 
     @property
-    def dimensions(self) -> Dimensions:
+    def dimensions(self) -> dict[str, int]:
         return dict(zip(["rows", "columns"], self._data.shape))
 
     @property
@@ -161,20 +158,20 @@ class DataFrame(_CommonFrameMixin, _SKLearnMixin):
     ) -> DataFrame:
         return _wrap(combine(self._data, columns, into, sep, drop))
 
-    def dedupe(self, columns: ColumnsU | None = None) -> DataFrame:
+    def dedupe(self, columns: LazyColumns | None = None) -> DataFrame:
         return _wrap(dedupe(self._data, columns))
 
-    def denix(self, columns: ColumnsU | None = None) -> DataFrame:
+    def denix(self, columns: LazyColumns | None = None) -> DataFrame:
         return _wrap(denix(self._data, columns))
 
-    def drop(self, columns: ColumnsU) -> DataFrame:
+    def drop(self, columns: LazyColumns) -> DataFrame:
         return _wrap(drop(self._data, columns))
 
     def fill(
         self,
-        columns: ColumnsU | None = None,
+        columns: LazyColumns | None = None,
         direction: Direction | None = "down",
-        constant: Any | None = None,
+        constant: Value | None = None,
     ) -> DataFrame:
         return _wrap(fill(self._data, columns, direction, constant))
 
@@ -188,35 +185,34 @@ class DataFrame(_CommonFrameMixin, _SKLearnMixin):
     ):
         return _wrap(gather(self._data, columns, into))
 
-    def group(self, by: ColumnsU) -> GroupedFrame:
+    def group(self, by: LazyColumns) -> GroupedFrame:
         return GroupedFrame(group(self._data, by))
 
     def join(
         self,
         rhs: DataFrame,
-        on: dict[Column, Column],
+        on: LazyColumns,
         how: Join = "left",
     ) -> DataFrame:
-        if not isinstance(rhs, DataFrame):
-            raise TypeError("rhs type is invalid")
+        assert isinstance(rhs, DataFrame), "must be DataFrame"
         return _wrap(join(self._data, rhs._data, on, how))
 
     def rename(self, columns: dict[Column, Column]) -> DataFrame:
         return _wrap(rename(self._data, columns))
 
-    def replace(self, rules: dict[Column, dict[Any, Any]]) -> DataFrame:
-        return _wrap(replace(self._data, rules))
+    def replace(self, over: dict[Column, dict[Value, Value]]) -> DataFrame:
+        return _wrap(replace(self._data, over))
 
-    def sample(self, rows: Rows | Percent = 1, seed: int | None = None) -> DataFrame:
+    def sample(self, rows: int | float = 1, seed: int | None = None) -> DataFrame:
         return _wrap(sample(self._data, rows, seed))
 
-    def select(self, columns: ColumnsU) -> DataFrame:
+    def select(self, columns: LazyColumns) -> DataFrame:
         return _wrap(select(self._data, columns))
 
     def shuffle(self, seed: int | None = None) -> DataFrame:
         return _wrap(shuffle(self._data, seed))
 
-    def sort(self, columns: ColumnsU, descending: bool = False) -> DataFrame:
+    def sort(self, columns: LazyColumns, descending: bool = False) -> DataFrame:
         return _wrap(sort(self._data, columns, descending))
 
     def split(

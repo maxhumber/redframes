@@ -1,21 +1,17 @@
 from __future__ import annotations
 
-from typing import Any, Callable
-
-import pandas as pd
-import pandas.core.groupby.generic as pg
-
+from ...types import PandasDataFrame, PandasGroupedFrame, Column, Func
 
 def summarize(
-    df: pd.DataFrame | pg.DataFrameGroupBy,
-    into_over_funcs: dict[str, tuple[str, Callable[..., Any]]],
-) -> pd.DataFrame:
-    if not isinstance(into_over_funcs, dict):
+    df: PandasDataFrame | PandasGroupedFrame,
+    over: dict[Column, tuple[Column, Func]],
+) -> PandasDataFrame:
+    if not isinstance(over, dict):
         raise TypeError(
             "into_over_funcs type is invalid, must be dict[str, tuple[str, Callable[..., Any]]]"
         )
-    if isinstance(df, pg.DataFrameGroupBy):
-        df = df.agg(**into_over_funcs)
+    if isinstance(df, PandasGroupedFrame):
+        df = df.agg(**over)
         df = df.reset_index()
     else:
         df = df.agg(**into_over_funcs)  # type: ignore

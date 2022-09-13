@@ -1,17 +1,14 @@
 from __future__ import annotations
 
-from typing import Any, Callable
-
-import pandas as pd
-import pandas.core.groupby.generic as pg
+from ...types import Column, PandasDataFrame, PandasGroupedFrame, Func
 
 
 def mutate(
-    df: pd.DataFrame | pg.DataFrameGroupBy, mutations: dict[str, Callable[..., Any]]
-) -> pd.DataFrame:
-    if not isinstance(mutations, dict):
+    df: PandasDataFrame | PandasGroupedFrame, over: dict[Column, Func]
+) -> PandasDataFrame:
+    if not isinstance(over, dict):
         raise TypeError("must be dict[str, Callable[..., Any]")
     df = df.copy()
-    for column, mutation in mutations.items():
+    for column, mutation in over.items():
         df[column] = df.apply(mutation, axis=1)
     return df

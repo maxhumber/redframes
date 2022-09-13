@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-from typing import Literal
-
-import pandas as pd
+from ...types import Direction, Value, LazyColumns, PandasDataFrame
 
 
 def fill(
-    df: pd.DataFrame,
-    columns: list[str] | None = None,
-    direction: Literal["down", "up"] | None = "down",
-    constant: str | int | float | None = None,
-) -> pd.DataFrame:
+    df: PandasDataFrame,
+    columns: LazyColumns = None,
+    direction: Direction | None = "down",
+    constant: Value | None = None,
+) -> PandasDataFrame:
     if columns and not isinstance(columns, list):
         raise TypeError("columns type is invalid, must be list[str]")
     if direction and constant:

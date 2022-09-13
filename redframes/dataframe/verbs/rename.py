@@ -1,10 +1,7 @@
-import pandas as pd
-
-# reverse the direction of the dictionary?
-# ensure that there's no duplicate names here
+from ...types import Column, PandasDataFrame
 
 
-def rename(df: pd.DataFrame, columns: dict[str, str]) -> pd.DataFrame:
+def rename(df: PandasDataFrame, columns: dict[Column, Column]) -> PandasDataFrame:
     if not isinstance(columns, dict):
         raise TypeError(f"columns type is invalid, must be dict[str, str]")
     bad_columns = list(set(columns.keys()) - set(df.columns))

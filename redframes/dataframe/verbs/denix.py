@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import pandas as pd
+from ...types import PandasDataFrame, LazyColumns
 
 
-def denix(df: pd.DataFrame, columns: list[str] | str | None = None) -> pd.DataFrame:
+def denix(df: PandasDataFrame, columns: LazyColumns | None = None) -> PandasDataFrame:
     is_not_list = not isinstance(columns, list)
     is_not_str = not isinstance(columns, str)
     is_not_none = not columns == None

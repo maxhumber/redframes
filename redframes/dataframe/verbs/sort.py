@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import pandas as pd
+from ...types import LazyColumns, PandasDataFrame
 
 from ._validate import _validate_columns_keys, _validate_columns_type_list_str
 
 
 def sort(
-    df: pd.DataFrame, columns: list[str] | str, descending: bool = False
-) -> pd.DataFrame:
+    df: PandasDataFrame, columns: LazyColumns, descending: bool = False
+) -> PandasDataFrame:
     if not isinstance(descending, bool):
         raise TypeError("must be bool")
     _validate_columns_type_list_str(columns)

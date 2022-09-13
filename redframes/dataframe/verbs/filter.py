@@ -1,9 +1,9 @@
 from typing import Callable
 
-import pandas as pd
+from ...types import PandasDataFrame, Func
 
 
-def filter(df: pd.DataFrame, func: Callable[..., bool]) -> pd.DataFrame:
+def filter(df: PandasDataFrame, func: Func) -> PandasDataFrame:
     if not callable(func):
         raise TypeError("func type is invalid, must be Callable[..., bool]")
     df = df.loc[func]  # type: ignore

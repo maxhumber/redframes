@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import pandas as pd
-
+from ...types import PandasDataFrame
 
 def sample(
-    df: pd.DataFrame, rows: int | float = 1, seed: int | None = None
-) -> pd.DataFrame:
+    df: PandasDataFrame, rows: int | float = 1, seed: int | None = None
+) -> PandasDataFrame:
     if type(rows) not in [int, float]:
         raise TypeError("rows type is invalid, must be int | float")
     if rows >= 1:

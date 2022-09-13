@@ -1,11 +1,10 @@
 import uuid
 
-import pandas as pd
-
+from ...types import Column, Columns, PandasDataFrame
 
 def split(
-    df: pd.DataFrame, column: str, into: list[str], sep: str, drop: bool = True
-) -> pd.DataFrame:
+    df: PandasDataFrame, column: Column, into: Columns, sep: str, drop: bool = True
+) -> PandasDataFrame:
     if not isinstance(column, str):
         raise TypeError("column type is invalid, must be str")
     if not isinstance(into, list):

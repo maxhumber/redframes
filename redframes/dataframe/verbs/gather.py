@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import pandas as pd
+from ...types import PandasDataFrame, Columns, Column
 
 
 def gather(
-    df: pd.DataFrame,
-    columns: list[str] | None = None,
-    into: tuple[str, str] = ("variable", "value"),
-) -> pd.DataFrame:
+    df: PandasDataFrame,
+    columns: Columns | None = None,
+    into: tuple[Column, Column] = ("variable", "value"),
+) -> PandasDataFrame:
     if not (isinstance(columns, list) or not columns):
         raise TypeError("columns type is invalid, must be list[str] | None")
     if not (isinstance(into, tuple) and len(into) == 2):

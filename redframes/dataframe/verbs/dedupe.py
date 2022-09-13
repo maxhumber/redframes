@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import pandas as pd
-
+from ...types import PandasDataFrame, LazyColumns
 from ._validate import _validate_columns_keys, _validate_columns_type_list_str_none
 
 
-def dedupe(df: pd.DataFrame, columns: list[str] | str | None = None) -> pd.DataFrame:
+def dedupe(df: PandasDataFrame, columns: LazyColumns | None = None) -> PandasDataFrame:
     _validate_columns_type_list_str_none(columns)
     _validate_columns_keys(columns, df.columns)
     df = df.drop_duplicates(subset=columns, keep="first")
