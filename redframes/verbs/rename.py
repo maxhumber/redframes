@@ -7,6 +7,7 @@ from ..types import Column, PandasDataFrame
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
 
+
 def rename(df: PandasDataFrame, columns: dict[Column, Column]) -> PandasDataFrame:
     enforce(columns, dict)
     bad_columns = list(set(columns.keys()) - set(df.columns))

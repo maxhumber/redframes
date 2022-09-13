@@ -9,6 +9,7 @@ from ..types import Column, Func, PandasDataFrame, PandasGroupedFrame
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
 
+
 def mutate(
     df: PandasDataFrame | PandasGroupedFrame, over: dict[Column, Func]
 ) -> PandasDataFrame:

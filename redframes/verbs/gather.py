@@ -11,6 +11,7 @@ from ..types import Column, Columns, PandasDataFrame
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
 
+
 def gather(
     df: PandasDataFrame,
     columns: Columns | None = None,

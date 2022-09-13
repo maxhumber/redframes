@@ -9,6 +9,7 @@ from ..types import LazyColumns, PandasDataFrame
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
 
+
 def denix(df: PandasDataFrame, columns: LazyColumns | None = None) -> PandasDataFrame:
     enforce(columns, {list, str, None})
     if isinstance(columns, str):

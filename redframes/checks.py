@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .types import LazyColumns, Columns, PandasIndex
+from .types import Columns, LazyColumns, PandasIndex
 
 
 def enforce(argument: Any, against: type | set[type | None]):

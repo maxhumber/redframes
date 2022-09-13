@@ -9,6 +9,7 @@ from ..types import LazyColumns, PandasDataFrame
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
 
+
 def drop(df: PandasDataFrame, columns: LazyColumns) -> PandasDataFrame:
     enforce(columns, {list, str})
     df = df.drop(columns, axis=1)

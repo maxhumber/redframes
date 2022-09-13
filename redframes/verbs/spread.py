@@ -2,14 +2,15 @@ import uuid
 
 import pandas as pd
 
-from ..types import Column, PandasDataFrame
 from ..checks import enforce
+from ..types import Column, PandasDataFrame
 
 # ✅ No "Bad" Types
 # ✅ No Side Effects
 # ✅ No "Weird" Indexes
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
+
 
 def spread(df: PandasDataFrame, column: Column, using: Column) -> PandasDataFrame:
     enforce(column, str)

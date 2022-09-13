@@ -8,6 +8,7 @@ from ..types import PandasDataFrame
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
 
+
 def append(top: PandasDataFrame, bottom: PandasDataFrame) -> PandasDataFrame:
     df = pd.concat([top, bottom])
     df = df.reset_index(drop=True)

@@ -6,6 +6,7 @@ from ..types import Func, PandasDataFrame
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
 
+
 def filter(df: PandasDataFrame, func: Func) -> PandasDataFrame:
     if not callable(func):
         raise TypeError("must be Func")

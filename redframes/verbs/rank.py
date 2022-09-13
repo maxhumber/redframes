@@ -9,6 +9,7 @@ from ..types import Column, PandasDataFrame, PandasGroupedFrame
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
 
+
 def rank(
     df: PandasDataFrame | PandasGroupedFrame,
     column: Column,

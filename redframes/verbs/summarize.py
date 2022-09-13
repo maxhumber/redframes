@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from ..types import Column, Func, PandasDataFrame, PandasGroupedFrame
 from ..checks import enforce
+from ..types import Column, Func, PandasDataFrame, PandasGroupedFrame
 
 # ✅ No "Bad" Types
 # ✅ No Side Effects
 # ✅ No "Weird" Indexes
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
+
 
 def summarize(
     df: PandasDataFrame | PandasGroupedFrame,

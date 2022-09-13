@@ -7,6 +7,7 @@ from ..types import Column, PandasDataFrame, Value
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
 
+
 def replace(
     df: PandasDataFrame, over: dict[Column, dict[Value, Value]]
 ) -> PandasDataFrame:

@@ -9,6 +9,7 @@ from ..types import PandasDataFrame
 # ⚠️ checks.unique
 # ❓ No Duplicate Columns
 
+
 def shuffle(df: PandasDataFrame, seed: int | None = None) -> PandasDataFrame:
     enforce(seed, {int, None})
     df = df.sample(frac=1, random_state=seed)
