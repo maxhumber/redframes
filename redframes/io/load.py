@@ -1,12 +1,11 @@
 import pandas as pd
 
-from ..dataframe import DataFrame, _wrap
-from ._validate import _validate
+from ..checks import _validate, enforce
+from ..core import DataFrame, _wrap
 
 
 def load(path: str, **kwargs) -> DataFrame:
-    if not (isinstance(path, str) and path.endswith(".csv")):
-        raise TypeError("file at path is invalid, must be a csv")
+    enforce(path, str)
     data = pd.read_csv(path, **kwargs)
     data = _validate(data)
     return _wrap(data)
