@@ -6,9 +6,9 @@ import pandas as pd
 # allow denix for all columns? Or must name?
 
 
-def denix(df: pd.DataFrame, columns: list[str] | None = None) -> pd.DataFrame:
-    if columns and not isinstance(columns, list):
-        raise TypeError("columns type is invalid, must be list[str] | None")
+def denix(df: pd.DataFrame, columns: list[str] | str | None = None) -> pd.DataFrame:
+    if all([not isinstance(columns, list), not isinstance(columns, str), not columns == None]):
+        raise TypeError("columns type is invalid, must be list[str] | str | None")
     df = df.dropna(subset=columns)
     df = df.reset_index(drop=True)
     return df

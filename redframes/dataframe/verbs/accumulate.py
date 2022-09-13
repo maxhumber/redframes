@@ -7,6 +7,15 @@ import pandas.core.groupby.generic as pg
 def accumulate(
     df: pd.DataFrame | pg.DataFrameGroupBy, column: str, into: str
 ) -> pd.DataFrame:
-    df = df.copy()
-    df[into] = df[column].cumsum()
+    if not isinstance(column, str):
+        raise TypeError("invalid column type, must be str")
+    if not isinstance(into, str):
+        raise TypeError("invalid into type, must be str")
+    if isinstance(df, pd.DataFrame):
+        df = df.copy()
+    result = df[column].cumsum()
+    if isinstance(df, pg.DataFrameGroupBy):
+        df = df.obj.copy()
+    df[into] = result
     return df
+

@@ -1,6 +1,5 @@
 ### todo
 
-- 10 minutes
 - make sure it works in machine learning pipeline
 - Write more tests
     - Ensure every verb has no ensure no side effects
@@ -14,8 +13,9 @@
 - add datasets
 - .log method? (with print out like Untitled12)
 - hide and protect!
+- 10 minute 
 
-## stuff
+## verbs
 
 - dedupe.py
     - correct index
@@ -53,15 +53,7 @@
     - correct index
     - no side effects
     - no bad columns
-
-
-
-
 - accumulate.py
-    - correct index
-    - no side effects
-    - no bad columns
-- append.py
     - correct index
     - no side effects
     - no bad columns

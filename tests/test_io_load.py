@@ -17,9 +17,8 @@ class TestIOLoad(unittest.TestCase):
 
     def test_simple(self):
         path = str(Path(self.tempdir) / "test_load_simple.csv")
-        pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "b", "c"]}).to_csv(
-            path, index=False
-        )
+        df = pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "b", "c"]})
+        df.to_csv(path, index=False)
         df = rf.load(path)
         self.assertIsNotNone(df)
 
@@ -28,7 +27,6 @@ class TestIOLoad(unittest.TestCase):
             rf.load("test_missing_file.csv")
 
     def test_bad_file_format(self):
-        with self.assertRaisesRegex(
-            TypeError, "file at path is invalid, must be a csv"
-        ):
+        message = "file at path is invalid, must be a csv"
+        with self.assertRaisesRegex(TypeError, message):
             rf.load("test_bad_file_format.json")

@@ -56,11 +56,11 @@ class _CommonFrameMixin:
         /,
         column: str,
         *,
-        method: Literal["average", "min", "max", "first", "dense"] = "dense",
         into: str,
-        reverse: bool = False,
+        method: Literal["min", "first", "dense"] = "dense",
+        descending: bool = False,
     ) -> DataFrame:
-        data = rank(self._data, column, method, into, reverse)
+        data = rank(self._data, column, into, method, descending)
         return _wrap(data)
 
     def summarize(
@@ -76,11 +76,11 @@ class _CommonFrameMixin:
 
 class GroupedDataFrame(_CommonFrameMixin):
     def __repr__(self) -> str:
-        return "<GroupedDataFrame>"
+        return "GroupedDataFrame()"
 
 
 class DataFrame(_CommonFrameMixin):
-    def __array__(self):  # sklearn.* requirement
+    def __array__(self):  # compatibility: sklearn 
         return self._data.__array__()
 
     def __eq__(self, rhs: object) -> bool:
@@ -133,7 +133,7 @@ class DataFrame(_CommonFrameMixin):
     # TODO: HIDE THIS
     @property
     def iloc(self):
-        return self._data.iloc  # sklearn.model_selection.train_test_split requirement
+        return self._data.iloc  # compatibility: sklearn.model_selection.train_test_split
 
     @property
     def rows(self) -> list[list[Any]]:
@@ -157,7 +157,7 @@ class DataFrame(_CommonFrameMixin):
         data = combine(self._data, columns, into, sep, drop)
         return _wrap(data)
 
-    def dedupe(self, /, columns: list[str] | None = None) -> DataFrame:
+    def dedupe(self, /, columns: list[str] | str | None = None) -> DataFrame:
         data = dedupe(self._data, columns)
         return _wrap(data)
 
@@ -194,7 +194,7 @@ class DataFrame(_CommonFrameMixin):
         data = gather(self._data, columns, into)
         return _wrap(data)
 
-    def group(self, /, columns: list[str]) -> GroupedDataFrame:
+    def group(self, /, columns: str | list[str]) -> GroupedDataFrame:
         data = group(self._data, columns)
         return GroupedDataFrame(data)
 
@@ -231,8 +231,8 @@ class DataFrame(_CommonFrameMixin):
         data = shuffle(self._data, seed)
         return _wrap(data)
 
-    def sort(self, /, columns: list[str], *, reverse: bool = False) -> DataFrame:
-        data = sort(self._data, columns, reverse)
+    def sort(self, /, columns: list[str], *, descending: bool = False) -> DataFrame:
+        data = sort(self._data, columns, descending)
         return _wrap(data)
 
     def split(
