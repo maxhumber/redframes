@@ -3,15 +3,15 @@ from __future__ import annotations
 import pandas as pd
 
 from ..types import Column, Columns, PandasDataFrame
-
+from ..checks import enforce
 
 def gather(
     df: PandasDataFrame,
     columns: Columns | None = None,
     into: tuple[Column, Column] = ("variable", "value"),
 ) -> PandasDataFrame:
-    if not (isinstance(columns, list) or not columns):
-        raise TypeError("columns type is invalid, must be list[str] | None")
+    enforce(columns, {list, None})
+    enforce(into, {tuple})
     if not (isinstance(into, tuple) and len(into) == 2):
         raise TypeError("into type is invalid, must be tuple[str, str]")
     if not columns:
@@ -25,4 +25,5 @@ def gather(
         value_name=into[1],
     )
     df = df.dropna(subset=into[1])  # type: ignore
+    df = df.reset_index(drop=True)
     return df

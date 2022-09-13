@@ -1,9 +1,8 @@
 from ..types import Column, PandasDataFrame
-
+from ..checks import enforce
 
 def rename(df: PandasDataFrame, columns: dict[Column, Column]) -> PandasDataFrame:
-    if not isinstance(columns, dict):
-        raise TypeError(f"columns type is invalid, must be dict[str, str]")
+    enforce(columns, {dict})
     bad_columns = list(set(columns.keys()) - set(df.columns))
     if bad_columns and len(bad_columns) == 1:
         raise KeyError(f"column key: {bad_columns} is invalid")

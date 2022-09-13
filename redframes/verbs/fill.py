@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from ..types import Direction, LazyColumns, PandasDataFrame, Value
-from ._validate import _validate_columns_type_list_str_none
+from ..checks import enforce
 
 
 def fill(
@@ -10,7 +10,7 @@ def fill(
     direction: Direction | None = "down",
     constant: Value | None = None,
 ) -> PandasDataFrame:
-    _validate_columns_type_list_str_none(columns)
+    enforce(columns, {list, str, None})
     if isinstance(columns, str):
         columns = [columns]
     if direction and constant:

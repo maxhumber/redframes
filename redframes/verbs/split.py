@@ -1,19 +1,15 @@
 import uuid
 
 from ..types import Column, Columns, PandasDataFrame
-
+from ..checks import enforce
 
 def split(
     df: PandasDataFrame, column: Column, into: Columns, sep: str, drop: bool = True
 ) -> PandasDataFrame:
-    if not isinstance(column, str):
-        raise TypeError("column type is invalid, must be str")
-    if not isinstance(into, list):
-        raise TypeError("into type is invalid, must be list[str]")
-    if not isinstance(sep, str):
-        raise TypeError("sep type is invalid, must be str")
-    if not isinstance(drop, bool):
-        raise TypeError("drop type is invalid, must be str")
+    enforce(column, {str})
+    enforce(into, {list})
+    enforce(sep, {str})
+    enforce(drop, {bool})
     if (column in into) and (not drop):
         raise ValueError("into columns argument is invalid, keys must be unique")
     bad_keys = set(df.columns).difference(set([column])).intersection(set(into))

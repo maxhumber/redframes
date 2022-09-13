@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import pprint
 
+from ..checks import enforce
+
 from ..types import (
     Any,
     Column,
@@ -102,15 +104,14 @@ class GroupedFrame(_CommonMixin):
 
 class DataFrame(_CommonMixin, _SKLearnMixin):
     def __init__(self, data: dict[Column, Values] | None = None):
+        enforce(data, {dict, None})
         if not data:
             self._data = PandasDataFrame()
-        elif isinstance(data, dict):
+        if isinstance(data, dict):
             self._data = PandasDataFrame(data)
-        else:
-            raise TypeError("must be dict[Column, Values] | None")
 
     def __eq__(self, rhs: Any) -> bool:
-        assert isinstance(rhs, DataFrame), "must be DataFrame"
+        enforce(rhs, {DataFrame})
         return self._data.equals(rhs._data)
 
     def __getitem__(self, key: Column) -> Values:
@@ -151,7 +152,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         return types
 
     def append(self, other: DataFrame) -> DataFrame:
-        assert isinstance(other, DataFrame), "must be DataFrame"
+        enforce(other, {DataFrame})
         return _wrap(append(self._data, other._data))
 
     def combine(
@@ -195,7 +196,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         on: LazyColumns,
         how: Join = "left",
     ) -> DataFrame:
-        assert isinstance(rhs, DataFrame), "must be DataFrame"
+        enforce(rhs, {DataFrame})
         return _wrap(join(self._data, rhs._data, on, how))
 
     def rename(self, columns: dict[Column, Column]) -> DataFrame:

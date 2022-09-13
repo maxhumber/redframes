@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from ..types import PandasDataFrame, PandasGroupedFrame
-
+from ..checks import enforce
 
 # compatibility: sklearn / train_test_split
 def take(
@@ -11,8 +11,7 @@ def take(
         df = df.take(rows, **kwargs)  # type: ignore
         df = df.reset_index(drop=True)
         return df
-    if not isinstance(rows, int):
-        raise TypeError("rows type is invalid, must be str")
+    enforce(rows, {int})
     if isinstance(df, PandasDataFrame):
         if rows > df.shape[0]:
             raise ValueError("rows argument is invalid, exceeds total size")

@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 from ..types import LazyColumns, PandasDataFrame
-
+from ..checks import enforce
 
 def denix(df: PandasDataFrame, columns: LazyColumns | None = None) -> PandasDataFrame:
-    is_not_list = not isinstance(columns, list)
-    is_not_str = not isinstance(columns, str)
-    is_not_none = not columns == None
-    if all([is_not_list, is_not_str, is_not_none]):
-        raise TypeError("columns type is invalid, must be list[str] | str | None")
+    enforce(columns, {list, str, None})
     if isinstance(columns, str):
         columns = [columns]
     if isinstance(columns, list):

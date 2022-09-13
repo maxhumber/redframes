@@ -1,11 +1,11 @@
 import pandas as pd
 
 from ..types import LazyColumns, PandasDataFrame
-from ._validate import _validate_columns_type_list_str
+from ..checks import enforce
 
 
 def select(df: PandasDataFrame, columns: LazyColumns) -> PandasDataFrame:
-    _validate_columns_type_list_str(columns)
+    enforce(columns, {list, str})
     if isinstance(columns, str):
         columns = [columns]
     bad_columns = list(set(columns) - set(df.columns))

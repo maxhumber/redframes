@@ -3,19 +3,15 @@ from __future__ import annotations
 import uuid
 
 from ..types import Column, Columns, PandasDataFrame
-
+from ..checks import enforce
 
 def combine(
     df: PandasDataFrame, columns: Columns, into: Column, sep: str, drop: bool = True
 ) -> PandasDataFrame:
-    if not isinstance(columns, list):
-        raise TypeError("must be Columns")
-    if not isinstance(into, str):
-        raise TypeError("must be str")
-    if not isinstance(sep, str):
-        raise TypeError("must be str")
-    if not isinstance(drop, bool):
-        raise TypeError("must be bool")
+    enforce(columns, {list})
+    enforce(into, {str})
+    enforce(sep, {str})
+    enforce(drop, {bool})
     if (into in df.columns) and (into not in columns):
         raise ValueError("into column argument is invalid, must be unique")
     if (into in df.columns) and (into in columns) and (not drop):

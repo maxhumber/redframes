@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 from ..types import Column, Func, PandasDataFrame, PandasGroupedFrame
-
+from ..checks import enforce
 
 def summarize(
     df: PandasDataFrame | PandasGroupedFrame,
     over: dict[Column, tuple[Column, Func]],
 ) -> PandasDataFrame:
-    if not isinstance(over, dict):
-        raise TypeError(
-            "into_over_funcs type is invalid, must be dict[str, tuple[str, Callable[..., Any]]]"
-        )
+    enforce(over, {dict})
     if isinstance(df, PandasGroupedFrame):
         df = df.agg(**over)
         df = df.reset_index()
