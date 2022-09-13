@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ...types import Direction, Value, LazyColumns, PandasDataFrame
+from ..types import Direction, LazyColumns, PandasDataFrame, Value
 
 
 def fill(

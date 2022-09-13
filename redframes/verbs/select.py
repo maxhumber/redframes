@@ -1,7 +1,8 @@
 import pandas as pd
 
-from ...types import LazyColumns, PandasDataFrame
+from ..types import LazyColumns, PandasDataFrame
 from ._validate import _validate_columns_type_list_str
+
 
 def select(df: PandasDataFrame, columns: LazyColumns) -> PandasDataFrame:
     _validate_columns_type_list_str(columns)

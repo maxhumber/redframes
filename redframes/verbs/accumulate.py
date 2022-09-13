@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ...types import PandasDataFrame, PandasGroupedFrame, Column
+from ..types import Column, PandasDataFrame, PandasGroupedFrame
 from ._validate import _validate_column_type_str
 
 

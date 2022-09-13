@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from ...types import PandasDataFrame
+from ..types import PandasDataFrame
+
 
 def shuffle(df: PandasDataFrame, seed: int | None = None) -> PandasDataFrame:
     if not (isinstance(seed, int) or seed == None):

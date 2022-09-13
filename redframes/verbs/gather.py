@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import pandas as pd
-from ...types import PandasDataFrame, Columns, Column
+
+from ..types import Column, Columns, PandasDataFrame
 
 
 def gather(

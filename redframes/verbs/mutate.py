@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ...types import Column, PandasDataFrame, PandasGroupedFrame, Func
+from ..types import Column, Func, PandasDataFrame, PandasGroupedFrame
 
 
 def mutate(

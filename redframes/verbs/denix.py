@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ...types import PandasDataFrame, LazyColumns
+from ..types import LazyColumns, PandasDataFrame
 
 
 def denix(df: PandasDataFrame, columns: LazyColumns | None = None) -> PandasDataFrame:

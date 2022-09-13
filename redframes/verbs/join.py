@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import pandas as pd
-from ...types import LazyColumns, PandasDataFrame, Join
+
+from ..types import Join, LazyColumns, PandasDataFrame
 
 
 def join(
@@ -17,8 +18,6 @@ def join(
             "method argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"
         )
     how = "outer" if how == "full" else how  # type: ignore
-    df = pd.merge(
-        lhs, rhs, on=on, how=how, suffixes=("_lhs", "_rhs")
-    )
+    df = pd.merge(lhs, rhs, on=on, how=how, suffixes=("_lhs", "_rhs"))
     df = df.reset_index(drop=True)
     return df

@@ -1,6 +1,7 @@
 import uuid
 
-from ...types import Column, Columns, PandasDataFrame
+from ..types import Column, Columns, PandasDataFrame
+
 
 def split(
     df: PandasDataFrame, column: Column, into: Columns, sep: str, drop: bool = True

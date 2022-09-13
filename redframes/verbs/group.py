@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from ...types import LazyColumns, PandasDataFrame, PandasGroupedFrame
-
+from ..types import LazyColumns, PandasDataFrame, PandasGroupedFrame
 from ._validate import _validate_columns_type_list_str
 
 

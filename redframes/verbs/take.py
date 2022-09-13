@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from ...types import PandasDataFrame, PandasGroupedFrame
+from ..types import PandasDataFrame, PandasGroupedFrame
 
 
 # compatibility: sklearn / train_test_split
 def take(
     df: PandasDataFrame | PandasGroupedFrame, rows: int = 1, **kwargs
 ) -> PandasDataFrame:
-    if kwargs:  
+    if kwargs:
         df = df.take(rows, **kwargs)  # type: ignore
         df = df.reset_index(drop=True)
         return df

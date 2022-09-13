@@ -1,7 +1,9 @@
-from ...types import PandasDataFrame, Column, Value
+from ..types import Column, PandasDataFrame, Value
 
 
-def replace(df: PandasDataFrame, rules: dict[Column, dict[Value, Value]]) -> PandasDataFrame:
+def replace(
+    df: PandasDataFrame, rules: dict[Column, dict[Value, Value]]
+) -> PandasDataFrame:
     if not isinstance(rules, dict):
         raise TypeError("rules type is invalid, must be dict[str, dict[Any, Any]]")
     bad_columns = list(set(rules.keys()) - set(df.columns))

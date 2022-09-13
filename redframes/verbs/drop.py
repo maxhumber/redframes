@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ...types import LazyColumns, PandasDataFrame
+from ..types import LazyColumns, PandasDataFrame
 
 
 def drop(df: PandasDataFrame, columns: LazyColumns) -> PandasDataFrame:

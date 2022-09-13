@@ -1,4 +1,4 @@
-from ...types import Column, PandasDataFrame
+from ..types import Column, PandasDataFrame
 
 
 def rename(df: PandasDataFrame, columns: dict[Column, Column]) -> PandasDataFrame:

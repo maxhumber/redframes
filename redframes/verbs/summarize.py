@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from ...types import PandasDataFrame, PandasGroupedFrame, Column, Func
+from ..types import Column, Func, PandasDataFrame, PandasGroupedFrame
+
 
 def summarize(
     df: PandasDataFrame | PandasGroupedFrame,

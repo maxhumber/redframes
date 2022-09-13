@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 
-from ...types import PandasDataFrame, Columns, Column
+from ..types import Column, Columns, PandasDataFrame
 
 
 def combine(

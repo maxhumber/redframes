@@ -1,6 +1,7 @@
 import uuid
 
-from ...types import Column, PandasDataFrame
+from ..types import Column, PandasDataFrame
+
 
 def spread(df: PandasDataFrame, column: Column, using: Column) -> PandasDataFrame:
     if not isinstance(column, str):

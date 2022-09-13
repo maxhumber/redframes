@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from ...types import PandasDataFrame
+from ..types import PandasDataFrame
+
 
 def sample(
     df: PandasDataFrame, rows: int | float = 1, seed: int | None = None

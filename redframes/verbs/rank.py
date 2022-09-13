@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from ...types import PandasDataFrame, PandasGroupedFrame, Column
+from ..types import Column, PandasDataFrame, PandasGroupedFrame
+
 
 def rank(
     df: PandasDataFrame | PandasGroupedFrame,

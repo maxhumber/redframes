@@ -1,6 +1,6 @@
 from typing import Callable
 
-from ...types import PandasDataFrame, Func
+from ..types import Func, PandasDataFrame
 
 
 def filter(df: PandasDataFrame, func: Func) -> PandasDataFrame:
