@@ -3,16 +3,12 @@ from __future__ import annotations
 from ..checks import _check_type
 from ..types import PandasDataFrame, PandasGroupedFrame
 
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
 
-# compatibility: sklearn / train_test_split
+
 def take(
     df: PandasDataFrame | PandasGroupedFrame, rows: int = 1, **kwargs
 ) -> PandasDataFrame:
+    # compatibility: sklearn / train_test_split
     if kwargs:
         df = df.take(rows, **kwargs)  # type: ignore
         df = df.reset_index(drop=True)

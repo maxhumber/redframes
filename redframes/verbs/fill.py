@@ -3,34 +3,26 @@ from __future__ import annotations
 from ..checks import _check_type
 from ..types import Direction, LazyColumns, PandasDataFrame, Value
 
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
-
 
 def fill(
     df: PandasDataFrame,
     columns: LazyColumns = None,
-    direction: Direction | None = "down",
+    direction: Direction | None = None,
     constant: Value | None = None,
 ) -> PandasDataFrame:
     _check_type(columns, {list, str, None})
     _check_type(direction, {str, None})
     columns = [columns] if isinstance(columns, str) else columns
-    if direction and constant:
-        raise ValueError("direction OR constant arugment must be None")
-    if (not direction) and (not constant):
-        raise ValueError("direction OR constant arugment must not be None")
-    if direction:
+    if (direction != None) and (constant != None):
+        raise ValueError("either direction OR constant must be None")
+    if (direction == None) and (constant == None):
+        raise ValueError("either direction OR constant must not be None")
+    if direction != None:
         if not (direction in ["down", "up"]):
-            raise ValueError(
-                "direction argument is invalid, must be one of {'down', 'up'}"
-            )
+            raise ValueError("must be one of {'down', 'up'}")
         method = {"down": "ffill", "up": "bfill"}.get(direction)
         value = None
-    if constant:
+    if constant != None:
         value = constant
         method = None
     df = df.copy()

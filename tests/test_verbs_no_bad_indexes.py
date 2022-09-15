@@ -5,7 +5,7 @@ import pandas as pd
 import redframes as rf
 
 
-def check_index(df: rf.DataFrame) -> bool:
+def index_is_okay(df: rf.DataFrame) -> bool:
     index = df._data.index
     is_unnamed = index.name == None
     is_range = isinstance(index, pd.RangeIndex)
@@ -39,94 +39,94 @@ class TestNoBadIndexes(unittest.TestCase):
 
     def test_accumulate(self):
         new = self.df.accumulate("foo", into="foo")
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_append(self):
         df_bottom = rf.DataFrame({"foo": [10]})
         new = self.df.append(df_bottom)
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_combine(self):
         new = self.df.combine(["foo", "bar"], into="foo")
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_dedupe(self):
         new = self.df.dedupe("baz")
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_denix(self):
         new = self.df.denix()
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_drop(self):
         new = self.df.drop("foo")
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_fill(self):
         new = self.df.fill("baz")
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_filter(self):
         new = self.df.filter(lambda row: row["bar"] > 5)
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_gather(self):
         new = self.df.gather()
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_group(self):
         new = self.df.group("baz").summarize({"foo": ("foo", rf.stat.mean)})
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_join(self):
         df_right = rf.DataFrame({"baz": ["A", "B"], "haz": ["Apple", "Banana"]})
         new = self.df.join(df_right, on="baz")
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_mutate(self):
         new = self.df.mutate({"foo": lambda row: row["foo"] * 10})
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_rank(self):
         new = self.df.rank("bar", into="bar_rank", descending=True)
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_rename(self):
         new = self.df.rename({"foo": "oof"})
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_replace(self):
         new = self.df.replace({"baz": {"B": "Banana"}})
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_sample(self):
         new = self.df.sample(5)
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_select(self):
         new = self.df.select(["foo", "bar"])
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_shuffle(self):
         new = self.df.shuffle()
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_sort(self):
         new = self.df.sort("bar", descending=True)
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_split(self):
         new = self.df.split("jaz", into=["jaz_1", "jaz_2"], sep="::")
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_spread(self):
         new = self.df.denix("baz").select(["baz", "foo"]).spread("baz", "foo")
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_summarize(self):
         new = self.df.summarize({"bar_mean": ("bar", rf.stat.mean)})
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))
 
     def test_take(self):
         new = self.df.take(-3)
-        self.assertTrue(check_index(new))
+        self.assertTrue(index_is_okay(new))

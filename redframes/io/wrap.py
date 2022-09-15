@@ -1,6 +1,6 @@
 import pandas as pd
 
-from ..checks import _check_type, _check_index, _check_columns
+from ..checks import _check_columns, _check_index, _check_type
 from ..core import DataFrame
 
 

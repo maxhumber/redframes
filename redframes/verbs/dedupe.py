@@ -1,13 +1,7 @@
 from __future__ import annotations
 
-from ..checks import _check_type, _check_keys
+from ..checks import _check_keys, _check_type
 from ..types import LazyColumns, PandasDataFrame
-
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
 
 
 def dedupe(df: PandasDataFrame, columns: LazyColumns | None = None) -> PandasDataFrame:

@@ -6,17 +6,17 @@ import redframes as rf
 class TestVerbCombine(unittest.TestCase):
     def test_split_bad_column_type(self):
         df = rf.DataFrame({"foo": ["foo-1", "foo-2", "foo-3"]})
-        with self.assertRaisesRegex(TypeError, "column argument must be a string"):
+        with self.assertRaisesRegex(TypeError, "must be str"):
             df.split(["foo"], sep="-", into=["foo"])
 
     def test_split_bad_sep_type(self):
         df = rf.DataFrame({"foo": ["foo-1", "foo-2", "foo-3"]})
-        with self.assertRaisesRegex(TypeError, "sep= separator must be a string"):
+        with self.assertRaisesRegex(TypeError, "must be str"):
             df.split("foo", sep=1, into=["foo"])
 
     def test_split_bad_into_type(self):
         df = rf.DataFrame({"foo": ["foo-1", "foo-2", "foo-3"]})
-        with self.assertRaisesRegex(TypeError, "into= columns argument must be a list"):
+        with self.assertRaisesRegex(TypeError, "must be list"):
             df.split("foo", sep="-", into="foo")
 
     def test_split_bad_into_wrong_length(self):

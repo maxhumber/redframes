@@ -1,13 +1,9 @@
 from __future__ import annotations
 
+import warnings
+
 from ..checks import _check_type
 from ..types import Column, PandasDataFrame, PandasGroupedFrame
-
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
 
 
 def accumulate(
@@ -15,6 +11,11 @@ def accumulate(
 ) -> PandasDataFrame:
     _check_type(column, str)
     _check_type(into, str)
+    into_is_not_column = (into != column)
+    into_is_in_df_columns = (into in df.columns)
+    if into_is_not_column and into_is_in_df_columns: 
+        message = f"overwriting existing column '{into}'"
+        warnings.warn(message)
     if isinstance(df, PandasDataFrame):
         df = df.copy()
     result = df[column].cumsum()

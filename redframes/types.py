@@ -7,16 +7,20 @@ import pandas as pd
 import pandas.core.groupby.generic as pg
 
 Any = Any
+Value = Any
+Values = list[Value]
+OldValue = Value
+NewValue = Value
 Column = str
 Columns = list[Column]
+LazyColumns = Union[Column, Columns]
+OldColumn = Column
+NewColumn = Column
 Direction = Literal["up", "down"]
 Func = Callable[..., Any]
 Join = Literal["left", "right", "inner", "full"]
-LazyColumns = Union[Column, Columns]
 NumpyArray = np.ndarray
 PandasDataFrame = pd.DataFrame
 PandasGroupedFrame = pg.DataFrameGroupBy
 PandasIndex = pd.Index
 PandasRangeIndex = pd.RangeIndex
-Value = Any
-Values = list[Value]

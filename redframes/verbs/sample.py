@@ -3,12 +3,6 @@ from __future__ import annotations
 from ..checks import _check_type
 from ..types import PandasDataFrame
 
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
-
 
 def sample(
     df: PandasDataFrame, rows: int | float = 1, seed: int | None = None

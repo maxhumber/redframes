@@ -3,12 +3,6 @@ from __future__ import annotations
 from ..checks import _check_type
 from ..types import Column, Func, PandasDataFrame, PandasGroupedFrame
 
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
-
 
 def summarize(
     df: PandasDataFrame | PandasGroupedFrame,

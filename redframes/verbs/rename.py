@@ -1,19 +1,18 @@
 from ..checks import _check_type
-from ..types import Column, PandasDataFrame
+from ..types import PandasDataFrame, NewColumn, OldColumn
 
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
+# TODO: Test for Duplicate Columns
 
 
-def rename(df: PandasDataFrame, columns: dict[Column, Column]) -> PandasDataFrame:
+def rename(df: PandasDataFrame, columns: dict[OldColumn, NewColumn]) -> PandasDataFrame:
     _check_type(columns, dict)
-    bad_columns = list(set(columns.keys()) - set(df.columns))
-    if bad_columns and len(bad_columns) == 1:
-        raise KeyError(f"column key: {bad_columns} is invalid")
-    if bad_columns and len(bad_columns) > 1:
-        raise KeyError(f"column keys: {bad_columns} are invalid")
+    cv = columns.values()
+    if len(set(cv)) != len(cv):
+        raise KeyError("columns must be unique")
+    missing_keys = set(columns.keys()) - set(df.columns)
+    if missing_keys and len(missing_keys) == 1:
+        raise KeyError(f"column key ({missing_keys}) is invalid")
+    if missing_keys and len(missing_keys) > 1:
+        raise KeyError(f"column keys ({missing_keys}) are invalid")
     df = df.rename(columns=columns)
     return df

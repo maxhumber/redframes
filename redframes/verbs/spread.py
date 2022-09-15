@@ -5,16 +5,14 @@ import pandas as pd
 from ..checks import _check_type
 from ..types import Column, PandasDataFrame
 
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
+# TODO: Test for Duplicate Columns
 
 
 def spread(df: PandasDataFrame, column: Column, using: Column) -> PandasDataFrame:
     _check_type(column, str)
     _check_type(using, str)
+    if column == using: 
+        raise KeyError("column and using must be unique")
     original_shape = df.shape[1]
     if original_shape == 2:
         temp = uuid.uuid4().hex

@@ -1,4 +1,4 @@
-from ..checks import _check_type, _check_file
+from ..checks import _check_file, _check_type
 from ..core import DataFrame
 
 

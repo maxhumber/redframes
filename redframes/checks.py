@@ -1,6 +1,13 @@
 from __future__ import annotations
 
-from .types import Columns, LazyColumns, PandasIndex, Any, PandasRangeIndex, PandasDataFrame
+from .types import (
+    Any,
+    Columns,
+    LazyColumns,
+    PandasDataFrame,
+    PandasIndex,
+    PandasRangeIndex,
+)
 
 
 def _check_type(argument: Any, against: type | set[type | None]) -> None:

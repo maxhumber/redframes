@@ -5,12 +5,6 @@ import pandas as pd
 from ..checks import _check_type
 from ..types import Column, Columns, PandasDataFrame
 
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
-
 
 def gather(
     df: PandasDataFrame,
@@ -20,7 +14,13 @@ def gather(
     _check_type(columns, {list, None})
     _check_type(into, tuple)
     if not (isinstance(into, tuple) and len(into) == 2):
-        raise TypeError("into type is invalid, must be tuple[str, str]")
+        raise TypeError("must be tuple[str, str]")
+    if into[0] == into[1]:
+        raise TypeError("must be unique")
+    if into[0] in df.columns:
+        raise TypeError("must not be an existing columns key")
+    if into[1] in df.columns:
+        raise TypeError("must not be an existing columns key")
     if not columns:
         columns = list(df.columns)
     index = [col for col in df.columns if col not in columns]

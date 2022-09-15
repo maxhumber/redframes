@@ -14,6 +14,10 @@ from .types import (
     NumpyArray,
     PandasDataFrame,
     PandasGroupedFrame,
+    NewValue, 
+    OldValue, 
+    OldColumn, 
+    NewColumn,
     Value,
     Values,
 )
@@ -171,7 +175,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
     def fill(
         self,
         columns: LazyColumns | None = None,
-        direction: Direction | None = "down",
+        direction: Direction | None = None,
         constant: Value | None = None,
     ) -> DataFrame:
         return _wrap(fill(self._data, columns, direction, constant))
@@ -198,10 +202,10 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         _check_type(rhs, DataFrame)
         return _wrap(join(self._data, rhs._data, on, how))
 
-    def rename(self, columns: dict[Column, Column]) -> DataFrame:
+    def rename(self, columns: dict[OldColumn, NewColumn]) -> DataFrame:
         return _wrap(rename(self._data, columns))
 
-    def replace(self, over: dict[Column, dict[Value, Value]]) -> DataFrame:
+    def replace(self, over: dict[Column, dict[OldValue, NewValue]]) -> DataFrame:
         return _wrap(replace(self._data, over))
 
     def sample(self, rows: int | float = 1, seed: int | None = None) -> DataFrame:

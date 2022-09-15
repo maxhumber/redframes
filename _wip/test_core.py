@@ -1,9 +1,4 @@
 import unittest
-from pathlib import Path
-from shutil import rmtree as delete
-from tempfile import mkdtemp as make_temp_dir
-
-import pandas as pd
 
 import redframes as rf
 

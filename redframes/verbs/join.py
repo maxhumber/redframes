@@ -5,12 +5,6 @@ import pandas as pd
 from ..checks import _check_type
 from ..types import Join, LazyColumns, PandasDataFrame
 
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
-
 
 def join(
     lhs: PandasDataFrame,

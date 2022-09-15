@@ -6,8 +6,7 @@ import redframes as rf
 class TestVerbAppend(unittest.TestCase):
     def test_bad_type(self):
         df = rf.DataFrame({"foo": [1, 2, 3]})
-        message = "df type is invalid, must be rf.DataFrame"
-        with self.assertRaisesRegex(TypeError, message):
+        with self.assertRaisesRegex(TypeError, "must be DataFrame"):
             df.append(1)
 
     def test_mismatched_columns(self):

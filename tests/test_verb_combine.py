@@ -6,22 +6,22 @@ import redframes as rf
 class TestVerbCombine(unittest.TestCase):
     def test_columns_type_bad(self):
         df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        with self.assertRaisesRegex(TypeError, "columns type is invalid, must be list"):
+        with self.assertRaisesRegex(TypeError, "must be list"):
             df.combine("foo", into="foo", sep="-")
 
     def test_sep_type_bad(self):
         df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        with self.assertRaisesRegex(TypeError, "sep type is invalid, must be str"):
+        with self.assertRaisesRegex(TypeError, "must be str"):
             df.combine(["foo", "bar"], into="baz", sep=1)
 
     def test_into_type_bad(self):
         df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        with self.assertRaisesRegex(TypeError, "into type is invalid, must be str"):
+        with self.assertRaisesRegex(TypeError, "must be str"):
             df.combine(["foo", "bar"], into=["baz"], sep="_")
 
     def test_drop_type_bad(self):
         df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        with self.assertRaisesRegex(TypeError, "drop type is invalid, must be bool"):
+        with self.assertRaisesRegex(TypeError, "must be bool"):
             df.combine(["foo", "bar"], into="baz", sep="_", drop=2)
 
     def test_bad_duplicate_columns_1(self):

@@ -1,12 +1,6 @@
 from ..checks import _check_type
 from ..types import Column, PandasDataFrame, Value
 
-# ✅ No "Bad" Types
-# ✅ No Side Effects
-# ✅ No "Weird" Indexes
-# ⚠️ checks.unique
-# ❓ No Duplicate Columns
-
 
 def replace(
     df: PandasDataFrame, over: dict[Column, dict[Value, Value]]
