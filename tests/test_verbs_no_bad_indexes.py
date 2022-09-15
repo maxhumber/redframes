@@ -63,7 +63,7 @@ class TestNoBadIndexes(unittest.TestCase):
         self.assertTrue(index_is_okay(new))
 
     def test_fill(self):
-        new = self.df.fill("baz")
+        new = self.df.fill("baz", direction="down")
         self.assertTrue(index_is_okay(new))
 
     def test_filter(self):

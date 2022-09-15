@@ -24,42 +24,10 @@ class TestVerbCombine(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "must be bool"):
             df.combine(["foo", "bar"], into="baz", sep="_", drop=2)
 
-    def test_bad_duplicate_columns_1(self):
-        df = rf.DataFrame(
-            {
-                "foo": [1, 2, 3, 4],
-                "bar": ["a", "b", "c", "d"],
-                "baz": ["!", "@", "#", "$"],
-            }
-        )
-        with self.assertRaisesRegex(
-            ValueError, "into column argument is invalid, must be unique"
-        ):
-            df.combine(["foo", "bar"], into="baz")
-
-    def test_bad_duplicate_columns_2(self):
-        df = rf.DataFrame(
-            {
-                "foo": [1, 2, 3, 4],
-                "bar": ["a", "b", "c", "d"],
-                "baz": ["!", "@", "#", "$"],
-            }
-        )
-        with self.assertRaisesRegex(
-            ValueError, "into column argument is invalid, must be unique"
-        ):
-            df.combine(["foo", "bar"], into="foo", drop=False)
-
     def test_two_columns(self):
         df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         result = df.combine(["foo", "bar"], into="baz", sep="_")
         expected = rf.DataFrame({"baz": ["1_4", "2_5", "3_6"]})
-        self.assertEqual(result, expected)
-
-    def test_two_columns_overwrite(self):
-        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        result = df.combine(["foo", "bar"], into="foo", sep="_")
-        expected = rf.DataFrame({"foo": ["1_4", "2_5", "3_6"]})
         self.assertEqual(result, expected)
 
     def test_three_columns(self):

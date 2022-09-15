@@ -74,7 +74,7 @@ class TestNoSideEffects(unittest.TestCase):
         self.assertEqual(self.df, self.expected)
 
     def test_fill(self):
-        _ = self.df.fill("baz")
+        _ = self.df.fill("baz", direction="down")
         self.assertEqual(self.df, self.expected)
 
     def test_filter(self):
