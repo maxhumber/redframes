@@ -1,5 +1,7 @@
 import pandas as pd
 
+from redframes.types import PandasDataFrame
+
 from ..checks import _check_columns, _check_file, _check_index, _check_type
 from ..core import DataFrame, _wrap
 
@@ -7,7 +9,7 @@ from ..core import DataFrame, _wrap
 def load(path: str, **kwargs) -> DataFrame:
     _check_type(path, str)
     _check_file(path)
-    data = pd.read_csv(path, **kwargs)
+    data: PandasDataFrame = pd.read_csv(path, **kwargs) # type: ignore
     _check_index(data)
     _check_columns(data)
     return _wrap(data)

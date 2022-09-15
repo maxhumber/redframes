@@ -6,7 +6,7 @@ from ..types import Direction, LazyColumns, PandasDataFrame, Value
 
 def fill(
     df: PandasDataFrame,
-    columns: LazyColumns = None,
+    columns: LazyColumns | None = None,
     direction: Direction | None = None,
     constant: Value | None = None,
 ) -> PandasDataFrame:

@@ -15,8 +15,8 @@ setup(
     license="BSD 2",
     packages=find_packages(),
     python_requires=">=3.9",
-    install_requires=["pandas>=1.4.4"],
+    install_requires=["pandas>=1.4"],
     extras_require={
-        "dev": ["black", "ipykernel", "isort", "matplotlib", "mypy", "scikit-learn"]
+        "dev": ["black", "ipykernel", "isort", "matplotlib", "mypy", "pandas-stubs", "pyright", "scikit-learn"]
     },
 )

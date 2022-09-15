@@ -85,9 +85,6 @@ class _CommonMixin(_TakeMixin):
     def accumulate(self, column: Column, into: Column) -> DataFrame:
         return _wrap(accumulate(self._data, column, into))
 
-    def mutate(self, over: dict[Column, Func]) -> DataFrame:
-        return _wrap(mutate(self._data, over))
-
     def rank(
         self,
         column: Column,
@@ -201,6 +198,9 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
     ) -> DataFrame:
         _check_type(rhs, DataFrame)
         return _wrap(join(self._data, rhs._data, on, how))
+
+    def mutate(self, over: dict[Column, Func]) -> DataFrame:
+        return _wrap(mutate(self._data, over))
 
     def rename(self, columns: dict[OldColumn, NewColumn]) -> DataFrame:
         return _wrap(rename(self._data, columns))
