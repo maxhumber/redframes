@@ -18,9 +18,9 @@ def gather(
     if into[0] == into[1]:
         raise TypeError("must be unique")
     if into[0] in df.columns:
-        raise TypeError("must not be an existing columns key")
+        raise TypeError("must not be an existing column key")
     if into[1] in df.columns:
-        raise TypeError("must not be an existing columns key")
+        raise TypeError("must not be an existing column key")
     if not columns:
         columns = list(df.columns)
     index = [col for col in df.columns if col not in columns]
