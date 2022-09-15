@@ -4,12 +4,10 @@ from ..checks import _check_type
 from ..types import PandasDataFrame, PandasGroupedFrame
 
 
-
 def take(
     df: PandasDataFrame | PandasGroupedFrame, rows: int = 1, **kwargs
 ) -> PandasDataFrame:
-    # compatibility: sklearn / train_test_split
-    if kwargs:
+    if kwargs:  # compatibility: sklearn / train_test_split
         df = df.take(rows, **kwargs)  # type: ignore
         df = df.reset_index(drop=True)
         return df

@@ -25,7 +25,7 @@ class TestNoBadIndexes(unittest.TestCase):
                 "raz": [1, 2, 3, None, None, None, 9, 9, None, None],
             }
         )
-    
+
     def test_accumulate_not_unqiue(self):
         self.df.accumulate("foo", into="foo")
         self.assertTrue(True)
@@ -41,11 +41,11 @@ class TestNoBadIndexes(unittest.TestCase):
     def test_combine_overwrite_existing(self):
         with self.assertWarnsRegex(UserWarning, "overwriting existing column *"):
             self.df.combine(["foo", "bar"], into="baz")
-        
+
     def test_combine_overwrite_no_drop(self):
         self.df.combine(["foo", "bar"], into="foo", drop=False)
         self.assertTrue(True)
-    
+
     def test_gather_same_column_names(self):
         with self.assertRaisesRegex(TypeError, "must be unique"):
             self.df.gather(into=("foo", "foo"))
@@ -69,7 +69,7 @@ class TestNoBadIndexes(unittest.TestCase):
     def test_rank_overwrite_existing(self):
         with self.assertWarnsRegex(UserWarning, "overwriting existing column *"):
             self.df.rank("bar", into="baz", descending=True)
-    
+
     def test_rename_duplicated_dict_values(self):
         with self.assertRaisesRegex(KeyError, "columns must be unique"):
             self.df.rename({"foo": "oof", "bar": "oof"})
@@ -87,9 +87,9 @@ class TestNoBadIndexes(unittest.TestCase):
             self.df.split("jaz", into=["paz", "paz"], sep="::")
 
     def test_spread_duplicated_column_names(self):
-        with self.assertRaisesRegex(KeyError, 'column and using must be unique'):
+        with self.assertRaisesRegex(KeyError, "column and using must be unique"):
             self.df.gather().spread("variable", "variable")
 
-    def test_summarize_group_existing_column(self): 
+    def test_summarize_group_existing_column(self):
         with self.assertRaisesRegex(ValueError, "cannot insert *"):
             self.df.group("baz").summarize({"baz": ("foo", rf.stat.max)})

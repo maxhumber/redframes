@@ -9,7 +9,7 @@ from ..core import DataFrame, _wrap
 def load(path: str, **kwargs) -> DataFrame:
     _check_type(path, str)
     _check_file(path)
-    data: PandasDataFrame = pd.read_csv(path, **kwargs) # type: ignore
+    data: PandasDataFrame = pd.read_csv(path, **kwargs)  # type: ignore
     _check_index(data)
     _check_columns(data)
     return _wrap(data)

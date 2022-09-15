@@ -11,13 +11,13 @@ from .types import (
     Func,
     Join,
     LazyColumns,
+    NewColumn,
+    NewValue,
     NumpyArray,
+    OldColumn,
+    OldValue,
     PandasDataFrame,
     PandasGroupedFrame,
-    NewValue, 
-    OldValue, 
-    OldColumn, 
-    NewColumn,
     Value,
     Values,
 )
@@ -58,7 +58,6 @@ class _TakeMixin:
     def __init__(self, data: PandasDataFrame | PandasGroupedFrame) -> None:
         self._data = data
 
-    # sklearn + GroupedFrame compatibility
     def take(self, rows: int, **kwargs) -> DataFrame:
         return _wrap(take(self._data, rows, **kwargs))
 

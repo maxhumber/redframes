@@ -1,7 +1,5 @@
 from ..checks import _check_type
-from ..types import PandasDataFrame, NewColumn, OldColumn
-
-# TODO: Test for Duplicate Columns
+from ..types import NewColumn, OldColumn, PandasDataFrame
 
 
 def rename(df: PandasDataFrame, columns: dict[OldColumn, NewColumn]) -> PandasDataFrame:

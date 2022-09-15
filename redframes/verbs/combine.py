@@ -13,9 +13,9 @@ def combine(
     _check_type(into, str)
     _check_type(sep, str)
     _check_type(drop, bool)
-    into_is_in_columns = (into in columns)
+    into_is_in_columns = into in columns
     into_is_not_in_columns = not into_is_in_columns
-    into_is_in_df_columns = (into in df.columns)
+    into_is_in_df_columns = into in df.columns
     if into_is_not_in_columns and into_is_in_df_columns:
         message = f"overwriting existing column '{into}'"
         warnings.warn(message)

@@ -17,6 +17,15 @@ setup(
     python_requires=">=3.9",
     install_requires=["pandas>=1.4"],
     extras_require={
-        "dev": ["black", "ipykernel", "isort", "matplotlib", "mypy", "pandas-stubs", "pyright", "scikit-learn"]
+        "dev": [
+            "black",
+            "ipykernel",
+            "isort",
+            "matplotlib",
+            "mypy",
+            "pandas-stubs",
+            "pyright",
+            "scikit-learn",
+        ]
     },
 )
