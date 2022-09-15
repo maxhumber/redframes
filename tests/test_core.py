@@ -23,11 +23,6 @@ class TestCore(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, message):
             rf.DataFrame({"foo": [0], "bar": [1, 2]})
 
-    # def test_init_pandas_dataframe(self):
-    #     pdf = pd.DataFrame({"foo": [1, 2, 3]})
-    #     rdf = rf.DataFrame(pdf)
-    #     self.assertIsNotNone(rdf)
-
     def test_init_bad_type(self):
         with self.assertRaisesRegex(TypeError, r"Invalid data input type *"):
             rf.DataFrame(1)

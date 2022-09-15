@@ -11,6 +11,7 @@ from .types import (
     Func,
     Join,
     LazyColumns,
+    NumpyArray,
     PandasDataFrame,
     PandasGroupedFrame,
     Value,
@@ -50,7 +51,7 @@ def _wrap(data: PandasDataFrame) -> DataFrame:
 
 
 class _TakeMixin:
-    def __init__(self, data: PandasDataFrame | PandasGroupedFrame):
+    def __init__(self, data: PandasDataFrame | PandasGroupedFrame) -> None:
         self._data = data
 
     # sklearn + GroupedFrame compatibility
@@ -59,10 +60,10 @@ class _TakeMixin:
 
 
 class _SKLearnMixin(_TakeMixin):
-    def __init__(self, data: PandasDataFrame):
+    def __init__(self, data: PandasDataFrame) -> None:
         self._data = data
 
-    def __array__(self):
+    def __array__(self) -> NumpyArray:
         return self._data.__array__()
 
     def __len__(self) -> int:
@@ -74,7 +75,7 @@ class _SKLearnMixin(_TakeMixin):
 
 
 class _CommonMixin(_TakeMixin):
-    def __init__(self, data: PandasDataFrame | PandasGroupedFrame):
+    def __init__(self, data: PandasDataFrame | PandasGroupedFrame) -> None:
         self._data = data
 
     def accumulate(self, column: Column, into: Column) -> DataFrame:
@@ -101,7 +102,7 @@ class GroupedFrame(_CommonMixin):
 
 
 class DataFrame(_CommonMixin, _SKLearnMixin):
-    def __init__(self, data: dict[Column, Values] | None = None):
+    def __init__(self, data: dict[Column, Values] | None = None) -> None:
         _check_type(data, {dict, None})
         if not data:
             self._data = PandasDataFrame()
