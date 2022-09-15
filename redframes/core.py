@@ -49,6 +49,7 @@ from .verbs import (
 
 
 def _wrap(data: PandasDataFrame) -> DataFrame:
+    """Internal/unsafe (no-copy) version of io.wrap()"""
     df = DataFrame()
     df._data = data
     return df
@@ -59,6 +60,41 @@ class _TakeMixin:
         self._data = data
 
     def take(self, rows: int, **kwargs) -> DataFrame:
+        """Take any number of rows from a DataFrame
+
+        Examples: 
+
+        ```
+        df = rf.DataFrame({"foo": range(10)})
+        ```
+        |   foo |
+        |------:|
+        |     0 |
+        |     1 |
+        |     2 |
+        |     3 |
+        |     4 |
+        |     5 |
+        |     6 |
+        |     7 |
+        |     8 |
+        |     9 |
+
+        ```
+        df.take(1)
+        ```
+        |   foo |
+        |------:|
+        |     0 |
+
+        ```
+        df.take(-2)
+        ```
+        |   foo |
+        |------:|
+        |     8 |
+        |     9 | 
+        """
         return _wrap(take(self._data, rows, **kwargs))
 
 
@@ -92,6 +128,7 @@ class _CommonMixin(_TakeMixin):
     ) -> DataFrame:
         return _wrap(rank(self._data, column, into, descending))
 
+    # should this be a dict?
     def summarize(self, over: dict[Column, tuple[Column, Func]]) -> DataFrame:
         return _wrap(summarize(self._data, over))
 
@@ -120,7 +157,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         return self._data.__repr__()
 
     def _repr_html_(self) -> str:
-        return self._data._repr_html_()
+        return self._data.to_html(index=True)  # index=False?
 
     def __str__(self) -> str:
         data = self._data.to_dict(orient="list")

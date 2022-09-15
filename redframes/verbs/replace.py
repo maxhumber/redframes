@@ -1,9 +1,9 @@
 from ..checks import _check_type
-from ..types import Column, PandasDataFrame, Value
+from ..types import Column, PandasDataFrame, OldValue, NewValue
 
 
 def replace(
-    df: PandasDataFrame, over: dict[Column, dict[Value, Value]]
+    df: PandasDataFrame, over: dict[Column, dict[OldValue, NewValue]]
 ) -> PandasDataFrame:
     _check_type(over, dict)
     bad_columns = list(set(over.keys()) - set(df.columns))

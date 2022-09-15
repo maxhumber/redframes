@@ -1,6 +1,5 @@
 ### todo
 
-- fix mypy
 - sklearn tests
 - docstrings
 - readme
