@@ -1,6 +1,6 @@
 import uuid
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import Column, Columns, PandasDataFrame
 
 # ✅ No "Bad" Types
@@ -13,10 +13,10 @@ from ..types import Column, Columns, PandasDataFrame
 def split(
     df: PandasDataFrame, column: Column, into: Columns, sep: str, drop: bool = True
 ) -> PandasDataFrame:
-    enforce(column, str)
-    enforce(into, list)
-    enforce(sep, str)
-    enforce(drop, bool)
+    _check_type(column, str)
+    _check_type(into, list)
+    _check_type(sep, str)
+    _check_type(drop, bool)
     if (column in into) and (not drop):
         raise ValueError("into columns argument is invalid, keys must be unique")
     bad_keys = set(df.columns).difference(set([column])).intersection(set(into))

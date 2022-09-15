@@ -1,4 +1,4 @@
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import Column, PandasDataFrame
 
 # ✅ No "Bad" Types
@@ -9,7 +9,7 @@ from ..types import Column, PandasDataFrame
 
 
 def rename(df: PandasDataFrame, columns: dict[Column, Column]) -> PandasDataFrame:
-    enforce(columns, dict)
+    _check_type(columns, dict)
     bad_columns = list(set(columns.keys()) - set(df.columns))
     if bad_columns and len(bad_columns) == 1:
         raise KeyError(f"column key: {bad_columns} is invalid")

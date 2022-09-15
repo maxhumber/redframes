@@ -4,22 +4,6 @@ import redframes as rf
 
 
 class TestVerbAppend(unittest.TestCase):
-    def test_no_side_effects(self):
-        df1 = rf.DataFrame({"foo": [1, 2]})
-        df2 = rf.DataFrame({"foo": [3, 4]})
-        df1_start = df1
-        df2_start = df2
-        _ = df1.append(df2)
-        self.assertEqual(df1_start, df1)
-        self.assertEqual(df2_start, df2)
-
-    def test_no_bad_index(self):
-        df1 = rf.DataFrame({"foo": range(100)})
-        df2 = rf.DataFrame({"foo": range(100, 200)})
-        result = df1.append(df2)
-        expected = rf.DataFrame({"foo": range(200)})
-        self.assertEqual(result, expected)
-
     def test_bad_type(self):
         df = rf.DataFrame({"foo": [1, 2, 3]})
         message = "df type is invalid, must be rf.DataFrame"

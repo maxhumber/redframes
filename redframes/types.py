@@ -15,5 +15,6 @@ LazyColumns = Union[Column, Columns]
 PandasDataFrame = pd.DataFrame
 PandasGroupedFrame = pg.DataFrameGroupBy
 PandasIndex = pd.Index
+PandasRangeIndex = pd.RangeIndex
 Value = Any
 Values = list[Value]

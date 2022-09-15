@@ -1,6 +1,6 @@
 import pandas as pd
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import LazyColumns, PandasDataFrame
 
 # ✅ No "Bad" Types
@@ -11,9 +11,8 @@ from ..types import LazyColumns, PandasDataFrame
 
 
 def select(df: PandasDataFrame, columns: LazyColumns) -> PandasDataFrame:
-    enforce(columns, {list, str})
-    if isinstance(columns, str):
-        columns = [columns]
+    _check_type(columns, {list, str})
+    columns = [columns] if isinstance(columns, str) else columns
     bad_columns = list(set(columns) - set(df.columns))
     if bad_columns and len(bad_columns) == 1:
         raise KeyError(f"column key: {bad_columns} is invalid")

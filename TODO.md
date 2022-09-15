@@ -1,10 +1,9 @@
 ### todo
 
-- tuesday: tests
-    - unique columns
-    - sklearn tests
 - wednesday: (HP)
 - thursday: all docs
+    - unique columns
+    - sklearn tests
     - docstrings
     - readme
     - cheat sheet
@@ -14,7 +13,6 @@
 
 ### Undecided
 
-- Sets?
 - save as a verb?
 
 ### Later

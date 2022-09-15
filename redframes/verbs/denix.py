@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import LazyColumns, PandasDataFrame
 
 # ✅ No "Bad" Types
@@ -11,9 +11,8 @@ from ..types import LazyColumns, PandasDataFrame
 
 
 def denix(df: PandasDataFrame, columns: LazyColumns | None = None) -> PandasDataFrame:
-    enforce(columns, {list, str, None})
-    if isinstance(columns, str):
-        columns = [columns]
+    _check_type(columns, {list, str, None})
+    columns = [columns] if isinstance(columns, str) else columns
     if isinstance(columns, list):
         bad_keys = set(columns).difference(df.columns)
         if bad_keys:

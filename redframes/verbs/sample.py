@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import PandasDataFrame
 
 # ✅ No "Bad" Types
@@ -13,7 +13,7 @@ from ..types import PandasDataFrame
 def sample(
     df: PandasDataFrame, rows: int | float = 1, seed: int | None = None
 ) -> PandasDataFrame:
-    enforce(rows, {int, float})
+    _check_type(rows, {int, float})
     if rows >= 1:
         if isinstance(rows, float):
             raise ValueError("rows (int) must be >= 1")

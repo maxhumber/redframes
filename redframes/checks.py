@@ -1,13 +1,9 @@
 from __future__ import annotations
 
-from typing import Any
-
-import pandas as pd
-
-from .types import Columns, LazyColumns, PandasIndex
+from .types import Columns, LazyColumns, PandasIndex, Any, PandasRangeIndex, PandasDataFrame
 
 
-def enforce(argument: Any, against: type | set[type | None]):
+def _check_type(argument: Any, against: type | set[type | None]):
     if isinstance(against, set):
         if len(against) == 0:
             against = {against}  # type: ignore
@@ -25,11 +21,11 @@ def enforce(argument: Any, against: type | set[type | None]):
         raise TypeError(f"must be {str_types}")
 
 
-def enforce_keys(columns: LazyColumns | None, true: Columns | PandasIndex):
+def _check_keys(columns: LazyColumns | None, against: Columns | PandasIndex):
     if isinstance(columns, str):
         columns = [columns]
-    columns = [] if columns == None else columns
-    bad_keys = set(columns).difference(true)  # type: ignore
+    columns = [] if (columns == None) else columns
+    bad_keys = set(columns).difference(against)  # type: ignore
     if bad_keys:
         if len(bad_keys) == 1:
             raise KeyError(f"invalid key {bad_keys}")
@@ -37,15 +33,19 @@ def enforce_keys(columns: LazyColumns | None, true: Columns | PandasIndex):
             raise KeyError(f"invalid keys {bad_keys}")
 
 
-def _validate(df: pd.DataFrame) -> pd.DataFrame:
-    if not isinstance(df.index, pd.RangeIndex):
-        raise IndexError("df.index is invalid, must be pd.RangeIndex")
-    if df.index.name:
-        raise IndexError("df.index is invalid, must unnamed")
-    if df.iloc[0].name != 0:
-        raise IndexError("df.index is invalid, must start at 0")
-    if not isinstance(df.columns, pd.Index):
-        raise KeyError("df.columns is invalid, must be flat")
+def _check_index(df: PandasDataFrame):
+    if not (df.index.name == None):
+        raise IndexError("must be unnamed")
+    if not isinstance(df.index, PandasRangeIndex):
+        raise IndexError("must be range")
+    if not (df.index.start == 0):
+        raise IndexError("must start at 0")
+    if not (df.index.step == 1):
+        raise IndexError("must step by 1")
+
+
+def _check_columns(df: PandasDataFrame):
+    if not isinstance(df.columns, PandasIndex):
+        raise KeyError("must be flat")
     if df.columns.has_duplicates:
-        raise KeyError("df.columns is invalid, must not contain duplicate keys")
-    return df
+        raise KeyError("must not contain duplicate keys")

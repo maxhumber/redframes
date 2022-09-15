@@ -1,9 +1,9 @@
 import pandas as pd
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..core import DataFrame
 
 
 def unwrap(df: DataFrame) -> pd.DataFrame:
-    enforce(df, DataFrame)
+    _check_type(df, DataFrame)
     return df._data.copy()

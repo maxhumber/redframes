@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import Column, PandasDataFrame, PandasGroupedFrame
 
 # ✅ No "Bad" Types
@@ -13,8 +13,8 @@ from ..types import Column, PandasDataFrame, PandasGroupedFrame
 def accumulate(
     df: PandasDataFrame | PandasGroupedFrame, column: Column, into: Column
 ) -> PandasDataFrame:
-    enforce(column, str)
-    enforce(into, str)
+    _check_type(column, str)
+    _check_type(into, str)
     if isinstance(df, PandasDataFrame):
         df = df.copy()
     result = df[column].cumsum()

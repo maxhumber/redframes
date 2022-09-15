@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import Column, Columns, PandasDataFrame
 
 # ✅ No "Bad" Types
@@ -17,8 +17,8 @@ def gather(
     columns: Columns | None = None,
     into: tuple[Column, Column] = ("variable", "value"),
 ) -> PandasDataFrame:
-    enforce(columns, {list, None})
-    enforce(into, tuple)
+    _check_type(columns, {list, None})
+    _check_type(into, tuple)
     if not (isinstance(into, tuple) and len(into) == 2):
         raise TypeError("into type is invalid, must be tuple[str, str]")
     if not columns:

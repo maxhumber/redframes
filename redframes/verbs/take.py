@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import PandasDataFrame, PandasGroupedFrame
 
 # ✅ No "Bad" Types
@@ -17,7 +17,7 @@ def take(
         df = df.take(rows, **kwargs)  # type: ignore
         df = df.reset_index(drop=True)
         return df
-    enforce(rows, int)
+    _check_type(rows, int)
     if isinstance(df, PandasDataFrame):
         if rows > df.shape[0]:
             raise ValueError("rows argument is invalid, exceeds total size")

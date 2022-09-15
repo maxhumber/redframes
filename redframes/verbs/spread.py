@@ -2,7 +2,7 @@ import uuid
 
 import pandas as pd
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import Column, PandasDataFrame
 
 # ✅ No "Bad" Types
@@ -13,8 +13,8 @@ from ..types import Column, PandasDataFrame
 
 
 def spread(df: PandasDataFrame, column: Column, using: Column) -> PandasDataFrame:
-    enforce(column, str)
-    enforce(using, str)
+    _check_type(column, str)
+    _check_type(using, str)
     original_shape = df.shape[1]
     if original_shape == 2:
         temp = uuid.uuid4().hex

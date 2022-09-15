@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import Column, Columns, PandasDataFrame
 
 # ✅ No "Bad" Types
@@ -15,10 +15,10 @@ from ..types import Column, Columns, PandasDataFrame
 def combine(
     df: PandasDataFrame, columns: Columns, into: Column, sep: str, drop: bool = True
 ) -> PandasDataFrame:
-    enforce(columns, list)
-    enforce(into, str)
-    enforce(sep, str)
-    enforce(drop, bool)
+    _check_type(columns, list)
+    _check_type(into, str)
+    _check_type(sep, str)
+    _check_type(drop, bool)
     if (into in df.columns) and (into not in columns):
         raise ValueError("into column argument is invalid, must be unique")
     if (into in df.columns) and (into in columns) and (not drop):

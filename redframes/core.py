@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pprint
 
-from .checks import enforce
+from .checks import _check_type
 from .types import (
     Any,
     Column,
@@ -102,14 +102,14 @@ class GroupedFrame(_CommonMixin):
 
 class DataFrame(_CommonMixin, _SKLearnMixin):
     def __init__(self, data: dict[Column, Values] | None = None):
-        enforce(data, {dict, None})
+        _check_type(data, {dict, None})
         if not data:
             self._data = PandasDataFrame()
         if isinstance(data, dict):
             self._data = PandasDataFrame(data)
 
     def __eq__(self, rhs: Any) -> bool:
-        enforce(rhs, DataFrame)
+        _check_type(rhs, DataFrame)
         return self._data.equals(rhs._data)
 
     def __getitem__(self, key: Column) -> Values:
@@ -150,7 +150,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         return types
 
     def append(self, other: DataFrame) -> DataFrame:
-        enforce(other, DataFrame)
+        _check_type(other, DataFrame)
         return _wrap(append(self._data, other._data))
 
     def combine(
@@ -194,7 +194,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         on: LazyColumns,
         how: Join = "left",
     ) -> DataFrame:
-        enforce(rhs, DataFrame)
+        _check_type(rhs, DataFrame)
         return _wrap(join(self._data, rhs._data, on, how))
 
     def rename(self, columns: dict[Column, Column]) -> DataFrame:

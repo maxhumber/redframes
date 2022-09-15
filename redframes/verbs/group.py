@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import LazyColumns, PandasDataFrame, PandasGroupedFrame
 
 # ✅ No "Bad" Types
@@ -11,6 +11,6 @@ from ..types import LazyColumns, PandasDataFrame, PandasGroupedFrame
 
 
 def group(df: PandasDataFrame, by: LazyColumns) -> PandasGroupedFrame:
-    enforce(by, {list, str})
+    _check_type(by, {list, str})
     gdf = df.groupby(by)
     return gdf

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import Direction, LazyColumns, PandasDataFrame, Value
 
 # ✅ No "Bad" Types
@@ -16,10 +16,9 @@ def fill(
     direction: Direction | None = "down",
     constant: Value | None = None,
 ) -> PandasDataFrame:
-    enforce(columns, {list, str, None})
-    enforce(direction, {str, None})
-    if isinstance(columns, str):
-        columns = [columns]
+    _check_type(columns, {list, str, None})
+    _check_type(direction, {str, None})
+    columns = [columns] if isinstance(columns, str) else columns
     if direction and constant:
         raise ValueError("direction OR constant arugment must be None")
     if (not direction) and (not constant):

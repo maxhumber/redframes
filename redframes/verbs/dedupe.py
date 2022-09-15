@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..checks import enforce, enforce_keys
+from ..checks import _check_type, _check_keys
 from ..types import LazyColumns, PandasDataFrame
 
 # ✅ No "Bad" Types
@@ -11,8 +11,8 @@ from ..types import LazyColumns, PandasDataFrame
 
 
 def dedupe(df: PandasDataFrame, columns: LazyColumns | None = None) -> PandasDataFrame:
-    enforce(columns, {list, str, None})
-    enforce_keys(columns, df.columns)
+    _check_type(columns, {list, str, None})
+    _check_keys(columns, df.columns)
     df = df.drop_duplicates(subset=columns, keep="first")
     df = df.reset_index(drop=True)
     return df

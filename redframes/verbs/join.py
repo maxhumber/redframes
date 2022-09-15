@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import Join, LazyColumns, PandasDataFrame
 
 # ✅ No "Bad" Types
@@ -18,8 +18,8 @@ def join(
     on: LazyColumns,
     how: Join = "left",
 ) -> PandasDataFrame:
-    enforce(on, {list, str})
-    enforce(how, str)
+    _check_type(on, {list, str})
+    _check_type(how, str)
     if not how in ["left", "right", "inner", "full"]:
         raise ValueError(
             "method argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"

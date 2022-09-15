@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from ..checks import enforce
+from ..checks import _check_type
 from ..types import Column, Func, PandasDataFrame, PandasGroupedFrame
 
 # ✅ No "Bad" Types
@@ -14,7 +14,7 @@ def summarize(
     df: PandasDataFrame | PandasGroupedFrame,
     over: dict[Column, tuple[Column, Func]],
 ) -> PandasDataFrame:
-    enforce(over, dict)
+    _check_type(over, dict)
     if isinstance(df, PandasGroupedFrame):
         df = df.agg(**over)
         df = df.reset_index()
