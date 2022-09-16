@@ -1,3 +1,5 @@
+**WARNING: BETA, Under Active Development (v1 API 98% complete), writing all the docstrings, readme, + rest of the unit tests right now**
+
 ### redframes 
 
 Name: [re]ctangular[d]ata[frames]

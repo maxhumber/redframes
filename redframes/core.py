@@ -160,16 +160,40 @@ class _CommonMixin(_TakeMixin):
         into: Column,
         descending: bool = False,
     ) -> DataFrame:
-        """XXX
+        """Densely rank values in a specific column
 
-        pandas:
-        tidyverse:
+        pandas: `rank("dense")`
+        tidyverse: `dense_rank`
 
         Example:
 
         ```python
-
+        df = rf.DataFrame({"foo": [2, 3, 3, 99, 1000, 1, -6, 4]})
         ```
+        |   foo |
+        |------:|
+        |     2 |
+        |     3 |
+        |     3 |
+        |    99 |
+        |  1000 |
+        |     1 |
+        |    -6 |
+        |     4 | 
+
+        ```python
+        df.rank("foo", into="rank", descending=True)
+        ```
+        |   foo |   rank |
+        |------:|-------:|
+        |     2 |      5 |
+        |     3 |      4 |
+        |     3 |      4 |
+        |    99 |      2 |
+        |  1000 |      1 |
+        |     1 |      6 |
+        |    -6 |      7 |
+        |     4 |      3 | 
         """
         return _wrap(rank(self._data, column, into, descending))
 
@@ -636,16 +660,75 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         return _wrap(gather(self._data, columns, into))
 
     def group(self, by: LazyColumns) -> GroupedFrame:
-        """XXX
+        """Create a GroupedFrame overwhich split-apply-combine operations can be applied
 
-        pandas:
-        tidyverse:
+        Compatible verbs: `accumulate`, `rank`, `summarize`, `take`
+
+        pandas: `groupby`
+        tidyverse: `group_by`
 
         Example:
 
         ```python
-
+        df = rf.DataFrame({"foo": ["A", "A", "A", "B", "B"], "bar": [1, 2, 3, 4, 5], "baz": [9, 7, 7, 5, 6]})
         ```
+        | foo   |   bar |   baz |
+        |:------|------:|------:|
+        | A     |     1 |     9 |
+        | A     |     2 |     7 |
+        | A     |     3 |     7 |
+        | B     |     4 |     5 |
+        | B     |     5 |     6 | 
+
+        + `accumulate`:
+
+        ```python
+        df.group("foo").accumulate("bar", into="bar_cumsum")
+        ```
+        | foo   |   bar |   baz |   bar_cumsum |
+        |:------|------:|------:|-------------:|
+        | A     |     1 |     9 |            1 |
+        | A     |     2 |     7 |            3 |
+        | A     |     3 |     7 |            6 |
+        | B     |     4 |     5 |            4 |
+        | B     |     5 |     6 |            9 | 
+
+        + `rank`:
+
+        ```python
+        df.group("foo").rank("baz", into="baz_rank", descending=True)
+        ```
+        | foo   |   bar |   baz |   baz_rank |
+        |:------|------:|------:|-----------:|
+        | A     |     1 |     9 |          1 |
+        | A     |     2 |     7 |          2 |
+        | A     |     3 |     7 |          2 |
+        | B     |     4 |     5 |          2 |
+        | B     |     5 |     6 |          1 | 
+
+        + `summarize`:
+
+        ```python
+        df4 = df.group("foo").summarize({
+            "bar_mean": ("bar", rf.stat.mean), 
+            "baz_min": ("baz", rf.stat.min)
+        })
+        ```
+        | foo   |   bar_mean |   baz_min |
+        |:------|-----------:|----------:|
+        | A     |        2   |         7 |
+        | B     |        4.5 |         5 | 
+
+        + `take`:
+
+        ```python
+        df.group("foo").take(1)
+        ```
+        | foo   |   bar |   baz |
+        |:------|------:|------:|
+        | A     |     1 |     9 |
+        | B     |     4 |     5 | 
+
         """
         return GroupedFrame(group(self._data, by))
 
@@ -655,45 +738,134 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         on: LazyColumns,
         how: Join = "left",
     ) -> DataFrame:
-        """XXX
+        """Join two DataFrames together using specific matching columns
 
-        pandas:
-        tidyverse:
+        pandas: `merge`
+        tidyverse: `left_join`, `right_join`, `inner_join`, `full_join`
 
-        Example:
+        Examples:
+
+        ```python   
+        adf = rf.DataFrame({"foo": ["A", "B", "C"], "bar": [1, 2, 3]})
+        ```
+        | foo   |   bar |
+        |:------|------:|
+        | A     |     1 |
+        | B     |     2 |
+        | C     |     3 | 
 
         ```python
-
+        bdf = rf.DataFrame({"foo": ["A", "B", "D"], "baz": ["!", "@", "#"]})
         ```
+        | foo   | baz   |
+        |:------|:------|
+        | A     | !     |
+        | B     | @     |
+        | D     | #     | 
+
+        Left join:
+
+        ```python
+        adf.join(bdf, on="foo", how="left")
+        ```
+        | foo   |   bar | baz   |
+        |:------|------:|:------|
+        | A     |     1 | !     |
+        | B     |     2 | @     |
+        | C     |     3 | nan   | 
+
+        Right join:
+
+        ```python
+        adf.join(bdf, on="foo", how="right")
+        ```
+        | foo   |   bar | baz   |
+        |:------|------:|:------|
+        | A     |     1 | !     |
+        | B     |     2 | @     |
+        | D     |   nan | #     | 
+
+        Inner join:
+
+        ```python
+        adf.join(bdf, on="foo", how="inner")
+        ```
+        | foo   |   bar | baz   |
+        |:------|------:|:------|
+        | A     |     1 | !     |
+        | B     |     2 | @     | 
+
+        Full join:
+
+        ```python
+        adf.join(bdf, on="foo", how="full")
+        ```
+        | foo   |   bar | baz   |
+        |:------|------:|:------|
+        | A     |     1 | !     |
+        | B     |     2 | @     |
+        | C     |     3 | nan   |
+        | D     |   nan | #     | 
         """
         _check_type(rhs, DataFrame)
         return _wrap(join(self._data, rhs._data, on, how))
 
     def mutate(self, over: dict[Column, Func]) -> DataFrame:
-        """XXX
+        """Create new, or transform existing columns
 
-        pandas:
-        tidyverse:
+        pandas: `apply`, `astype`
+        tidyverse: `mutate`
 
         Example:
 
         ```python
-
+        df = rf.DataFrame({"foo": [1, 2, 3]})
         ```
+        |   foo |
+        |------:|
+        |     1 |
+        |     2 |
+        |     3 | 
+
+        ```python
+        df = df.mutate({
+            "bar": lambda row: float(row["foo"]), 
+            "baz": lambda row: "X" + str(row["bar"] * 2),
+            "jaz": lambda _: "Jazz"
+        })
+        ```
+        |   foo |   bar | baz   | jaz   |
+        |------:|------:|:------|:------|
+        |     1 |     1 | X2.0  | Jazz  |
+        |     2 |     2 | X4.0  | Jazz  |
+        |     3 |     3 | X6.0  | Jazz  | 
         """
         return _wrap(mutate(self._data, over))
 
     def rename(self, columns: dict[OldColumn, NewColumn]) -> DataFrame:
-        """XXX
+        """Rename columns from "Old" to "New"
 
-        pandas:
-        tidyverse:
+        pandas: `rename`
+        tidyverse: `rename`
 
         Example:
 
         ```python
-
+        df = rf.DataFrame({"foo": [1, 2], "bar": [3, 4]})
         ```
+        |   foo |   bar |
+        |------:|------:|
+        |     1 |     3 |
+        |     2 |     4 | 
+
+        ```python
+        df.rename({"foo": "oof", "bar": "rab"})
+        ```
+        |   oof |   rab |
+        |------:|------:|
+        |     1 |     3 |
+        |     2 |     4 | 
+
         """
         return _wrap(rename(self._data, columns))
 
