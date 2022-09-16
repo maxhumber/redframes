@@ -3,15 +3,15 @@ from __future__ import annotations
 import pandas as pd
 
 from ..checks import _check_type
-from ..types import Column, Columns, PandasDataFrame
+from ..types import Column, LazyColumns, PandasDataFrame
 
 
 def gather(
     df: PandasDataFrame,
-    columns: Columns | None = None,
+    columns: LazyColumns | None = None,
     into: tuple[Column, Column] = ("variable", "value"),
 ) -> PandasDataFrame:
-    _check_type(columns, {list, None})
+    _check_type(columns, {list, str, None})
     _check_type(into, tuple)
     if not (isinstance(into, tuple) and len(into) == 2):
         raise TypeError("must be tuple[str, str]")
@@ -21,8 +21,10 @@ def gather(
         raise TypeError("must not be an existing column key")
     if into[1] in df.columns:
         raise TypeError("must not be an existing column key")
-    if not columns:
+    if columns == None:
         columns = list(df.columns)
+    if isinstance(columns, str):
+        columns = [columns]
     index = [col for col in df.columns if col not in columns]
     df = pd.melt(
         df,

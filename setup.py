@@ -26,7 +26,7 @@ setup(
             "pandas-stubs",
             "pyright",
             "scikit-learn",
-            "tabulate"
+            "tabulate",
         ]
     },
 )
