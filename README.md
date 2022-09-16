@@ -1,14 +1,10 @@
 ##### ⚠️ WARNING: BETA (THIS PAGE UNDER ACTIVE DEVELOPMENT)
 
 
-
-
-
 <div align="center">
   <img alt="redframes" src="images/logo.png" height="200px">
   <p><b>re</b>ctangular <b>d</b>ata <b>frames</b></p>
 </div>
-
 
 
 **redframes** is a data cleaning, wrangling, and manipulation library for Python. It is fully interoperable with pandas, and compatible with the most common machine learning (`scikit-learn`) and visualization (`matplotlib`) workflows. 
@@ -19,7 +15,7 @@ The library prioritizes ease of use, legibility, and "lines-of-code-per-google-s
 
 
 
-##### Install & Import
+### Install & Import
 
 ```sh
 pip install git+https://github.com/maxhumber/redframes.git
@@ -31,7 +27,7 @@ import redframes as rf
 
 
 
-##### Quickstart
+### Quickstart
 
 ```python
 import redframes as rf
@@ -105,7 +101,7 @@ df = (
 
 
 
-##### matplotlib
+### matplotlib
 
 ```python
 import matplotlib.pyplot as plt
@@ -126,11 +122,11 @@ df = (
 plt.barh(df["position"], df["avp"], color=df["color"]);
 ```
 
-  <img alt="redframes" src="images/bars.png" height="200px">
+<img alt="redframes" src="images/bars.png" height="200px">
 
 
 
-##### scikit-learn
+### scikit-learn
 
 ```python
 from sklearn.linear_model import LinearRegression
@@ -168,7 +164,7 @@ model.predict(X_new)
 
 
 
-##### Verbs
+### Verbs
 
 There are 23 core verbs that can be actioned against that `rf.DataFrame` objects come 
 
