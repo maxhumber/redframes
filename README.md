@@ -85,8 +85,8 @@ import redframes as rf
 ```python 
 df = rf.load("path_to.csv") # load a csv file
 rf.save(df, "path_to.csv") # save a df to a csv file
-pdf = rf.wrap(df) # convert a rf.DataFrame to a pd.DataFrame
-df = rf.unwrap(pdf) # convert a pd.DataFrame to a rf.DataFrame
+df = rf.wrap(pdf) # convert a pd.DataFrame to a rf.DataFrame
+pdf = rf.unwrap(df) # convert a rf.DataFrame to a pd.DataFrame
 ```
 
 
