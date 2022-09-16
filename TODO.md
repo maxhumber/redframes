@@ -1,10 +1,9 @@
 ### todo
 
-- sklearn tests
-- readme
-- logo
-- Launch: LI, HN, Twitter
-
+- put all docstrings examples in unit tests
+- finish readme
+- finish migrating _wip tests over
+- Launch Monday: LI, HN, Twitter
 
 ### Later
 

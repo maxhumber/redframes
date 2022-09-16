@@ -1,52 +1,42 @@
-### WIP (BETA)
-
-Python version badge, pandas version badge
+##### ⚠️ WARNING: BETA (THIS PAGE UNDER ACTIVE DEVELOPMENT)
 
 
 
-[re]ctangular[d]ata[frames]
+
+
+<div align="center">
+  <img alt="redframes" src="images/logo.png" height="200px">
+  <p><b>re</b>ctangular <b>d</b>ata <b>frames</b></p>
+</div>
 
 
 
-Tool comparison chart
+**redframes** is a data cleaning, wrangling, and manipulation library for Python. It is fully interoperable with pandas, and compatible with the most common machine learning (`scikit-learn`) and visualization (`matplotlib`) workflows. 
 
-- Less googling. 
-- More Pythonic/Ergonomic feel. 
-- Does 90% of what pandas can do (never will do 100%)
-  - Drop down to pandas (unwrap) when needed
-- Method chaining!
-- Lambdas!!
-- Everything returned from DataFrame is a standard python object
-- Speed is not a priority ATM (but it shouldn't be super slow at <10M rows)
-- No indexes (or confusing multi-index)
-- No duplicate columns
-- No side-effects (or changes in place)
+The library prioritizes ease of use, legibility, and "lines-of-code-per-google-search" over scope, flexibility, and performance. These priorities are realized through the liberal embrace of lambda functions, method chaining, and type hints!
+
+**redframes** does less, on purpose—so that you can focus on the work that matters most. If/when you do need "more", you can "drop-down" to pandas with `rf.unwrap`!
 
 
 
-### Install
+##### Install & Import
 
 ```sh
 pip install git+https://github.com/maxhumber/redframes.git
 ```
 
-
-
-### Import 
-
 ```python
 import redframes as rf
 ```
 
 
 
-### Quickstart
+##### Quickstart
 
 ```python
 import redframes as rf
 import pandas as pd
 
-# create a pandas DataFrame
 pdf = pd.DataFrame([
     [12, "D'Marcus", "Williums", "East", "WR", 253.21],
     [14, "T.J.", "Juckson", "East", "WR", 239.99],
@@ -87,7 +77,6 @@ pdf = pd.DataFrame([
 # convert to rf.DataFrame
 rdf = rf.wrap(pdf)
 
-# start chaining method/verbs
 df = (
     rdf
     .combine(["First Name", "Last Name"], into="name", sep=" ")
@@ -113,6 +102,75 @@ df = (
     .summarize({"mean_ppg": ("pts_per_game", rf.stat.mean)})
 )
 ```
+
+
+
+##### matplotlib
+
+```python
+import matplotlib.pyplot as plt
+
+df = (
+    rdf # from above
+    .rename({"Position": "position"})
+    .filter(lambda row: row["position"] != "QB/RB")
+    .group("position")
+    .take(3)
+    .group("position")
+    .summarize({"avp": ("Points", rf.stat.mean)})
+    .sort("avp")
+    .mutate({"color": lambda row: row["position"] in ["WR", "RB"]})
+    .replace({"color": {False: "orange", True: "red"}})
+)
+
+plt.barh(df["position"], df["avp"], color=df["color"]);
+```
+
+  <img alt="redframes" src="images/bars.png" height="200px">
+
+
+
+##### scikit-learn
+
+```python
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+
+df = rf.DataFrame({
+    "touchdowns": [15, 19, 5, 7, 9, 10, 12, 22, 16, 10],
+    "age": [21, 22, 21, 24, 26, 28, 30, 35, 28, 21],
+    "mvp": [1, 1, 0, 0, 0, 0, 0, 1, 0, 0]
+})
+
+target = "touchdowns"
+y = df[target]
+X = df.drop(target)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+model.score(X_test, y_test)
+# 0.5083194901655527
+
+print(X_train.take(1))
+# rf.DataFrame({'age': [21], 'mvp': [0]})
+
+X_new = rf.DataFrame({'age': [22], 'mvp': [1]})
+model.predict(X_new)
+# array([19.])
+```
+
+
+
+---
+
+⚠️ WIP BELOW HERE ⚠️ 
+
+
+
+##### Verbs
+
+There are 23 core verbs that can be actioned against that `rf.DataFrame` objects come 
 
 
 

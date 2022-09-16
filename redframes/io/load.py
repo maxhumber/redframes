@@ -12,7 +12,7 @@ def load(path: str, **kwargs) -> DataFrame:
     Example:
 
     ```python
-    df = rf.load("example.csv")   
+    df = rf.load("example.csv")
     ```
     """
     _check_type(path, str)
