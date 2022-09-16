@@ -1,3 +1,5 @@
+"""Common summary functions/statistics"""
+
 import numpy as np
 
 count = len

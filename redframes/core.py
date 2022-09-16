@@ -179,7 +179,7 @@ class _CommonMixin(_TakeMixin):
         |  1000 |
         |     1 |
         |    -6 |
-        |     4 | 
+        |     4 |
 
         ```python
         df.rank("foo", into="rank", descending=True)
@@ -193,32 +193,68 @@ class _CommonMixin(_TakeMixin):
         |  1000 |      1 |
         |     1 |      6 |
         |    -6 |      7 |
-        |     4 |      3 | 
+        |     4 |      3 |
         """
         return _wrap(rank(self._data, column, into, descending))
 
     def summarize(self, over: dict[Column, tuple[Column, Func]]) -> DataFrame:
-        """XXX
+        """Apply summary functions/statistics to create new columns over specified columns
 
-        pandas:
-        tidyverse:
+        pandas: `agg`
+        tidyverse: `summarise`
 
         Example:
 
         ```python
-
+        df = rf.DataFrame({"foo": [1, 2, 3, 4, 5], "bar": [99, 100, 1, -5, 2]})
         ```
+        |   foo |   bar |
+        |------:|------:|
+        |     1 |    99 |
+        |     2 |   100 |
+        |     3 |     1 |
+        |     4 |    -5 |
+        |     5 |     2 |
+
+        ```python
+        df = df.summarize({
+            "fcount": ("foo", rf.stat.count),
+            "fmean": ("foo", rf.stat.mean),
+            "fsum": ("foo", rf.stat.sum),
+            "fmax": ("foo", rf.stat.max),
+            "bmedian": ("bar", rf.stat.median),
+            "bmin": ("bar", rf.stat.min),
+            "bstd": ("bar", rf.stat.std)
+        })
+        ```
+        |   fcount |   fmean |   fsum |   fmax |   bmedian |   bmin |   bstd |
+        |---------:|--------:|-------:|-------:|----------:|-------:|-------:|
+        |        5 |       3 |     15 |      5 |         2 |     -5 |  54.93 |
         """
         return _wrap(summarize(self._data, over))
 
 
 class GroupedFrame(_CommonMixin):
+    """GroupedFrame compatible with: `accumulate`, `rank`, `summarize`, `take`"""
+
     def __repr__(self) -> str:
         return "GroupedFrame()"
 
 
 class DataFrame(_CommonMixin, _SKLearnMixin):
     def __init__(self, data: dict[Column, Values] | None = None) -> None:
+        """Initialize a DataFrame with a standard dictionary
+
+        Example:
+
+        ```python
+        df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"]})
+        ```
+        |   foo | bar   |
+        |------:|:------|
+        |     1 | A     |
+        |     2 | B     |
+        """
         _check_type(data, {dict, None})
         if not data:
             self._data = PandasDataFrame()
@@ -226,10 +262,34 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
             self._data = PandasDataFrame(data)
 
     def __eq__(self, rhs: Any) -> bool:
+        """Check if two DataFrames are equal to eachother
+
+        Example:
+
+        ```python
+        adf = rf.DataFrame({"foo": [1]})
+        bdf = rf.DataFrame({"bar": [1]})
+        cdf = rf.DataFrame({"foo": [1]})
+        print(adf == bdf)
+        print(adf == cdf)
+        # False
+        # True
+        ```
+        """
         _check_type(rhs, DataFrame)
         return self._data.equals(rhs._data)
 
     def __getitem__(self, key: Column) -> Values:
+        """Retrive values (as a python list) from a specified column
+
+        Example:
+
+        ```python
+        df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"]})
+        df["foo"]
+        # [1, 2]
+        ```
+        """
         return list(self._data[key])
 
     def __repr__(self) -> str:
@@ -239,6 +299,16 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         return self._data.to_html(index=True)  # index=False?
 
     def __str__(self) -> str:
+        """Return string constructor (for copy-and-pasting)
+
+        Example:
+
+        ```python
+        df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"]})
+        str(df)
+        # "rf.DataFrame({'foo': [1, 2], 'bar': ['A', 'B']})"
+        ```
+        """
         data = self._data.to_dict(orient="list")
         string = pprint.pformat(data, indent=4, sort_dicts=False, compact=True)
         if "\n" in string:
@@ -250,18 +320,58 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
 
     @property
     def columns(self) -> Columns:
+        """Inspect column names (keys)
+
+        Example:
+
+        ```python
+        df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"], "baz": [True, False]})
+        df.columns
+        # ['foo', 'bar', 'baz']
+        ```
+        """
         return list(self._data.columns)
 
     @property
     def dimensions(self) -> dict[str, int]:
+        """Inspect DataFrame shape
+
+        Example:
+
+        ```python
+        df = rf.DataFrame({"foo": range(10), "bar": range(10, 20)})
+        df.dimensions
+        # {'rows': 10, 'columns': 2}
+        ```
+        """
         return dict(zip(["rows", "columns"], self._data.shape))
 
     @property
     def empty(self) -> bool:
+        """Inspect if DataFrame is "empty"
+
+        Example:
+
+        ```python
+        df = rf.DataFrame()
+        df.empty
+        # True
+        ```
+        """
         return self._data.empty
 
     @property
     def types(self) -> dict[Column, type]:
+        """Inspect column types
+
+        Example:
+
+        ```python
+        df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"], "baz": [True, False]})
+        df.types
+        # {'foo': int, 'bar': str, 'baz': bool}
+        ```
+        """
         data = self._data.astype("object")
         types = {str(col): type(data.loc[0, col]) for col in data}  # type: ignore
         return types
@@ -306,7 +416,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
     def combine(
         self, columns: Columns, into: Column, sep: str = "-", drop: bool = True
     ) -> DataFrame:
-        """Combine multiple columns into a single column (opposite of `separate`)
+        """Combine multiple columns into a single column (opposite of `split`)
 
         pandas: `+`
         tidyverse: `unite`
@@ -603,10 +713,10 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
 
     def gather(
         self,
-        columns: LazyColumns | None = None,
+        columns: Columns | None = None,
         into: tuple[Column, Column] = ("variable", "value"),
     ):
-        """Lengthen data, by increasing rows and decreasing columns (opposite of `spread`)
+        """Lengthen data, increase rows, decrease columns (opposite of `spread`)
 
         pandas: `melt`
         tidyverse: `gather`, `pivot_longer`
@@ -619,7 +729,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |   foo |   bar |   baz |
         |------:|------:|------:|
         |     1 |     3 |     4 |
-        |     2 |     4 |     5 | 
+        |     2 |     4 |     5 |
 
         All columns:
 
@@ -633,17 +743,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         | bar        |       3 |
         | bar        |       4 |
         | baz        |       4 |
-        | baz        |       5 | 
-
-        Single column:
-
-        ```python
-        df.gather("foo")
-        ```
-        |   bar |   baz | variable   |   value |
-        |------:|------:|:-----------|--------:|
-        |     3 |     4 | foo        |       1 |
-        |     4 |     5 | foo        |       2 |
+        | baz        |       5 |
 
         Multiple columns:
 
@@ -655,7 +755,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |     4 | foo   |     1 |
         |     5 | foo   |     2 |
         |     4 | bar   |     3 |
-        |     5 | bar   |     4 | 
+        |     5 | bar   |     4 |
         """
         return _wrap(gather(self._data, columns, into))
 
@@ -678,7 +778,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         | A     |     2 |     7 |
         | A     |     3 |     7 |
         | B     |     4 |     5 |
-        | B     |     5 |     6 | 
+        | B     |     5 |     6 |
 
         + `accumulate`:
 
@@ -691,7 +791,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         | A     |     2 |     7 |            3 |
         | A     |     3 |     7 |            6 |
         | B     |     4 |     5 |            4 |
-        | B     |     5 |     6 |            9 | 
+        | B     |     5 |     6 |            9 |
 
         + `rank`:
 
@@ -704,20 +804,20 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         | A     |     2 |     7 |          2 |
         | A     |     3 |     7 |          2 |
         | B     |     4 |     5 |          2 |
-        | B     |     5 |     6 |          1 | 
+        | B     |     5 |     6 |          1 |
 
         + `summarize`:
 
         ```python
         df4 = df.group("foo").summarize({
-            "bar_mean": ("bar", rf.stat.mean), 
+            "bar_mean": ("bar", rf.stat.mean),
             "baz_min": ("baz", rf.stat.min)
         })
         ```
         | foo   |   bar_mean |   baz_min |
         |:------|-----------:|----------:|
         | A     |        2   |         7 |
-        | B     |        4.5 |         5 | 
+        | B     |        4.5 |         5 |
 
         + `take`:
 
@@ -727,7 +827,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         | foo   |   bar |   baz |
         |:------|------:|------:|
         | A     |     1 |     9 |
-        | B     |     4 |     5 | 
+        | B     |     4 |     5 |
 
         """
         return GroupedFrame(group(self._data, by))
@@ -745,14 +845,14 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
 
         Examples:
 
-        ```python   
+        ```python
         adf = rf.DataFrame({"foo": ["A", "B", "C"], "bar": [1, 2, 3]})
         ```
         | foo   |   bar |
         |:------|------:|
         | A     |     1 |
         | B     |     2 |
-        | C     |     3 | 
+        | C     |     3 |
 
         ```python
         bdf = rf.DataFrame({"foo": ["A", "B", "D"], "baz": ["!", "@", "#"]})
@@ -761,7 +861,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |:------|:------|
         | A     | !     |
         | B     | @     |
-        | D     | #     | 
+        | D     | #     |
 
         Left join:
 
@@ -772,7 +872,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |:------|------:|:------|
         | A     |     1 | !     |
         | B     |     2 | @     |
-        | C     |     3 | nan   | 
+        | C     |     3 | nan   |
 
         Right join:
 
@@ -783,7 +883,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |:------|------:|:------|
         | A     |     1 | !     |
         | B     |     2 | @     |
-        | D     |   nan | #     | 
+        | D     |   nan | #     |
 
         Inner join:
 
@@ -793,7 +893,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         | foo   |   bar | baz   |
         |:------|------:|:------|
         | A     |     1 | !     |
-        | B     |     2 | @     | 
+        | B     |     2 | @     |
 
         Full join:
 
@@ -805,7 +905,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         | A     |     1 | !     |
         | B     |     2 | @     |
         | C     |     3 | nan   |
-        | D     |   nan | #     | 
+        | D     |   nan | #     |
         """
         _check_type(rhs, DataFrame)
         return _wrap(join(self._data, rhs._data, on, how))
@@ -825,11 +925,11 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |------:|
         |     1 |
         |     2 |
-        |     3 | 
+        |     3 |
 
         ```python
         df = df.mutate({
-            "bar": lambda row: float(row["foo"]), 
+            "bar": lambda row: float(row["foo"]),
             "baz": lambda row: "X" + str(row["bar"] * 2),
             "jaz": lambda _: "Jazz"
         })
@@ -838,7 +938,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |------:|------:|:------|:------|
         |     1 |     1 | X2.0  | Jazz  |
         |     2 |     2 | X4.0  | Jazz  |
-        |     3 |     3 | X6.0  | Jazz  | 
+        |     3 |     3 | X6.0  | Jazz  |
         """
         return _wrap(mutate(self._data, over))
 
@@ -856,7 +956,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |   foo |   bar |
         |------:|------:|
         |     1 |     3 |
-        |     2 |     4 | 
+        |     2 |     4 |
 
         ```python
         df.rename({"foo": "oof", "bar": "rab"})
@@ -864,107 +964,288 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |   oof |   rab |
         |------:|------:|
         |     1 |     3 |
-        |     2 |     4 | 
+        |     2 |     4 |
 
         """
         return _wrap(rename(self._data, columns))
 
     def replace(self, over: dict[Column, dict[OldValue, NewValue]]) -> DataFrame:
-        """XXX
+        """Replace values in specified columns, from "old" to "new"
 
-        pandas:
-        tidyverse:
+        pandas: `replace`
+        tidyverse: `mutate(... case_when(...))`
 
         Example:
 
         ```python
-
+        df = rf.DataFrame({"foo": [1, 2, 2, 2, 1], "bar": [1, "A", "B", True, False]})
         ```
+        |   foo | bar   |
+        |------:|:------|
+        |     1 | 1     |
+        |     2 | A     |
+        |     2 | B     |
+        |     2 | True  |
+        |     1 | False |
+
+        ```python
+        df = df.replace({
+            "foo": {2: 222},
+            "bar": {False: 0, True: 1, "A": 2, "B": 3}
+        })
+        ```
+        |   foo |   bar |
+        |------:|------:|
+        |     1 |     1 |
+        |   222 |     2 |
+        |   222 |     3 |
+        |   222 |     1 |
+        |     1 |     0 |
         """
         return _wrap(replace(self._data, over))
 
-    def sample(self, rows: int | float = 1, seed: int | None = None) -> DataFrame:
-        """XXX
+    def sample(self, rows: int | float, seed: int | None = None) -> DataFrame:
+        """Sample any number, or percentage total of rows
 
-        pandas:
-        tidyverse:
+        pandas: `sample(n, frac)`
+        tidyverse: `sample_n`, `sample_frac`
 
-        Example:
+        Examples:
 
         ```python
-
+        df = rf.DataFrame({"foo": range(10), "bar": range(10, 20)})
         ```
+        |   foo |   bar |
+        |------:|------:|
+        |     0 |    10 |
+        |     1 |    11 |
+        |     2 |    12 |
+        |     3 |    13 |
+        |     4 |    14 |
+        |     5 |    15 |
+        |     6 |    16 |
+        |     7 |    17 |
+        |     8 |    18 |
+        |     9 |    19 |
+
+        Single row:
+
+        ```python
+        df.sample(1)
+        ```
+        |   foo |   bar |
+        |------:|------:|
+        |     7 |    17 |
+
+        Multiple rows:
+
+        ```python
+        df.sample(3)
+        ```
+        |   foo |   bar |
+        |------:|------:|
+        |     4 |    14 |
+        |     1 |    11 |
+        |     6 |    16 |
+
+        Percentage of total rows (30%):
+
+        ```python
+        df.sample(0.3)
+        ```
+        |   foo |   bar |
+        |------:|------:|
+        |     4 |    14 |
+        |     3 |    13 |
+        |     1 |    11 |
         """
         return _wrap(sample(self._data, rows, seed))
 
     def select(self, columns: LazyColumns) -> DataFrame:
-        """XXX
+        """Retain specified columns (opposite of `drop`)
 
-        pandas:
-        tidyverse:
+        pandas: `select`
+        tidyverse: `select`
 
-        Example:
+        Examples:
 
         ```python
-
+        df = rf.DataFrame({"foo": [1, 2], "bar": [3, 4], "baz": [5, 6]})
         ```
+        |   foo |   bar |   baz |
+        |------:|------:|------:|
+        |     1 |     3 |     5 |
+        |     2 |     4 |     6 |
+
+        Single column:
+
+        ```python
+        df.select("foo")
+        ```
+        |   foo |
+        |------:|
+        |     1 |
+        |     2 |
+
+        Multiple columns:
+
+        ```python
+        df.select(["foo", "baz"])
+        ```
+        |   foo |   baz |
+        |------:|------:|
+        |     1 |     5 |
+        |     2 |     6 |
         """
         return _wrap(select(self._data, columns))
 
     def shuffle(self, seed: int | None = None) -> DataFrame:
-        """XXX
+        """Shuffle all rows in DataFrame
 
-        pandas:
-        tidyverse:
+        pandas: `sample(frac=1)`
+        tidyverse: `sample_frac(..., 1)`
 
         Example:
 
         ```python
-
+        df = rf.DataFrame({"foo": range(5), "bar": range(5, 10)})
         ```
+        |   foo |   bar |
+        |------:|------:|
+        |     0 |     5 |
+        |     1 |     6 |
+        |     2 |     7 |
+        |     3 |     8 |
+        |     4 |     9 |
+
+        ```python
+        df.shuffle()
+        ```
+        |   foo |   bar |
+        |------:|------:|
+        |     4 |     9 |
+        |     2 |     7 |
+        |     3 |     8 |
+        |     0 |     5 |
+        |     1 |     6 |
         """
         return _wrap(shuffle(self._data, seed))
 
     def sort(self, columns: LazyColumns, descending: bool = False) -> DataFrame:
-        """XXX
+        """Order rows with reference to specific columns
 
-        pandas:
-        tidyverse:
+        pandas: `sort_values`
+        tidyverse: `arrange`
 
-        Example:
+        Examples:
 
         ```python
-
+        df = rf.DataFrame({"foo": ["Z", "X", "A", "A"], "bar": [2, -2, 4, -4]})
         ```
+        | foo   |   bar |
+        |:------|------:|
+        | Z     |     2 |
+        | X     |    -2 |
+        | A     |     4 |
+        | A     |    -4 |
+
+        Single column:
+
+        ```python
+        df.sort("bar")
+        ```
+        | foo   |   bar |
+        |:------|------:|
+        | A     |    -4 |
+        | X     |    -2 |
+        | Z     |     2 |
+        | A     |     4 |
+
+        Descending order:
+
+        ```python
+        df.sort("bar", descending=True)
+        ```
+        | foo   |   bar |
+        |:------|------:|
+        | A     |     4 |
+        | Z     |     2 |
+        | X     |    -2 |
+        | A     |    -4 |
+
+        Multiple columns:
+
+        ```python
+        df.sort(["foo", "bar"], descending=False)
+        ```
+        | foo   |   bar |
+        |:------|------:|
+        | A     |    -4 |
+        | A     |     4 |
+        | X     |    -2 |
+        | Z     |     2 |
         """
         return _wrap(sort(self._data, columns, descending))
 
     def split(
         self, column: Column, into: Columns, sep: str, drop: bool = True
     ) -> DataFrame:
-        """XXX
+        """Split a column into multiple columns (opposite of `combine`)
 
-        pandas:
-        tidyverse:
+        pandas: `df[col].str.split()`
+        tidyverse: `separate`
 
         Example:
 
         ```python
-
+        df = rf.DataFrame({"foo": ["A::1", "B::2", "C:3"]})
         ```
+        | foo   |
+        |:------|
+        | A::1  |
+        | B::2  |
+        | C:3   |
+
+        ```python
+        df.split("foo", into=["foo", "bar"], sep="::", drop=True)
+        ```
+        | foo   |   bar |
+        |:------|------:|
+        | A     |     1 |
+        | B     |     2 |
+        | C:3   |       |
         """
         return _wrap(split(self._data, column, into, sep, drop))
 
     def spread(self, column: Column, using: Column) -> DataFrame:
-        """XXX
+        """Widen data, increase columns, decreas rows (opposite of `gather`)
 
-        pandas:
-        tidyverse:
+        pandas: `pivot_table`
+        tidyverse: `spread`, `pivot_wider`
 
         Example:
 
         ```python
-
+        df = rf.DataFrame({"foo": ["A", "A", "A", "B", "B", "B", "B"], "bar": [1, 2, 3, 4, 5, 6, 7]})
         ```
+        | foo   |   bar |
+        |:------|------:|
+        | A     |     1 |
+        | A     |     2 |
+        | A     |     3 |
+        | B     |     4 |
+        | B     |     5 |
+        | B     |     6 |
+        | B     |     7 |
+
+        ```python
+        df.spread("foo", using="bar")
+        ```
+        |   A |   B |
+        |----:|----:|
+        |   1 |   4 |
+        |   2 |   5 |
+        |   3 |   6 |
+        | nan |   7 |
         """
         return _wrap(spread(self._data, column, using))

@@ -1,5 +1,5 @@
 from ..checks import _check_type
-from ..types import Column, PandasDataFrame, OldValue, NewValue
+from ..types import Column, NewValue, OldValue, PandasDataFrame
 
 
 def replace(

@@ -5,7 +5,7 @@ from ..types import PandasDataFrame
 
 
 def sample(
-    df: PandasDataFrame, rows: int | float = 1, seed: int | None = None
+    df: PandasDataFrame, rows: int | float, seed: int | None = None
 ) -> PandasDataFrame:
     _check_type(rows, {int, float})
     if rows >= 1:

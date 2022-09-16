@@ -1,10 +1,8 @@
 ### todo
 
 - sklearn tests
-- docstrings
 - readme
 - logo
-- beta: LI
 - Launch: LI, HN, Twitter
 
 

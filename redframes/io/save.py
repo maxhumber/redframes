@@ -3,6 +3,14 @@ from ..core import DataFrame
 
 
 def save(df: DataFrame, path: str, **kwargs) -> None:
+    """Save a rf.DataFrame to a csv file (opposite of `load`)
+
+    Example:
+
+    ```python
+    rf.save(df, "example.csv")
+    ```
+    """
     _check_type(df, DataFrame)
     _check_type(path, str)
     _check_file(path)
