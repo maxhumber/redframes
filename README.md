@@ -1,10 +1,14 @@
 ### WIP (BETA)
 
+Python version badge, pandas version badge
+
 
 
 [re]ctangular[d]ata[frames]
 
 
+
+Tool comparison chart
 
 - Less googling. 
 - More Pythonic/Ergonomic feel. 
@@ -28,12 +32,21 @@ pip install git+https://github.com/maxhumber/redframes.git
 
 
 
+### Import 
+
+```python
+import redframes as rf
+```
+
+
+
 ### Quickstart
 
 ```python
 import redframes as rf
 import pandas as pd
 
+# create a pandas DataFrame
 pdf = pd.DataFrame([
     [12, "D'Marcus", "Williums", "East", "WR", 253.21],
     [14, "T.J.", "Juckson", "East", "WR", 239.99],
@@ -71,10 +84,10 @@ pdf = pd.DataFrame([
     [2, "Dan", "Smith", "West", "QB", 367.69]
 ], columns=["Number", "First Name", "Last Name", "Team", "Position", "Points"])
 
-# wrap pd.DataFrame into a rf.DataFrame
+# convert to rf.DataFrame
 rdf = rf.wrap(pdf)
 
-# chain method/verbs together
+# start chaining method/verbs
 df = (
     rdf
     .combine(["First Name", "Last Name"], into="name", sep=" ")
@@ -103,24 +116,12 @@ df = (
 
 
 
-### API
+### IO
 
-<u>Import</u>:
-
-```python
-import redframes as rf
-```
-
-
-
-<u>IO (In-Out)</u>:
-
-```python 
-df = rf.load("path_to.csv") # load a csv file
-rf.save(df, "path_to.csv") # save a df to a csv file
-df = rf.wrap(pdf) # convert a pd.DataFrame to a rf.DataFrame
-pdf = rf.unwrap(df) # convert a rf.DataFrame to a pd.DataFrame
-```
+- `rf.load`
+- `rf.save`
+- `rf.wrap`
+- `rf.unwrap`
 
 
 
