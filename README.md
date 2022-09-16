@@ -1,18 +1,13 @@
-**WARNING: BETA, Under Active Development (v1 API 98% complete), writing all the docstrings, readme, + rest of the unit tests right now**
-
-### redframes 
-
-Name: [re]ctangular[d]ata[frames]
-
-Logo: will be a panda with Red Sunglasses 🐼🟥🕶 😜
+### WIP (BETA)
 
 
 
-### Guiding Philosophy
+[re]ctangular[d]ata[frames]
+
+
 
 - Less googling. 
 - More Pythonic/Ergonomic feel. 
-
 - Does 90% of what pandas can do (never will do 100%)
   - Drop down to pandas (unwrap) when needed
 - Method chaining!
@@ -25,7 +20,7 @@ Logo: will be a panda with Red Sunglasses 🐼🟥🕶 😜
 
 
 
-### Install (beta):
+### Install
 
 ```sh
 pip install git+https://github.com/maxhumber/redframes.git
@@ -37,40 +32,78 @@ pip install git+https://github.com/maxhumber/redframes.git
 
 ```python
 import redframes as rf
+import pandas as pd
 
-raw = rf.load("nfl.csv")
+pdf = pd.DataFrame([
+    [12, "D'Marcus", "Williums", "East", "WR", 253.21],
+    [14, "T.J.", "Juckson", "East", "WR", 239.99],
+    [67, "T'Variuness", "King", "East", "WR", 173.46],
+    [88, "Tyroil", "Smoochie-Wallace", "East", "QB", 367.15],
+    [91, "D'Squarius", "Green, Jr.", "East", "TE", None],
+    [3, "Ibrahim", "Moizoos", "East", "TE", 134.21],
+    [13, "Jackmerius", "Tacktheratrix", "East", "RB", 228.42],
+    [55, "D'Isiah T.", "Billings-Clyde", "East", "WR", 100],
+    [0, "D'Jasper", "Probincrux III", "East", "RB", 180.14],
+    [1, "Leoz Maxwell", "Jilliumz", "East", None, 170.21],
+    [68, "Javaris Jamar", "Javarison-Lamar", "East", "WR", 87.29],
+    [69, "Davoin", "Shower-Handel", None, "TE", 99.76],
+    [77, "Hingle", "McCringleberry", None, "RB", 132.63],
+    [89, "L'Carpetron", "Dookmarriot", "East", "QB", 240.5],
+    [20, "J'Dinkalage", "Morgoone", "East", "K", 118.12],
+    [17, "Xmus Jaxon", "Flaxon-Waxon", "East", "QB", 211.07],
+    [10, "Saggitariutt", "Jefferspin", "West", "QB", 355.8],
+    [11, "D'Glester", "Hardunkichud", "West", "WR", 305.45],
+    [91, "Swirvithan", "L'Goodling-Splatt", "West", "WR", 147.47],
+    [44, "Quatro", "Quatro", "West", "WR", 98.29],
+    [19, "Ozamataz", "Buckshank", "West", "RB", 85.58],
+    [12, "Beezer Twelve", "Washingbeard", "West", "RB", None],
+    [55, "Shakiraquan T.G.I.F.", "Carter", "West", "TE", 148.33],
+    [70, "X-Wing", "@Aliciousness", "West", "RB", 12.00],
+    [36, "Sequester", "Grundelplith M.D.", "West", "WR", 228.26],
+    [4, "Scoish Velociraptor", "Maloish", "West", "TE", None],
+    [5, "T.J. A.J. R.J.", "Backslashinfourth V", "West", "RB", 183.12],
+    [33, "Eeee", "Eeeeeeeee", "West", "QB/RB", 200.01],
+    [88, "Donkey", "Teeth", "West", "TE", 56.2],
+    [88, "Donkey", "Teeth", "West", "TE", 56.2],
+    [88, "Donkey", "Teeth", "West", "TE", 56.2],
+    [15, "Torque (Construction Drilling Noise)", "Lewith", None, "K", 153.70],
+    [6, "(The Player", "Formerly Known As Mousecop)", None, "K", 121.65],
+    [2, "Dan", "Smith", "West", "QB", 367.69]
+], columns=["Number", "First Name", "Last Name", "Team", "Position", "Points"])
 
+# wrap pd.DataFrame into a rf.DataFrame
+rdf = rf.wrap(pdf)
+
+# chain method/verbs together
 df = (
-    raw
+    rdf
     .combine(["First Name", "Last Name"], into="name", sep=" ")
-    .drop(["Rank", "ID"])
     .rename({
-        "Position": "pos", 
+        "Position": "position", 
         "Team": "team", 
         "Points": "points", 
-        "Bye Week": "bye"
     })
-    .select(["name", "pos", "team", "points", "bye"])
+    .select(["name", "team", "position", "points"])
+    .dedupe("name")
+    .fill("team", direction="down")
+    .denix(["position", "points"])
+    .group("position")
+    .rank("points", into="rank", descending=True)
     .filter(lambda row: 
-        (row["pos"].isin(["RB", "WR", "QB"])) &
+        (row["position"].isin(["RB", "WR", "QB"])) &
         (row["points"] >= 100)
     )
-    .sort(["team", "pos", "points"])
-    .group(["team", "pos"])
-    .take(1)
+    .sort(["position", "points"], descending=True)
     .mutate({"pts_per_game": lambda row: round(row["points"] / 17, 1)})
     .drop("points")
     .group("team")
-    .summarize({"mean_pts_per_game": ("pts_per_game", rf.stat.mean)})
-    .sort("mean_pts_per_game", descending=True)
+    .summarize({"mean_ppg": ("pts_per_game", rf.stat.mean)})
 )
-
-rf.unwrap(df)
 ```
 
 
 
-### API:
+### API
 
 <u>Import</u>:
 
@@ -139,20 +172,3 @@ df.spread() # spread columns (oppsite of gather, like pivot_table)
 df.summarize() # summarise statistics (like agg)
 df.take() # take any number of rows (like had, tail)
 ```
-
-
-
-### Questions
-
-- Did you encounter any bugs? Anything unexpected?
-- Any verbs you would want renamed?
-- Any other verbs I'm missing?
-- Any missing properties/magics for DataFrame?
-- Any super super unclear?
-- .rename / Continue pandas format, or do `{"New": "Old"}`?
-- Summarize: continue to use tuple? Or change to dict? `{new: {"old": stat}}`
-- Should I totally get rid of index rows (in jupyter html output display)?
-- Should `save` be a verb/method? Or keep in `io` namespace?
-- Should I add a `log` method (that would print out for shape and column names at each step)?
-- Please try with visualization!
-- Please try with sklearn (I think it works, took a while to gerry-rig it)!!
