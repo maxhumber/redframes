@@ -1,3 +1,10 @@
+### bugs
+
+- preview with # lines/rows 100?
+- spread is bugging out (when strings, not numbers??)
+- None/Nil/NaN, nan
+- decimals??
+
 ### todo
 
 - put all docstrings examples in unit tests

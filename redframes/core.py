@@ -217,7 +217,7 @@ class _CommonMixin(_TakeMixin):
         |     5 |     2 |
 
         ```python
-        df = df.summarize({
+        df.summarize({
             "fcount": ("foo", rf.stat.count),
             "fmean": ("foo", rf.stat.mean),
             "fsum": ("foo", rf.stat.sum),
@@ -555,7 +555,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         Examples:
 
         ```python
-        rf.DataFrame({"foo": [1, 2], "bar": [3, 4], "baz": [5, 6]})
+        df = rf.DataFrame({"foo": [1, 2], "bar": [3, 4], "baz": [5, 6]})
         ```
         |   foo |   bar |   baz |
         |------:|------:|------:|
@@ -809,7 +809,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         + `summarize`:
 
         ```python
-        df4 = df.group("foo").summarize({
+        df.group("foo").summarize({
             "bar_mean": ("bar", rf.stat.mean),
             "baz_min": ("baz", rf.stat.min)
         })
@@ -928,7 +928,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |     3 |
 
         ```python
-        df = df.mutate({
+        df.mutate({
             "bar": lambda row: float(row["foo"]),
             "baz": lambda row: "X" + str(row["bar"] * 2),
             "jaz": lambda _: "Jazz"
@@ -989,7 +989,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         |     1 | False |
 
         ```python
-        df = df.replace({
+        df.replace({
             "foo": {2: 222},
             "bar": {False: 0, True: 1, "A": 2, "B": 3}
         })

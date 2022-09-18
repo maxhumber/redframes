@@ -1,5 +1,3 @@
-##### ⚠️ WARNING: BETA (THIS PAGE UNDER ACTIVE DEVELOPMENT)
-
 
 <div align="center">
   <img alt="redframes" src="images/logo.png" height="200px">
