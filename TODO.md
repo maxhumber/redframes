@@ -7,15 +7,18 @@
 
 ### todo
 
-- put all docstrings examples in unit tests
 - finish readme
-- finish migrating _wip tests over
-- Launch Monday: LI, HN, Twitter
+    - badges
+- push v1 to pypi
+- launch: LI, HN, Twitter, newsletters
 
-### Later
+### later
 
-- add datasets
-- .log method? (with print out like Untitled12)
-- hide and protect!
-- 10 minutes
-- cheatsheet
+- datasets
+- .log (Untitled12)
+- .slice
+- .complete
+- hide/protect/private
+- 10 minutes tutorial
+- cheatsheet (pandas/dplyr/tidyr)
+- stackoverflow blitz

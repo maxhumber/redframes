@@ -28,6 +28,11 @@ def _check_type(argument: Any, against: type | set[type | None]) -> None:
         raise TypeError(f"must be {str_types}")
 
 
+def _check_values(values: Any, type: type) -> None:
+    if not all(isinstance(value, type) for value in values):
+        raise TypeError(f"must be {type.__name__}")
+
+
 def _check_keys(columns: LazyColumns | None, against: Columns | PandasIndex) -> None:
     if isinstance(columns, str):
         columns = [columns]
