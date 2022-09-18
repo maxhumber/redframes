@@ -14,7 +14,7 @@ def index_is_okay(df: rf.DataFrame) -> bool:
     return all([is_unnamed, is_range, is_zero_start, is_one_step])
 
 
-class TestNoBadIndexes(unittest.TestCase):
+class TestIndex(unittest.TestCase):
     def setUp(self):
         self.df = rf.DataFrame(
             {

@@ -3,7 +3,7 @@ import unittest
 import redframes as rf
 
 
-class TestDocsReadme(unittest.TestCase):
+class TestReadme(unittest.TestCase):
     def setUp(self):
         import pandas as pd
 

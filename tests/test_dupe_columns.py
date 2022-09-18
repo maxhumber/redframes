@@ -3,7 +3,7 @@ import unittest
 import redframes as rf
 
 
-class TestNoBadIndexes(unittest.TestCase):
+class TestDupeColumns(unittest.TestCase):
     def setUp(self):
         self.df = rf.DataFrame(
             {

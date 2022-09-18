@@ -3,7 +3,7 @@ import unittest
 import redframes as rf
 
 
-class TestDocstringsCore(unittest.TestCase):
+class TestDocstrings(unittest.TestCase):
     def test_take(self):
         df = rf.DataFrame({"foo": range(10)})
         result1 = df.take(1)

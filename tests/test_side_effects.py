@@ -3,7 +3,7 @@ import unittest
 import redframes as rf
 
 
-class TestNoSideEffects(unittest.TestCase):
+class TestSideEffects(unittest.TestCase):
     def setUp(self):
         self.df = rf.DataFrame(
             {
