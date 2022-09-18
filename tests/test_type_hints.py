@@ -25,7 +25,7 @@ class TestSideEffects(unittest.TestCase):
                 "raz": [1, 2, 3, None, None, None, 9, 9, None, None],
             }
         )
-    
+
     def test_io_load_bad_path(self):
         with self.assertRaisesRegex(TypeError, "must be str"):
             rf.load(1)
@@ -138,11 +138,15 @@ class TestSideEffects(unittest.TestCase):
             self.df.fill("bar", direction="sideways")
 
     def test_fill_bad_constant_and_direction(self):
-        with self.assertRaisesRegex(ValueError, "either direction OR constant must not be None"):
+        with self.assertRaisesRegex(
+            ValueError, "either direction OR constant must not be None"
+        ):
             self.df.fill("bar")
 
     def test_fill_bad_no_constant_nor_direction(self):
-        with self.assertRaisesRegex(ValueError, "either direction OR constant must be None"):
+        with self.assertRaisesRegex(
+            ValueError, "either direction OR constant must be None"
+        ):
             self.df.fill("bar", direction="down", constant="X")
 
     def test_filter_bad_func(self):
@@ -172,7 +176,10 @@ class TestSideEffects(unittest.TestCase):
 
     def test_join_bad_how_argument(self):
         rhs = rf.DataFrame()
-        with self.assertRaisesRegex(ValueError, "method argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"):
+        with self.assertRaisesRegex(
+            ValueError,
+            "method argument is invalid, must be one of {'left', 'right', 'inner', 'full'}",
+        ):
             self.df.join(rhs, on="baz", how="inside")
 
     def test_mutate_bad_over(self):
