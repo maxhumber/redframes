@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="redframes",
-    version="1.0rc1",
+    version="1.0",
     url="https://github.com/maxhumber/redframes",
     description="[re]ctangular[d]ata[frames]",
     long_description=long_description,
