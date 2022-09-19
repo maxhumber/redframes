@@ -1,12 +1,17 @@
 <div align="center">
   <img alt="redframes" src="images/logo.png" height="200px">
+  <br/>
+  <div align="center">
+    <a href="https://pypi.python.org/pypi/redframes"><img alt="PyPI" src="https://img.shields.io/pypi/v/redframes.svg"></a>
+    <a href="https://pandas.pydata.org/"><img alt="Pandas Version" src="https://img.shields.io/badge/pandas-1.4%2B-orange"></a>  
+    <a href="https://pypi.python.org/pypi/redframes"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/redframes.svg"></a>
+  </div>
 </div>
-
 
 
 <b style="color:red;">red</b><b>frames</b> (<b style="color:red;">re</b>ctangular <b style="color:red;">d</b>ata <b>frames</b>) is a data manipulation library for ML and visualization. It is fully interoperable with [pandas](https://github.com/pandas-dev/pandas), compatible with [scikit-learn](https://github.com/scikit-learn/scikit-learn), and works great with [matplotlib](https://github.com/matplotlib/matplotlib)!
 
-<b style="color:red;">red</b><b>frames</b> prioritizes syntax, consistency, and velocity (over flexibility, scope, and performance).
+<b style="color:red;">red</b><b>frames</b> prioritizes syntax over flexibility and scope. And minimizes the *number-of-googles-per-lines-of-code*™ so that you can focus on the work that matters most
 
 "What is <b style="color:red;">red</b><b>frames</b>?" would be the answer to the Jeopardy! clue "A [pythonic](https://stackoverflow.com/a/25011492/3731467) [dplyr](https://github.com/tidyverse/dplyr)"
 
@@ -83,7 +88,7 @@ rf.save(df, "example.csv")
 df = rf.load("example.csv")
 
 # to/from pandas
-pandf = rf.unwrap(df) 
+pandf = rf.unwrap(df)
 reddf = rf.wrap(pandf)
 ```
 
@@ -93,31 +98,31 @@ reddf = rf.wrap(pandf)
 
 There are 23 core "verbs" that make up `rf.DataFrame` objects. Each verb is [pure](https://en.wikipedia.org/wiki/Pure_function), "chain-able", and has an analog in pandas/dplyr (see *docstrings* for more info/examples): 
 
-| <b style="color:red;">red</b><b>frames</b> | pandas                     | dplyr                          |
-| ------------------------------------------ | -------------------------- | ------------------------------ |
-| `.accumulate`                              | `cumsum`                   | `mutate(... = cumsum(...))`    |
-| `.append`                                  | `concat`                   | `bind_rows`                    |
-| `.combine`                                 | `+`                        | `unite`                        |
-| `.dedupe`                                  | `drop_duplicates`          | `distinct`                     |
-| `.denix`                                   | `dropna`                   | `drop_na`                      |
-| `.drop`                                    | `drop(..., axis=1)`        | `select(- ...)`                |
-| `.fill`                                    | `fillna`                   | `fill`, `replace_na`           |
-| `.filter`                                  | `df[df[col] == condition]` | `filter`                       |
-| `.gather`                                  | `melt`                     | `gather`, `pivot_longer`       |
-| `.group`                                   | `groupby`                  | `group_by`                     |
-| `.join`                                    | `merge`                    | `*_join`                       |
-| `.mutate`                                  | `apply`, `astype`          | `mutate`                       |
-| `.rank`                                    | `rank("dense")`            | `dense_rank`                   |
-| `.rename`                                  | `rename`                   | `rename`                       |
-| `.replace`                                 | `replace`                  | `mutate(... = case_when(...))` |
-| `.sample`                                  | `sample(n, frac)`          | `sample_n`, `sample_frac`      |
-| `.select`                                  | `select`                   | `select`                       |
-| `.shuffle`                                 | `sample(frac=1)`           | `sample_frac(..., 1)`          |
-| `.sort`                                    | `sort_values`              | `arrange`                      |
-| `.split`                                   | `df[col].str.split()`      | `separate`                     |
-| `.spread`                                  | `pivot_table`              | `spread`, `pivot_wider`        |
-| `.summarise`                               | `agg`                      | `summarise`                    |
-| `.take`                                    | `head`, `tail`             | `slice_head`, `slice_tail`     |
+|               | pandas                     | dplyr                          |
+| ------------- | -------------------------- | ------------------------------ |
+| `.accumulate` | `cumsum`                   | `mutate(... = cumsum(...))`    |
+| `.append`     | `concat`                   | `bind_rows`                    |
+| `.combine`    | `+`                        | `unite`                        |
+| `.dedupe`     | `drop_duplicates`          | `distinct`                     |
+| `.denix`      | `dropna`                   | `drop_na`                      |
+| `.drop`       | `drop(..., axis=1)`        | `select(- ...)`                |
+| `.fill`       | `fillna`                   | `fill`, `replace_na`           |
+| `.filter`     | `df[df[col] == condition]` | `filter`                       |
+| `.gather`     | `melt`                     | `gather`, `pivot_longer`       |
+| `.group`      | `groupby`                  | `group_by`                     |
+| `.join`       | `merge`                    | `*_join`                       |
+| `.mutate`     | `apply`, `astype`          | `mutate`                       |
+| `.rank`       | `rank("dense")`            | `dense_rank`                   |
+| `.rename`     | `rename`                   | `rename`                       |
+| `.replace`    | `replace`                  | `mutate(... = case_when(...))` |
+| `.sample`     | `sample(n, frac)`          | `sample_n`, `sample_frac`      |
+| `.select`     | `select`                   | `select`                       |
+| `.shuffle`    | `sample(frac=1)`           | `sample_frac(..., 1)`          |
+| `.sort`       | `sort_values`              | `arrange`                      |
+| `.split`      | `df[col].str.split()`      | `separate`                     |
+| `.spread`     | `pivot_table`              | `spread`, `pivot_wider`        |
+| `.summarise`  | `agg`                      | `summarise`                    |
+| `.take`       | `head`, `tail`             | `slice_head`, `slice_tail`     |
 
 
 
@@ -179,5 +184,4 @@ X_new = rf.DataFrame({'age': [22], 'mvp': [1]})
 model.predict(X_new)
 # array([19.])
 ```
-
 

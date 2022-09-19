@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="redframes",
-    version="1.0b2",
+    version="1.0rc1",
     url="https://github.com/maxhumber/redframes",
     description="[re]ctangular[d]ata[frames]",
     long_description=long_description,
@@ -29,4 +29,10 @@ setup(
             "tabulate",
         ]
     },
+    classifiers=[
+        "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+    ],
 )
