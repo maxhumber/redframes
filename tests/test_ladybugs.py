@@ -12,4 +12,4 @@ class TestLadyBugs(unittest.TestCase):
         expected = rf.DataFrame(
             {"bar": ["D", "E", "F"], "baz": ["G", "H", "I"], "foo": ["A", "B", "C"]}
         )
-        self.assertEquals(result, expected)
+        self.assertEqual(result, expected)

@@ -589,7 +589,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         """Fill missing values "down", "up", or with a constant
 
         pandas: `fillna`
-        tidyverse: `fill` / `replace_na`
+        tidyverse: `fill`, `replace_na`
 
         Examples:
 
@@ -973,7 +973,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         """Replace values in specified columns, from "old" to "new"
 
         pandas: `replace`
-        tidyverse: `mutate(... case_when(...))`
+        tidyverse: `mutate(... = case_when(...))`
 
         Example:
 

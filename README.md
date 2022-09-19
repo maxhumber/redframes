@@ -1,22 +1,21 @@
-
 <div align="center">
   <img alt="redframes" src="images/logo.png" height="200px">
-  <p><b>re</b>ctangular <b>d</b>ata <b>frames</b></p>
 </div>
 
 
-**redframes** is a data cleaning, wrangling, and manipulation library for Python. It is fully interoperable with pandas, and compatible with the most common machine learning (`scikit-learn`) and visualization (`matplotlib`) workflows. 
 
-The library prioritizes ease of use, legibility, and "lines-of-code-per-google-search" over scope, flexibility, and performance. These priorities are realized through the liberal embrace of lambda functions, method chaining, and type hints!
+<b style="color:red;">red</b><b>frames</b> (<b style="color:red;">re</b>ctangular <b style="color:red;">d</b>ata <b>frames</b>) is a data manipulation library for ML and visualization. It is fully interoperable with [pandas](https://github.com/pandas-dev/pandas), compatible with [scikit-learn](https://github.com/scikit-learn/scikit-learn), and works great with [matplotlib](https://github.com/matplotlib/matplotlib)!
 
-**redframes** does less, on purpose—so that you can focus on the work that matters most. If/when you do need "more", you can "drop-down" to pandas with `rf.unwrap`!
+<b style="color:red;">red</b><b>frames</b> prioritizes syntax, consistency, and velocity (over flexibility, scope, and performance).
+
+"What is <b style="color:red;">red</b><b>frames</b>?" would be the answer to the Jeopardy! clue "A [pythonic](https://stackoverflow.com/a/25011492/3731467) [dplyr](https://github.com/tidyverse/dplyr)"
 
 
 
 ### Install & Import
 
 ```sh
-pip install git+https://github.com/maxhumber/redframes.git
+pip install redframes
 ```
 
 ```python
@@ -27,92 +26,116 @@ import redframes as rf
 
 ### Quickstart
 
+Copy-and-paste this:
+
 ```python
 import redframes as rf
-import pandas as pd
 
-pdf = pd.DataFrame([
-    [12, "D'Marcus", "Williums", "East", "WR", 253.21],
-    [14, "T.J.", "Juckson", "East", "WR", 239.99],
-    [67, "T'Variuness", "King", "East", "WR", 173.46],
-    [88, "Tyroil", "Smoochie-Wallace", "East", "QB", 367.15],
-    [91, "D'Squarius", "Green, Jr.", "East", "TE", None],
-    [3, "Ibrahim", "Moizoos", "East", "TE", 134.21],
-    [13, "Jackmerius", "Tacktheratrix", "East", "RB", 228.42],
-    [55, "D'Isiah T.", "Billings-Clyde", "East", "WR", 100],
-    [0, "D'Jasper", "Probincrux III", "East", "RB", 180.14],
-    [1, "Leoz Maxwell", "Jilliumz", "East", None, 170.21],
-    [68, "Javaris Jamar", "Javarison-Lamar", "East", "WR", 87.29],
-    [69, "Davoin", "Shower-Handel", None, "TE", 99.76],
-    [77, "Hingle", "McCringleberry", None, "RB", 132.63],
-    [89, "L'Carpetron", "Dookmarriot", "East", "QB", 240.5],
-    [20, "J'Dinkalage", "Morgoone", "East", "K", 118.12],
-    [17, "Xmus Jaxon", "Flaxon-Waxon", "East", "QB", 211.07],
-    [10, "Saggitariutt", "Jefferspin", "West", "QB", 355.8],
-    [11, "D'Glester", "Hardunkichud", "West", "WR", 305.45],
-    [91, "Swirvithan", "L'Goodling-Splatt", "West", "WR", 147.47],
-    [44, "Quatro", "Quatro", "West", "WR", 98.29],
-    [19, "Ozamataz", "Buckshank", "West", "RB", 85.58],
-    [12, "Beezer Twelve", "Washingbeard", "West", "RB", None],
-    [55, "Shakiraquan T.G.I.F.", "Carter", "West", "TE", 148.33],
-    [70, "X-Wing", "@Aliciousness", "West", "RB", 12.00],
-    [36, "Sequester", "Grundelplith M.D.", "West", "WR", 228.26],
-    [4, "Scoish Velociraptor", "Maloish", "West", "TE", None],
-    [5, "T.J. A.J. R.J.", "Backslashinfourth V", "West", "RB", 183.12],
-    [33, "Eeee", "Eeeeeeeee", "West", "QB/RB", 200.01],
-    [88, "Donkey", "Teeth", "West", "TE", 56.2],
-    [88, "Donkey", "Teeth", "West", "TE", 56.2],
-    [88, "Donkey", "Teeth", "West", "TE", 56.2],
-    [15, "Torque (Construction Drilling Noise)", "Lewith", None, "K", 153.70],
-    [6, "(The Player", "Formerly Known As Mousecop)", None, "K", 121.65],
-    [2, "Dan", "Smith", "West", "QB", 367.69]
-], columns=["Number", "First Name", "Last Name", "Team", "Position", "Points"])
+df = rf.DataFrame({
+    "foo": ["A", "A", "B", None, "B", "A", "A", "C"],
+    "bar": [1, 4, 2, -4, 5, 6, 6, -2], 
+    "baz": [0.99, None, 0.25, 0.75, 0.66, 0.47, 0.48, None]
+})
 
-# convert to rf.DataFrame
-rdf = rf.wrap(pdf)
+df["foo"] 
+# ['A', 'A', 'B', None, 'B', 'A', 'A', 'C']
+df.columns 
+# ['foo', 'bar', 'baz']
+df.dimensions
+# {'rows': 8, 'columns': 3}
+df.empty
+# False
+df.types
+# {'foo': str, 'bar': int, 'baz': float}
 
-df = (
-    rdf
-    .combine(["First Name", "Last Name"], into="name", sep=" ")
-    .rename({
-        "Position": "position", 
-        "Team": "team", 
-        "Points": "points", 
-    })
-    .select(["name", "team", "position", "points"])
-    .dedupe("name")
-    .fill("team", direction="down")
-    .denix(["position", "points"])
-    .group("position")
-    .rank("points", into="rank", descending=True)
+(
+    df
+    .mutate({"bar100": lambda row: row["bar"] * 100})
+    .select(["foo", "baz", "bar100"])
     .filter(lambda row: 
-        (row["position"].isin(["RB", "WR", "QB"])) &
-        (row["points"] >= 100)
+        (row["foo"].isin(["A", "B"])) & (row["bar100"] > 0)
     )
-    .sort(["position", "points"], descending=True)
-    .mutate({"pts_per_game": lambda row: round(row["points"] / 17, 1)})
-    .drop("points")
-    .group("team")
-    .summarize({"mean_ppg": ("pts_per_game", rf.stat.mean)})
+    .denix("baz")
+    .group("foo")
+    .summarize({
+        "bar_mean": ("bar100", rf.stat.mean), 
+        "baz_sum": ("baz", rf.stat.sum)
+    })
+    .gather(["bar_mean", "baz_sum"])
+    .sort("value")
 )
 ```
 
 
 
-### matplotlib
+### IO
+
+Save, load, and convert `rf.DataFrame` objects:
 
 ```python
+import redframes as rf
+import pandas as pd
+
+df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"]})
+
+# save/load
+rf.save(df, "example.csv")
+df = rf.load("example.csv")
+
+# to/from pandas
+pandf = rf.unwrap(df) 
+reddf = rf.wrap(pandf)
+```
+
+
+
+### Verbs
+
+There are 23 core "verbs" that make up `rf.DataFrame` objects. Each verb is [pure](https://en.wikipedia.org/wiki/Pure_function), "chain-able", and has an analog in pandas/dplyr (see *docstrings* for more info/examples): 
+
+| <b style="color:red;">red</b><b>frames</b> | pandas                     | dplyr                          |
+| ------------------------------------------ | -------------------------- | ------------------------------ |
+| `.accumulate`                              | `cumsum`                   | `mutate(... = cumsum(...))`    |
+| `.append`                                  | `concat`                   | `bind_rows`                    |
+| `.combine`                                 | `+`                        | `unite`                        |
+| `.dedupe`                                  | `drop_duplicates`          | `distinct`                     |
+| `.denix`                                   | `dropna`                   | `drop_na`                      |
+| `.drop`                                    | `drop(..., axis=1)`        | `select(- ...)`                |
+| `.fill`                                    | `fillna`                   | `fill`, `replace_na`           |
+| `.filter`                                  | `df[df[col] == condition]` | `filter`                       |
+| `.gather`                                  | `melt`                     | `gather`, `pivot_longer`       |
+| `.group`                                   | `groupby`                  | `group_by`                     |
+| `.join`                                    | `merge`                    | `*_join`                       |
+| `.mutate`                                  | `apply`, `astype`          | `mutate`                       |
+| `.rank`                                    | `rank("dense")`            | `dense_rank`                   |
+| `.rename`                                  | `rename`                   | `rename`                       |
+| `.replace`                                 | `replace`                  | `mutate(... = case_when(...))` |
+| `.sample`                                  | `sample(n, frac)`          | `sample_n`, `sample_frac`      |
+| `.select`                                  | `select`                   | `select`                       |
+| `.shuffle`                                 | `sample(frac=1)`           | `sample_frac(..., 1)`          |
+| `.sort`                                    | `sort_values`              | `arrange`                      |
+| `.split`                                   | `df[col].str.split()`      | `separate`                     |
+| `.spread`                                  | `pivot_table`              | `spread`, `pivot_wider`        |
+| `.summarise`                               | `agg`                      | `summarise`                    |
+| `.take`                                    | `head`, `tail`             | `slice_head`, `slice_tail`     |
+
+
+
+### matplotlib
+
+`rf.DataFrame` objects integrate seamlessly with `matplotlib`:
+
+```python
+import redframes as rf
 import matplotlib.pyplot as plt
 
+df = rf.DataFrame({
+    'position': ['TE', 'K', 'RB', 'WR', 'QB'],
+    'avp': [116.98, 131.15, 180, 222.22, 272.91]
+})
+
 df = (
-    rdf # from above
-    .rename({"Position": "position"})
-    .filter(lambda row: row["position"] != "QB/RB")
-    .group("position")
-    .take(3)
-    .group("position")
-    .summarize({"avp": ("Points", rf.stat.mean)})
-    .sort("avp")
+    df
     .mutate({"color": lambda row: row["position"] in ["WR", "RB"]})
     .replace({"color": {False: "orange", True: "red"}})
 )
@@ -126,9 +149,12 @@ plt.barh(df["position"], df["avp"], color=df["color"]);
 
 ### scikit-learn
 
+`rf.DataFrame` objects are fully compatible with `sklearn` functions, estimators, and transformers:
+
 ```python
-from sklearn.linear_model import LinearRegression
+import redframes as rf
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
 
 df = rf.DataFrame({
     "touchdowns": [15, 19, 5, 7, 9, 10, 12, 22, 16, 10],
@@ -155,73 +181,3 @@ model.predict(X_new)
 ```
 
 
-
----
-
-⚠️ WIP BELOW HERE ⚠️ 
-
-
-
-### Verbs
-
-There are 23 core verbs that can be actioned against that `rf.DataFrame` objects come 
-
-
-
-### IO
-
-- `rf.load`
-- `rf.save`
-- `rf.wrap`
-- `rf.unwrap`
-
-
-
-<u>Init</u>:
-
-```python
-# (only) with dict
-df = rf.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-```
-
-
-
-<u>Properties & "Magics"</u>:
-
-```python
-df["foo"] # returns column as Python List of Values
-df.columns # returns Python List of Columns
-df.dimensions # returns {"rows": 10, "columns": 3}
-df.empty # returns bool
-df.types # returns {"foo": str, "bar": float}
-```
-
-
-
-<u>Verbs (see /docs/docs.ipynb for now...!)</u>: (Will properly document...)
-
-```python
-df.accumulate() # cumsum
-df.append() # append rows (like pd.concat)
-df.combine() # combine multiple columns into one (opposite of split)
-df.dedupe() # drop duplicates (like df.drop_duplicates)
-df.denix() # drop nil/null/na/none (like df.dropna)
-df.drop() # drop select columns
-df.fill() # fill up/down or with a constant (like df.fillna)
-df.filter() # filter with a lambda function
-df.gather() # gather (opposite of spread, like pd.melt)
-df.group() # like df.groupby (works with: take, accumulate, rank, summarize)
-df.join() # join two dataframes together (like pd.merge)
-df.mutate() # mutate a new column (like df.apply)
-df.rank() # rank column (dense)
-df.rename() # rename columns
-df.replace() # replace values in a column
-df.sample() # sample a number of rows
-df.select() # select columns
-df.shuffle() # shuffle rows
-df.sort() # sort rows
-df.split() # split column (oppsite of combine)
-df.spread() # spread columns (oppsite of gather, like pivot_table)
-df.summarize() # summarise statistics (like agg)
-df.take() # take any number of rows (like had, tail)
-```
