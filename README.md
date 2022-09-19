@@ -185,4 +185,3 @@ X_new = rf.DataFrame({'age': [22], 'mvp': [1]})
 model.predict(X_new)
 # array([19.])
 ```
-
