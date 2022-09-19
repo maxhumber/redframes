@@ -53,7 +53,7 @@ class TestReadme(unittest.TestCase):
             ],
             columns=["Number", "First Name", "Last Name", "Team", "Position", "Points"],
         )
-        rdf = rf.wrap(pdf)
+        rdf = rf.convert(pdf)
 
         self.pdf = pdf
         self.rdf = rdf
