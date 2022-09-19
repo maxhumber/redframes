@@ -47,8 +47,8 @@ class TestTypeHints(unittest.TestCase):
             rf.save(self.df, "example.json")
 
     def test_io_unwrap_bad_object(self):
-            with self.assertRaisesRegex(TypeError, "must be DataFrame"):
-                rf.unwrap(1)
+        with self.assertRaisesRegex(TypeError, "must be DataFrame"):
+            rf.unwrap(1)
 
     def test_io_wrap_bad_object(self):
         with self.assertRaisesRegex(TypeError, "must be DataFrame"):

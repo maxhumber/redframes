@@ -1,10 +1,3 @@
-### bugs
-
-- preview with # lines/rows 100?
-- spread is bugging out (when strings, not numbers??)
-- None/Nil/NaN, nan
-- decimals??
-
 ### todo
 
 - finish readme

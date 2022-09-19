@@ -1,3 +1,3 @@
 from . import stat
 from .core import DataFrame
-from .io import load, save, wrap, unwrap
+from .io import load, save, unwrap, wrap

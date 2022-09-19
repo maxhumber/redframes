@@ -16,7 +16,7 @@ def spread(df: PandasDataFrame, column: Column, using: Column) -> PandasDataFram
         temp = uuid.uuid4().hex
         df[temp] = df.groupby(column).cumcount()
     index = [col for col in df.columns if col not in [column, using]]
-    df = pd.pivot_table(df, index=index, columns=[column], values=[using])  # type: ignore
+    df = pd.pivot_table(df, index=index, columns=[column], values=[using], aggfunc="first")  # type: ignore
     df.columns = [col for col in df.columns.get_level_values(1)]  # type: ignore
     df = df.reset_index().rename_axis(None, axis=0)
     if original_shape == 2:
