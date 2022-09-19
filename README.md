@@ -6,14 +6,15 @@
     <a href="https://pandas.pydata.org/"><img alt="Pandas Version" src="https://img.shields.io/badge/pandas-1.4%2B-orange"></a>  
     <a href="https://pypi.python.org/pypi/redframes"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/redframes.svg"></a>
   </div>
+  <br/>
 </div>
 
 
 <b style="color:red;">red</b><b>frames</b> (<b style="color:red;">re</b>ctangular <b style="color:red;">d</b>ata <b>frames</b>) is a data manipulation library for ML and visualization. It is fully interoperable with [pandas](https://github.com/pandas-dev/pandas), compatible with [scikit-learn](https://github.com/scikit-learn/scikit-learn), and works great with [matplotlib](https://github.com/matplotlib/matplotlib)!
 
-<b style="color:red;">red</b><b>frames</b> prioritizes syntax over flexibility and scope. And minimizes the *number-of-googles-per-lines-of-code*™ so that you can focus on the work that matters most
+<b style="color:red;">red</b><b>frames</b> prioritizes syntax over flexibility and scope. And minimizes the *number-of-googles-per-lines-of-code*™ so that you can focus on the work that matters most.
 
-"What is <b style="color:red;">red</b><b>frames</b>?" would be the answer to the Jeopardy! clue "A [pythonic](https://stackoverflow.com/a/25011492/3731467) [dplyr](https://github.com/tidyverse/dplyr)"
+"What is <b style="color:red;">red</b><b>frames</b>?" would be the answer to the Jeopardy! clue "A [pythonic](https://stackoverflow.com/a/25011492/3731467) [dplyr](https://github.com/tidyverse/dplyr)".
 
 
 
