@@ -46,9 +46,17 @@ class TestTypeHints(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "must end in .csv"):
             rf.save(self.df, "example.json")
 
-    def test_io_convert_bad_object(self):
-        with self.assertRaisesRegex(TypeError, "must be rf.DataFrame | pd.DataFrame"):
-            rf.convert(1)
+    def test_io_unwrap_bad_object(self):
+            with self.assertRaisesRegex(TypeError, "must be DataFrame"):
+                rf.unwrap(1)
+
+    def test_io_wrap_bad_object(self):
+        with self.assertRaisesRegex(TypeError, "must be DataFrame"):
+            rf.unwrap(1)
+
+    # def test_io_convert_bad_object(self):
+    #     with self.assertRaisesRegex(TypeError, "must be rf.DataFrame | pd.DataFrame"):
+    #         rf.convert(1)
 
     def test_take_bad_rows(self):
         with self.assertRaisesRegex(TypeError, "must be int"):

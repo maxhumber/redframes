@@ -6,11 +6,29 @@ from ..types import PandasDataFrame
 
 
 def unwrap(rdf: DataFrame) -> PandasDataFrame:
+    """Convert a rf.DataFrame into a pd.DataFrame (opposite of `wrap`)
+
+    Example:
+
+    ```python
+    rdf = rf.DataFrame({"foo": range(10)})
+    pdf = rf.unwrap(rdf)
+    ```
+    """
     _check_type(rdf, DataFrame)
     return rdf._data.copy()
 
 
 def wrap(pdf: PandasDataFrame) -> DataFrame:
+    """Convert a pd.DataFrame into a rf.DataFrame (opposite of `unwrap`)
+
+    Example:
+
+    ```python
+    pdf = pd.DataFrame({"foo": range(10)})
+    rdf = rf.wrap(pdf)
+    ```
+    """
     _check_type(pdf, PandasDataFrame)
     _check_index(pdf)
     _check_columns(pdf)

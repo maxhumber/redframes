@@ -34,21 +34,49 @@ class TestIO(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "must be DataFrame"):
             rf.save(1, "example.json")
 
-    def test_convert_bad_type(self):
-        with self.assertRaisesRegex(TypeError, "must be rf.DataFrame | pd.DataFrame"):
-            rf.convert(1)
+    def test_unwrap_bad_type(self):
+        with self.assertRaisesRegex(TypeError, "must be DataFrame"):
+            rf.unwrap(1)
 
-    def test_convert_unwrap_no_side_effect(self):
-        pdf = rf.convert(self.df)
+    def test_wrap_bad_type(self):
+        with self.assertRaisesRegex(TypeError, "must be DataFrame"):
+            rf.wrap(1)
+
+    def test_unwrap_wrong_direction(self):
+        with self.assertRaisesRegex(TypeError, "must be DataFrame"):
+            rf.unwrap(self.pdf)
+
+    def test_wrap_wrong_direction(self):
+        with self.assertRaisesRegex(TypeError, "must be DataFrame"):
+            rf.wrap(self.df)
+
+    def test_unwrap_no_side_effect(self):
+        pdf = rf.unwrap(self.df)
         pdf.columns = ["oof", "rab"]
         expected = rf.DataFrame({"foo": [1, 2], "bar": [3, 4]})
         self.assertEqual(self.df, expected)
 
-    def test_convert_wrap_no_side_effect(self):
-        df = rf.convert(self.pdf)
+    def test_wrap_no_side_effect(self):
+        df = rf.wrap(self.pdf)
         df = df.rename({"foo": "oof"})
         expected = pd.DataFrame({"foo": [1, 2], "bar": [3, 4]})
         self.assertTrue(self.pdf.equals(expected))
+
+    # def test_convert_bad_type(self):
+    #     with self.assertRaisesRegex(TypeError, "must be rf.DataFrame | pd.DataFrame"):
+    #         rf.convert(1)
+
+    # def test_convert_unwrap_no_side_effect(self):
+    #     pdf = rf.convert(self.df)
+    #     pdf.columns = ["oof", "rab"]
+    #     expected = rf.DataFrame({"foo": [1, 2], "bar": [3, 4]})
+    #     self.assertEqual(self.df, expected)
+
+    # def test_convert_wrap_no_side_effect(self):
+    #     df = rf.convert(self.pdf)
+    #     df = df.rename({"foo": "oof"})
+    #     expected = pd.DataFrame({"foo": [1, 2], "bar": [3, 4]})
+    #     self.assertTrue(self.pdf.equals(expected))
 
     def test_round_trip_save_load(self):
         rf.save(self.df, self.path)
@@ -56,8 +84,14 @@ class TestIO(unittest.TestCase):
         expected = rf.DataFrame({"foo": [1, 2], "bar": [3, 4]})
         self.assertEqual(result, expected)
 
-    def test_round_trip_convert(self):
-        pdf = rf.convert(self.df)
-        result = rf.convert(pdf)
+    # def test_round_trip_convert(self):
+    #     pdf = rf.convert(self.df)
+    #     result = rf.convert(pdf)
+    #     expected = rf.DataFrame({"foo": [1, 2], "bar": [3, 4]})
+    #     self.assertEqual(result, expected)
+
+    def test_round_trip_unwrap_wrap(self):
+        pdf = rf.unwrap(self.df)
+        result = rf.wrap(pdf)
         expected = rf.DataFrame({"foo": [1, 2], "bar": [3, 4]})
         self.assertEqual(result, expected)
