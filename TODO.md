@@ -1,5 +1,12 @@
 ### todo
 
+- datachange interchange format (`__dataframe__`)
+- tally verb?
+- more research into `.assign`
+- rollup (alias for summary)
+
+### later 
+
 - datasets
 - .log (Untitled12)
 - .slice
