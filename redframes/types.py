@@ -20,6 +20,7 @@ Direction = Literal["up", "down"]
 Func = Callable[..., Any]
 Join = Literal["left", "right", "inner", "full"]
 NumpyArray = np.ndarray
+NumpyType = np.dtype
 PandasDataFrame = pd.DataFrame
 PandasGroupedFrame = pg.DataFrameGroupBy
 PandasIndex = pd.Index

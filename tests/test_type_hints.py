@@ -78,13 +78,13 @@ class TestTypeHints(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "must be bool"):
             self.df.rank("bar", "bar", descending="bar")
 
-    def test_summarize_bad_over(self):
+    def test_rollup_bad_over(self):
         with self.assertRaisesRegex(TypeError, "must be dict"):
-            self.df.summarize(1)
+            self.df.rollup(1)
 
-    def test_summarize_bad_over_values(self):
+    def test_rollup_bad_over_values(self):
         with self.assertRaises(TypeError):
-            self.df.summarize({"bar_mean": 1})
+            self.df.rollup({"bar_mean": 1})
 
     def test_init_bad_data(self):
         with self.assertRaisesRegex(TypeError, "must be dict | None"):

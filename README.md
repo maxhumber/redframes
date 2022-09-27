@@ -4,7 +4,7 @@
   <div align="center">
     <a href="https://pypi.python.org/pypi/redframes"><img alt="PyPI" src="https://img.shields.io/pypi/v/redframes.svg"></a>
     <a href="https://pypi.python.org/pypi/redframes"><img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/redframes.svg"></a>
-    <a href="https://pandas.pydata.org/"><img alt="Pandas Version" src="https://img.shields.io/badge/pandas-1.4%2B-blue"></a>  
+    <a href="https://pandas.pydata.org/"><img alt="Pandas Version" src="https://img.shields.io/badge/pandas-1.5%2B-blue"></a>  
   </div>
   <br/>
 </div>
@@ -52,7 +52,7 @@ df.dimensions
 df.empty
 # False
 df.types
-# {'foo': str, 'bar': int, 'baz': float}
+# {'foo': object, 'bar': int, 'baz': float}
 
 (
     df
@@ -63,7 +63,7 @@ df.types
     )
     .denix("baz")
     .group("foo")
-    .summarize({
+    .rollup({
         "bar_mean": ("bar100", rf.stat.mean), 
         "baz_sum": ("baz", rf.stat.sum)
     })
@@ -116,13 +116,13 @@ There are 23 core "verbs" that make up `rf.DataFrame` objects. Each verb is [pur
 | `.rank`                                           | `rank("dense")`            | `dense_rank`                   |
 | `.rename`                                         | `rename`                   | `rename`                       |
 | `.replace`                                        | `replace`                  | `mutate(... = case_when(...))` |
+| `.rollup`                                         | `agg`                      | `summarize`                    |
 | `.sample`                                         | `sample(n, frac)`          | `sample_n`, `sample_frac`      |
 | `.select`                                         | `select`                   | `select`                       |
 | `.shuffle`                                        | `sample(frac=1)`           | `sample_frac(..., 1)`          |
 | `.sort`                                           | `sort_values`              | `arrange`                      |
 | `.split`                                          | `df[col].str.split()`      | `separate`                     |
 | `.spread`                                         | `pivot_table`              | `spread`, `pivot_wider`        |
-| `.summarise`                                      | `agg`                      | `summarise`                    |
 | `.take`                                           | `head`, `tail`             | `slice_head`, `slice_tail`     |
 
 

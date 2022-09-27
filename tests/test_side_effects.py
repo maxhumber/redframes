@@ -86,7 +86,7 @@ class TestSideEffects(unittest.TestCase):
         self.assertEqual(self.df, self.expected)
 
     def test_group(self):
-        _ = self.df.group("baz").summarize({"foo": ("foo", rf.stat.mean)})
+        _ = self.df.group("baz").rollup({"foo": ("foo", rf.stat.mean)})
         self.assertEqual(self.df, self.expected)
 
     def test_join(self):
@@ -114,6 +114,10 @@ class TestSideEffects(unittest.TestCase):
         _ = self.df.replace({"baz": {"B": "Banana"}})
         self.assertEqual(self.df, self.expected)
 
+    def test_rollup(self):
+        _ = self.df.rollup({"bar_mean": ("bar", rf.stat.mean)})
+        self.assertEqual(self.df, self.expected)
+
     def test_sample(self):
         _ = self.df.sample(5)
         self.assertEqual(self.df, self.expected)
@@ -136,10 +140,6 @@ class TestSideEffects(unittest.TestCase):
 
     def test_spread(self):
         _ = self.df.denix("baz").select(["baz", "foo"]).spread("baz", "foo")
-        self.assertEqual(self.df, self.expected)
-
-    def test_summarize(self):
-        _ = self.df.summarize({"bar_mean": ("bar", rf.stat.mean)})
         self.assertEqual(self.df, self.expected)
 
     def test_take(self):

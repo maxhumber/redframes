@@ -27,9 +27,9 @@ class TestDocstrings(unittest.TestCase):
         )
         self.assertEqual(result, expected)
 
-    def test_summarize(self):
+    def test_rollup(self):
         df = rf.DataFrame({"foo": [1, 2, 3, 4, 5], "bar": [99, 100, 1, -5, 2]})
-        result = df.summarize(
+        result = df.rollup(
             {
                 "fcount": ("foo", rf.stat.count),
                 "fmean": ("foo", rf.stat.mean),
@@ -97,7 +97,7 @@ class TestDocstrings(unittest.TestCase):
     def test_types(self):
         df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"], "baz": [True, False]})
         result = df.types
-        expected = {"foo": int, "bar": str, "baz": bool}
+        expected = {"foo": int, "bar": object, "baz": bool}
         self.assertEqual(result, expected)
 
     def test_append(self):
@@ -221,7 +221,7 @@ class TestDocstrings(unittest.TestCase):
         )
         result1 = df.group("foo").accumulate("bar", into="bar_cumsum")
         result2 = df.group("foo").rank("baz", into="baz_rank", descending=True)
-        result3 = df.group("foo").summarize(
+        result3 = df.group("foo").rollup(
             {"bar_mean": ("bar", rf.stat.mean), "baz_min": ("baz", rf.stat.min)}
         )
         result4 = df.group("foo").take(1)

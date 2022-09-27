@@ -74,6 +74,14 @@ class TestDupeColumns(unittest.TestCase):
         with self.assertRaisesRegex(KeyError, "columns must be unique"):
             self.df.rename({"foo": "oof", "bar": "oof"})
 
+    def test_rollup_group_existing_column(self):
+        with self.assertRaisesRegex(ValueError, "cannot insert *"):
+            self.df.group("baz").rollup({"baz": ("foo", rf.stat.max)})
+
+    def test_select_duplicate_keys(self):
+        with self.assertRaisesRegex(KeyError, "column keys must be unique"):
+            self.df.select(["foo", "foo"])
+
     def test_split_overwrite_into_one(self):
         self.df.split("jaz", into=["jaz", "paz"], sep="::")
         self.assertTrue(True)
@@ -89,7 +97,3 @@ class TestDupeColumns(unittest.TestCase):
     def test_spread_duplicated_column_names(self):
         with self.assertRaisesRegex(KeyError, "column and using must be unique"):
             self.df.gather().spread("variable", "variable")
-
-    def test_summarize_group_existing_column(self):
-        with self.assertRaisesRegex(ValueError, "cannot insert *"):
-            self.df.group("baz").summarize({"baz": ("foo", rf.stat.max)})

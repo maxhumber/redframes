@@ -13,3 +13,9 @@ class TestLadyBugs(unittest.TestCase):
             {"bar": ["D", "E", "F"], "baz": ["G", "H", "I"], "foo": ["A", "B", "C"]}
         )
         self.assertEqual(result, expected)
+
+    def test_types_mixed_column(self):
+        df = rf.DataFrame({"foo": [1, None, 2.0, "3"]})
+        result = df.types
+        expected = {"foo": object}
+        self.assertEqual(result, expected)

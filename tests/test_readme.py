@@ -32,7 +32,7 @@ class TestReadme(unittest.TestCase):
         df.empty
         # False
         df.types
-        # {'foo': str, 'bar': int, 'baz': float}
+        # {'foo': object, 'bar': int, 'baz': float}
 
         (
             df.mutate({"bar100": lambda row: row["bar"] * 100})
@@ -40,7 +40,7 @@ class TestReadme(unittest.TestCase):
             .filter(lambda row: (row["foo"].isin(["A", "B"])) & (row["bar100"] > 0))
             .denix("baz")
             .group("foo")
-            .summarize(
+            .rollup(
                 {"bar_mean": ("bar100", rf.stat.mean), "baz_sum": ("baz", rf.stat.sum)}
             )
             .gather(["bar_mean", "baz_sum"])
@@ -50,8 +50,9 @@ class TestReadme(unittest.TestCase):
         self.assertTrue(True)
 
     def test_io(self):
-        import redframes as rf
         import pandas as pd
+
+        import redframes as rf
 
         df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"]})
 
@@ -66,8 +67,9 @@ class TestReadme(unittest.TestCase):
         self.assertTrue(True)
 
     def test_matplotlib(self):
-        import redframes as rf
         import matplotlib.pyplot as plt
+
+        import redframes as rf
 
         df = rf.DataFrame(
             {
@@ -80,14 +82,15 @@ class TestReadme(unittest.TestCase):
             {"color": {False: "orange", True: "red"}}
         )
 
-        plt.barh(df["position"], df["avp"], color=df["color"]);
+        plt.barh(df["position"], df["avp"], color=df["color"])
 
         self.assertTrue(True)
 
     def test_sklearn(self):
-        import redframes as rf
         from sklearn.linear_model import LinearRegression
         from sklearn.model_selection import train_test_split
+
+        import redframes as rf
 
         df = rf.DataFrame(
             {

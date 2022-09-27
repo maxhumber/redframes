@@ -13,11 +13,11 @@ from .mutate import mutate
 from .rank import rank
 from .rename import rename
 from .replace import replace
+from .rollup import rollup
 from .sample import sample
 from .select import select
 from .shuffle import shuffle
 from .sort import sort
 from .split import split
 from .spread import spread
-from .summarize import summarize
 from .take import take

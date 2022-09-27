@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import datetime
 import pprint
+import warnings
 
 from .checks import _check_type
 from .types import (
@@ -14,6 +16,7 @@ from .types import (
     NewColumn,
     NewValue,
     NumpyArray,
+    NumpyType,
     OldColumn,
     OldValue,
     PandasDataFrame,
@@ -37,13 +40,13 @@ from .verbs import (
     rank,
     rename,
     replace,
+    rollup,
     sample,
     select,
     shuffle,
     sort,
     split,
     spread,
-    summarize,
     take,
 )
 
@@ -105,12 +108,15 @@ class _TakeMixin:
         return _wrap(take(self._data, rows, **kwargs))
 
 
-class _SKLearnMixin(_TakeMixin):
+class _InterchangeMixin(_TakeMixin):
     def __init__(self, data: PandasDataFrame) -> None:
         self._data = data
 
     def __array__(self) -> NumpyArray:
         return self._data.__array__()
+
+    def __dataframe__(self, nan_as_null=False, allow_copy=True) -> "PandasDataFrameXchg":  # type: ignore
+        return self._data.__dataframe__(nan_as_null, allow_copy)
 
     def __len__(self) -> int:
         return self._data.__len__()
@@ -197,7 +203,7 @@ class _CommonMixin(_TakeMixin):
         """
         return _wrap(rank(self._data, column, into, descending))
 
-    def summarize(self, over: dict[Column, tuple[Column, Func]]) -> DataFrame:
+    def rollup(self, over: dict[Column, tuple[Column, Func]]) -> DataFrame:
         """Apply summary functions/statistics to create new columns over specified columns
 
         pandas: `agg`
@@ -217,7 +223,7 @@ class _CommonMixin(_TakeMixin):
         |     5 |     2 |
 
         ```python
-        df.summarize({
+        df.rollup({
             "fcount": ("foo", rf.stat.count),
             "fmean": ("foo", rf.stat.mean),
             "fsum": ("foo", rf.stat.sum),
@@ -231,17 +237,23 @@ class _CommonMixin(_TakeMixin):
         |---------:|--------:|-------:|-------:|----------:|-------:|-------:|
         |        5 |       3 |     15 |      5 |         2 |     -5 |  54.93 |
         """
-        return _wrap(summarize(self._data, over))
+        return _wrap(rollup(self._data, over))
+
+    def summarize(self, over: dict[Column, tuple[Column, Func]]) -> DataFrame:
+        warnings.warn(
+            "Marked for removal, please use `rollup` instead", DeprecationWarning
+        )
+        return self.rollup(over)
 
 
 class GroupedFrame(_CommonMixin):
-    """GroupedFrame compatible with: `accumulate`, `rank`, `summarize`, `take`"""
+    """GroupedFrame compatible with: `accumulate`, `rank`, `rollup`, `take`"""
 
     def __repr__(self) -> str:
         return "GroupedFrame()"
 
 
-class DataFrame(_CommonMixin, _SKLearnMixin):
+class DataFrame(_CommonMixin, _InterchangeMixin):
     def __init__(self, data: dict[Column, Values] | None = None) -> None:
         """Initialize a DataFrame with a standard dictionary
 
@@ -369,12 +381,23 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         ```python
         df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"], "baz": [True, False]})
         df.types
-        # {'foo': int, 'bar': str, 'baz': bool}
+        # {'foo': int, 'bar': object, 'baz': bool}
         ```
         """
-        data = self._data.astype("object")
-        types = {str(col): type(data.loc[0, col]) for col in data}  # type: ignore
-        return types
+        numpy_types = {
+            NumpyType("O"): object,
+            NumpyType("int64"): int,
+            NumpyType("float64"): float,
+            NumpyType("bool"): bool,
+            NumpyType("datetime64"): datetime.datetime,
+        }
+        raw_types = dict(self._data.dtypes)
+        clean_types = {}
+        for column in self.columns:
+            current = raw_types[column]
+            clean = numpy_types.get(current, current)  # type: ignore
+            clean_types[column] = clean
+        return clean_types
 
     def append(self, other: DataFrame) -> DataFrame:
         """Concatenate another DataFrame to the bottom
@@ -762,7 +785,7 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
     def group(self, by: LazyColumns) -> GroupedFrame:
         """Create a GroupedFrame overwhich split-apply-combine operations can be applied
 
-        Compatible verbs: `accumulate`, `rank`, `summarize`, `take`
+        Compatible verbs: `accumulate`, `rank`, `rollup`, `take`
 
         pandas: `groupby`
         tidyverse: `group_by`
@@ -806,10 +829,10 @@ class DataFrame(_CommonMixin, _SKLearnMixin):
         | B     |     4 |     5 |          2 |
         | B     |     5 |     6 |          1 |
 
-        + `summarize`:
+        + `rollup`:
 
         ```python
-        df.group("foo").summarize({
+        df.group("foo").rollup({
             "bar_mean": ("bar", rf.stat.mean),
             "baz_min": ("baz", rf.stat.min)
         })

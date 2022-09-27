@@ -75,7 +75,7 @@ class TestIndex(unittest.TestCase):
         self.assertTrue(index_is_okay(new))
 
     def test_group(self):
-        new = self.df.group("baz").summarize({"foo": ("foo", rf.stat.mean)})
+        new = self.df.group("baz").rollup({"foo": ("foo", rf.stat.mean)})
         self.assertTrue(index_is_okay(new))
 
     def test_join(self):
@@ -97,6 +97,10 @@ class TestIndex(unittest.TestCase):
 
     def test_replace(self):
         new = self.df.replace({"baz": {"B": "Banana"}})
+        self.assertTrue(index_is_okay(new))
+
+    def test_rollup(self):
+        new = self.df.rollup({"bar_mean": ("bar", rf.stat.mean)})
         self.assertTrue(index_is_okay(new))
 
     def test_sample(self):
@@ -121,10 +125,6 @@ class TestIndex(unittest.TestCase):
 
     def test_spread(self):
         new = self.df.denix("baz").select(["baz", "foo"]).spread("baz", "foo")
-        self.assertTrue(index_is_okay(new))
-
-    def test_summarize(self):
-        new = self.df.summarize({"bar_mean": ("bar", rf.stat.mean)})
         self.assertTrue(index_is_okay(new))
 
     def test_take(self):

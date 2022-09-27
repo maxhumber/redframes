@@ -3,9 +3,11 @@ from setuptools import find_packages, setup
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
+exec(open("mypackage/version.py").read())
+
 setup(
     name="redframes",
-    version="1.0",
+    version=__version__,  # type: ignore
     url="https://github.com/maxhumber/redframes",
     description="[re]ctangular[d]ata[frames]",
     long_description=long_description,
@@ -15,7 +17,7 @@ setup(
     license="BSD 2",
     packages=find_packages(),
     python_requires=">=3.9",
-    install_requires=["pandas>=1.4"],
+    install_requires=["pandas>=1.5"],
     extras_require={
         "test": [
             "matplotlib",
@@ -32,7 +34,7 @@ setup(
             "pyright",
             "scikit-learn",
             "tabulate",
-        ]
+        ],
     },
     classifiers=[
         "Intended Audience :: Developers",

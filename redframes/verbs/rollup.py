@@ -4,7 +4,7 @@ from ..checks import _check_type
 from ..types import Column, Func, PandasDataFrame, PandasGroupedFrame
 
 
-def summarize(
+def rollup(
     df: PandasDataFrame | PandasGroupedFrame,
     over: dict[Column, tuple[Column, Func]],
 ) -> PandasDataFrame:
