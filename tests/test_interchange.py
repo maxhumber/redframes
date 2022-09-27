@@ -10,4 +10,4 @@ class TestInterchange(unittest.TestCase):
         rdf = rf.DataFrame({"foo": [1, 2], "bar": [3, 4]})
         result = pd.api.interchange.from_dataframe(rdf)
         expected = pd.DataFrame({"foo": [1, 2], "bar": [3, 4]})
-        self.assertEqual(result, expected)
+        self.assertTrue(result.equals(expected))
