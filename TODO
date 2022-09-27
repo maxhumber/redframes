@@ -1,10 +1,4 @@
-### todo
-
-- datachange interchange format (`__dataframe__`)
-- more research into `.assign`
-
-### later 
-
+- more research into `.assign` mutate(..., vectorized=True)?
 - datasets
 - .log (Untitled12)
 - .slice

@@ -1,0 +1,9 @@
+- 1.1
+    - BUMP: Pandas 1.5+
+    - NEW: `__dataframe__` interchange format support
+    - NEW: `rollup` verb (fka `summarize`)
+    - NEW: `__version__`
+    - BUGFIX: `select` verb now requires unique column keys
+    - BUGFIX: `types` property is now more robust to mixed types within a column
+    - DEPRECATED: `summarize` (please use `rollup`!)
+
