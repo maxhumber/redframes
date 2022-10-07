@@ -28,6 +28,7 @@ from .verbs import (
     accumulate,
     append,
     combine,
+    cross,
     dedupe,
     denix,
     drop,
@@ -240,9 +241,8 @@ class _CommonMixin(_TakeMixin):
         return _wrap(rollup(self._data, over))
 
     def summarize(self, over: dict[Column, tuple[Column, Func]]) -> DataFrame:
-        warnings.warn(
-            "Marked for removal, please use `rollup` instead", DeprecationWarning
-        )
+        message = "Marked for removal, please use `rollup` instead"
+        warnings.warn(message, FutureWarning)
         return self.rollup(over)
 
 
@@ -288,7 +288,8 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         # True
         ```
         """
-        _check_type(rhs, DataFrame)
+        if not isinstance(rhs, DataFrame):
+            return False
         return self._data.equals(rhs._data)
 
     def __getitem__(self, key: Column) -> Values:
@@ -371,6 +372,26 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         ```
         """
         return self._data.empty
+
+    @property
+    def memory(self) -> str: 
+        """Interrogate DataFrame (deep) memory usage
+        
+        Example:
+
+        ```python
+        df = rf.DataFrame({"foo": [1, 2, 3], "bar": ["A", "B", "C"]})
+        df.memory
+        # '326B'
+        ```
+        """
+        size = self._data.memory_usage(deep=True).sum()
+        power_labels = {40: "TB", 30: "GB", 20: "MB", 10: "KB"}
+        for power, label in power_labels.items():
+            if size >= (2**power):
+                approx_size = size // 2**power
+                return f"{approx_size} {label}"
+        return f"{size} B"
 
     @property
     def types(self) -> dict[Column, type]:
@@ -463,6 +484,65 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         | B::2  |
         """
         return _wrap(combine(self._data, columns, into, sep, drop))
+
+    def cross(self, rhs: DataFrame | None = None, postfix: tuple[str, str] = ("_lhs", "_rhs")) -> DataFrame: 
+        """Cross join another DataFrame (or the DataFrame itself)
+
+        pandas: `merge(..., how="cross")`
+        tidyverse: `full_join(..., by = character())`
+
+        Examples:
+
+        ```python
+        df = rf.DataFrame({"foo": ["a", "b", "c"], "bar": [1, 2, 3]})
+        ```
+        | foo   |   bar |
+        |:------|------:|
+        | a     |     1 |
+        | b     |     2 |
+        | c     |     3 |
+
+        Self:
+
+        ```python
+        df.cross()
+        ```
+
+        | foo_lhs   |   bar_lhs | foo_rhs   |   bar_rhs |
+        |:----------|----------:|:----------|----------:|
+        | a         |         1 | a         |         1 |
+        | a         |         1 | b         |         2 |
+        | a         |         1 | c         |         3 |
+        | b         |         2 | a         |         1 |
+        | b         |         2 | b         |         2 |
+        | b         |         2 | c         |         3 |
+        | c         |         3 | a         |         1 |
+        | c         |         3 | b         |         2 |
+        | c         |         3 | c         |         3 |
+
+        Two DataFrames:
+
+        ```python 
+        dfa = rf.DataFrame({"foo": [1, 2, 3]})
+        dfb = rf.DataFrame({"bar": [1, 2, 3]})
+        dfa.cross(dfb, postfix=("_a", "_b"))
+        ```
+
+        |   foo |   bar |
+        |------:|------:|
+        |     1 |     1 |
+        |     1 |     2 |
+        |     1 |     3 |
+        |     2 |     1 |
+        |     2 |     2 |
+        |     2 |     3 |
+        |     3 |     1 |
+        |     3 |     2 |
+        |     3 |     3 |
+        """
+        rhs = self if (rhs == None) else rhs
+        _check_type(rhs, DataFrame)
+        return _wrap(cross(self._data, rhs._data, postfix))
 
     def dedupe(self, columns: LazyColumns | None = None) -> DataFrame:
         """Drop duplicate rows with reference to optional target columns
@@ -860,6 +940,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         rhs: DataFrame,
         on: LazyColumns,
         how: Join = "left",
+        postfix: tuple[str, str] = ("_lhs", "_rhs"),
     ) -> DataFrame:
         """Join two DataFrames together using specific matching columns
 
@@ -931,7 +1012,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         | D     |   nan | #     |
         """
         _check_type(rhs, DataFrame)
-        return _wrap(join(self._data, rhs._data, on, how))
+        return _wrap(join(self._data, rhs._data, on, how, postfix))
 
     def mutate(self, over: dict[Column, Func]) -> DataFrame:
         """Create new, or transform existing columns

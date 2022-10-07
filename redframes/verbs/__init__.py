@@ -1,6 +1,7 @@
 from .accumulate import accumulate
 from .append import append
 from .combine import combine
+from .cross import cross
 from .dedupe import dedupe
 from .denix import denix
 from .drop import drop
