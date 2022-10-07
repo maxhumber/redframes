@@ -97,33 +97,34 @@ reddf = rf.wrap(pandf)
 
 ### Verbs
 
-There are 23 core "verbs" that make up `rf.DataFrame` objects. Each verb is [pure](https://en.wikipedia.org/wiki/Pure_function), "chain-able", and has an analog in pandas/dplyr (see *docstrings* for more info/examples): 
+There are 24 core "verbs" that make up `rf.DataFrame` objects. Each verb is [pure](https://en.wikipedia.org/wiki/Pure_function), "chain-able", and has an analog in pandas/tidyverse (see *docstrings* for more info/examples): 
 
-|                                                   | pandas                     | dplyr                          |
-| ------------------------------------------------- | -------------------------- | ------------------------------ |
-| `.accumulate`                                     | `cumsum`                   | `mutate(... = cumsum(...))`    |
-| `.append`                                         | `concat`                   | `bind_rows`                    |
-| `.combine`                                        | `+`                        | `unite`                        |
-| `.dedupe`                                         | `drop_duplicates`          | `distinct`                     |
-| [`.denix`](https://www.dictionary.com/browse/nix) | `dropna`                   | `drop_na`                      |
-| `.drop`                                           | `drop(..., axis=1)`        | `select(- ...)`                |
-| `.fill`                                           | `fillna`                   | `fill`, `replace_na`           |
-| `.filter`                                         | `df[df[col] == condition]` | `filter`                       |
-| `.gather`                                         | `melt`                     | `gather`, `pivot_longer`       |
-| `.group`                                          | `groupby`                  | `group_by`                     |
-| `.join`                                           | `merge`                    | `*_join`                       |
-| `.mutate`                                         | `apply`, `astype`          | `mutate`                       |
-| `.rank`                                           | `rank("dense")`            | `dense_rank`                   |
-| `.rename`                                         | `rename`                   | `rename`                       |
-| `.replace`                                        | `replace`                  | `mutate(... = case_when(...))` |
-| `.rollup`                                         | `agg`                      | `summarize`                    |
-| `.sample`                                         | `sample(n, frac)`          | `sample_n`, `sample_frac`      |
-| `.select`                                         | `select`                   | `select`                       |
-| `.shuffle`                                        | `sample(frac=1)`           | `sample_frac(..., 1)`          |
-| `.sort`                                           | `sort_values`              | `arrange`                      |
-| `.split`                                          | `df[col].str.split()`      | `separate`                     |
-| `.spread`                                         | `pivot_table`              | `spread`, `pivot_wider`        |
-| `.take`                                           | `head`, `tail`             | `slice_head`, `slice_tail`     |
+|                                                   | pandas                     | tidyverse                          |
+| ------------------------------------------------- | -------------------------- | ---------------------------------- |
+| `.accumulate`                                     | `cumsum`                   | `mutate(... = cumsum(...))`        |
+| `.append`                                         | `concat`                   | `bind_rows`                        |
+| `.combine`                                        | `+`                        | `unite`                            |
+| `.cross`                                          | `merge(..., how="cross")`  | `full_join(..., by = character())` |
+| `.dedupe`                                         | `drop_duplicates`          | `distinct`                         |
+| [`.denix`](https://www.dictionary.com/browse/nix) | `dropna`                   | `drop_na`                          |
+| `.drop`                                           | `drop(..., axis=1)`        | `select(-...)`                     |
+| `.fill`                                           | `fillna`                   | `fill`, `replace_na`               |
+| `.filter`                                         | `df[df[col] == condition]` | `filter`                           |
+| `.gather`                                         | `melt`                     | `gather`, `pivot_longer`           |
+| `.group`                                          | `groupby`                  | `group_by`                         |
+| `.join`                                           | `merge`                    | `*_join`                           |
+| `.mutate`                                         | `apply`, `astype`          | `mutate`                           |
+| `.rank`                                           | `rank("dense")`            | `dense_rank`                       |
+| `.rename`                                         | `rename`                   | `rename`                           |
+| `.replace`                                        | `replace`                  | `mutate(... = case_when(...))`     |
+| `.rollup`                                         | `agg`                      | `summarize`                        |
+| `.sample`                                         | `sample(n, frac)`          | `sample_n`, `sample_frac`          |
+| `.select`                                         | `select`                   | `select`                           |
+| `.shuffle`                                        | `sample(frac=1)`           | `sample_frac(..., 1)`              |
+| `.sort`                                           | `sort_values`              | `arrange`                          |
+| `.split`                                          | `df[col].str.split()`      | `separate`                         |
+| `.spread`                                         | `pivot_table`              | `spread`, `pivot_wider`            |
+| `.take`                                           | `head`, `tail`             | `slice_head`, `slice_tail`         |
 
 
 
