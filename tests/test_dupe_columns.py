@@ -35,15 +35,15 @@ class TestDupeColumns(unittest.TestCase):
             self.df.accumulate("foo", into="bar")
 
     def test_combine_into_overwrite(self):
-        self.df.combine(["foo", "bar"], into="foo")
+        self.df.combine(["foo", "bar"], into="foo", sep="-")
         self.assertTrue(True)
 
     def test_combine_overwrite_existing(self):
         with self.assertWarnsRegex(UserWarning, "overwriting existing column *"):
-            self.df.combine(["foo", "bar"], into="baz")
+            self.df.combine(["foo", "bar"], into="baz", sep="-")
 
     def test_combine_overwrite_no_drop(self):
-        self.df.combine(["foo", "bar"], into="foo", drop=False)
+        self.df.combine(["foo", "bar"], into="foo", sep="-", drop=False)
         self.assertTrue(True)
 
     def test_gather_same_column_names(self):

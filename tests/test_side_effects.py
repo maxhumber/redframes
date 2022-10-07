@@ -58,7 +58,7 @@ class TestSideEffects(unittest.TestCase):
         self.assertEqual(df_bottom, df_bottom_expected)
 
     def test_combine(self):
-        _ = self.df.combine(["foo", "bar"], into="foo")
+        _ = self.df.combine(["foo", "bar"], into="foo", sep="-")
         self.assertEqual(self.df, self.expected)
 
     def test_cross(self):

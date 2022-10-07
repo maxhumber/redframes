@@ -19,3 +19,9 @@ class TestLadyBugs(unittest.TestCase):
         result = df.types
         expected = {"foo": object}
         self.assertEqual(result, expected)
+
+    def test_comine_overwrite_and_drop_other(self):
+        df = rf.DataFrame({"foo": [1, 2, 3], "bar": [1, 2, 3]})
+        result = df.combine(["foo", "bar"], into="foo", sep="-", drop=True)
+        expected = rf.DataFrame({"foo": ["1-1", "2-2", "3-3"]})
+        self.assertEqual(result, expected)

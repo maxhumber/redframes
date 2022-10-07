@@ -102,11 +102,11 @@ class TestTypeHints(unittest.TestCase):
 
     def test_combine_bad_columns(self):
         with self.assertRaisesRegex(TypeError, "must be list"):
-            self.df.combine(1, "foo")
+            self.df.combine(1, "foo", sep="-")
 
     def test_combine_bad_into_column(self):
         with self.assertRaisesRegex(TypeError, "must be str"):
-            self.df.combine(["foo", "bar"], 1)
+            self.df.combine(["foo", "bar"], 1, sep="-")
 
     def test_combine_bad_sep_argument(self):
         with self.assertRaisesRegex(TypeError, "must be str"):

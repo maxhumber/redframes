@@ -47,7 +47,7 @@ class TestIndex(unittest.TestCase):
         self.assertTrue(index_is_okay(new))
 
     def test_combine(self):
-        new = self.df.combine(["foo", "bar"], into="foo")
+        new = self.df.combine(["foo", "bar"], into="foo", sep="-")
         self.assertTrue(index_is_okay(new))
 
     def test_cross(self):

@@ -458,7 +458,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(append(self._data, other._data))
 
     def combine(
-        self, columns: Columns, into: Column, sep: str = "-", drop: bool = True
+        self, columns: Columns, into: Column, sep: str, drop: bool = True
     ) -> DataFrame:
         """Combine multiple columns into a single column (opposite of `split`)
 

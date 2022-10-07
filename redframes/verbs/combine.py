@@ -20,7 +20,8 @@ def combine(
         message = f"overwriting existing column '{into}'"
         warnings.warn(message)
     df = df.copy()
-    df[into] = df[columns].apply(lambda row: sep.join(row.values.astype(str)), axis=1)
-    if drop and into_is_not_in_columns:
+    new = df[columns].apply(lambda row: sep.join(row.values.astype(str)), axis=1)
+    if drop:
         df = df.drop(columns, axis=1)
+    df[into] = new
     return df
