@@ -374,9 +374,9 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return self._data.empty
 
     @property
-    def memory(self) -> str: 
+    def memory(self) -> str:
         """Interrogate DataFrame (deep) memory usage
-        
+
         Example:
 
         ```python
@@ -485,7 +485,9 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         """
         return _wrap(combine(self._data, columns, into, sep, drop))
 
-    def cross(self, rhs: DataFrame | None = None, postfix: tuple[str, str] = ("_lhs", "_rhs")) -> DataFrame: 
+    def cross(
+        self, rhs: DataFrame | None = None, postfix: tuple[str, str] = ("_lhs", "_rhs")
+    ) -> DataFrame:
         """Cross join another DataFrame (or the DataFrame itself)
 
         pandas: `merge(..., how="cross")`
@@ -522,7 +524,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
 
         Two DataFrames:
 
-        ```python 
+        ```python
         dfa = rf.DataFrame({"foo": [1, 2, 3]})
         dfb = rf.DataFrame({"bar": [1, 2, 3]})
         dfa.cross(dfb, postfix=("_a", "_b"))

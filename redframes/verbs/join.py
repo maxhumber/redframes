@@ -17,7 +17,9 @@ def join(
     _check_type(how, str)
     _check_type(postfix, tuple)
     if not how in ["left", "right", "inner", "full"]:
-        message = "on argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"
+        message = (
+            "on argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"
+        )
         raise ValueError(message)
     how = "outer" if (how == "full") else how  # type: ignore
     df = pd.merge(lhs, rhs, on=on, how=how, suffixes=postfix)
