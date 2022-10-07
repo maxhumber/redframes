@@ -1,9 +1,11 @@
+- explode, collapse verbs
 - more research into `.assign` mutate(..., vectorized=True)?
 - datasets
 - .log (Untitled12)
 - .slice
 - .complete
+- .tally?
 - hide/protect/private
 - 10 minutes tutorial
 - cheatsheet (pandas/dplyr/tidyr)
-- stackoverflow blitz
+- anaconda

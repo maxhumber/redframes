@@ -1,3 +1,11 @@
+- 1.2b1
+    - NEW: `cross` join verb!
+    - NEW: `join(..., postfix=("_lhs, "_rhs"))` argument
+    - NEW: `memory` property to check DataFrame memory footprint
+    - NEW: Makefile (for development)
+    - BUGFIX: `combine` drop=True argument now works as intended
+    - BUGFIX: `summarize` deprecation warning now displays properly
+    - BREAKING: `combine` now explicitly requires a `sep` argument
 - 1.1
     - BUMP: Pandas 1.5+
     - NEW: `__dataframe__` interchange format support
