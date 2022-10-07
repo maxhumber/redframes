@@ -43,33 +43,38 @@ df = rf.DataFrame({
     "baz": [0.99, None, 0.25, 0.75, 0.66, 0.47, 0.48, None]
 })
 
-df["foo"] 
-# ['A', 'A', 'B', None, 'B', 'A', 'A', 'C']
-df.columns 
-# ['foo', 'bar', 'baz']
-df.dimensions
-# {'rows': 8, 'columns': 3}
-df.empty
-# False
-df.types
-# {'foo': object, 'bar': int, 'baz': float}
+# | foo   |   bar |    baz |
+# |:------|------:|-------:|
+# | A     |     1 |   0.99 |
+# | A     |     4 |        |
+# | B     |     2 |   0.25 |
+# |       |    -4 |   0.75 |
+# | B     |     5 |   0.66 |
+# | A     |     6 |   0.47 |
+# | A     |     6 |   0.48 |
+# | C     |    -2 |        |
 
 (
     df
     .mutate({"bar100": lambda row: row["bar"] * 100})
     .select(["foo", "baz", "bar100"])
-    .filter(lambda row: 
-        (row["foo"].isin(["A", "B"])) & (row["bar100"] > 0)
-    )
+    .filter(lambda row: (row["foo"].isin(["A", "B"])) & (row["bar100"] > 0))
     .denix("baz")
     .group("foo")
     .rollup({
         "bar_mean": ("bar100", rf.stat.mean), 
         "baz_sum": ("baz", rf.stat.sum)
     })
-    .gather(["bar_mean", "baz_sum"])
+    .gather(["bar_mean", "baz_sum"], into=("variable", "value"))
     .sort("value")
 )
+
+# | foo   | variable   |   value |
+# |:------|:-----------|--------:|
+# | B     | baz_sum    |   0.91  |
+# | A     | baz_sum    |   1.94  |
+# | B     | bar_mean   | 350     |
+# | A     | bar_mean   | 433.333 |
 ```
 
 
@@ -125,6 +130,32 @@ There are 24 core "verbs" that make up `rf.DataFrame` objects. Each verb is [pur
 | `.split`                                          | `df[col].str.split()`      | `separate`                         |
 | `.spread`                                         | `pivot_table`              | `spread`, `pivot_wider`            |
 | `.take`                                           | `head`, `tail`             | `slice_head`, `slice_tail`         |
+
+
+
+### Properties
+
+In addition to all of the verbs there are several properties attached to each `DataFrame`:
+
+```python
+df["foo"] 
+# ['A', 'A', 'B', None, 'B', 'A', 'A', 'C']
+
+df.columns 
+# ['foo', 'bar', 'baz']
+
+df.dimensions
+# {'rows': 8, 'columns': 3}
+
+df.empty
+# False
+
+df.memory
+# '686 B'
+
+df.types
+# {'foo': object, 'bar': int, 'baz': float}
+```
 
 
 
