@@ -91,8 +91,7 @@ class TestTypeHints(unittest.TestCase):
             rf.DataFrame(1)
 
     def test_eq_bad_rhs_object(self):
-        with self.assertRaisesRegex(TypeError, "must be DataFrame"):
-            self.df == 1
+        self.assertFalse(self.df == 1)
 
     def test_getitem_bad_key(self):
         pass
@@ -176,7 +175,9 @@ class TestTypeHints(unittest.TestCase):
 
     def test_join_bad_how_argument(self):
         rhs = rf.DataFrame()
-        message = "on argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"
+        message = (
+            "on argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"
+        )
         with self.assertRaisesRegex(ValueError, message):
             self.df.join(rhs, on="baz", how="inside")
 

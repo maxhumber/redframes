@@ -94,6 +94,12 @@ class TestDocstrings(unittest.TestCase):
         expected = True
         self.assertEqual(result, expected)
 
+    def test_memory(self):
+        df = rf.DataFrame({"foo": [1, 2, 3], "bar": ["A", "B", "C"]})
+        result = df.memory
+        expected = "326 B"
+        self.assertEqual(result, expected)
+
     def test_types(self):
         df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"], "baz": [True, False]})
         result = df.types
@@ -118,6 +124,26 @@ class TestDocstrings(unittest.TestCase):
         result = df.combine(["bar", "foo"], into="baz", sep="::", drop=True)
         expected = rf.DataFrame({"baz": ["A::1", "B::2"]})
         self.assertEqual(result, expected)
+
+    def test_cross(self):
+        df = rf.DataFrame({"foo": ["a", "b", "c"], "bar": [1, 2, 3]})
+        dfa = rf.DataFrame({"foo": [1, 2, 3]})
+        dfb = rf.DataFrame({"bar": [1, 2, 3]})
+        result1 = df.cross()
+        result2 = dfa.cross(dfb, postfix=("_a", "_b"))
+        expected1 = rf.DataFrame(
+            {
+                "foo_lhs": ["a", "a", "a", "b", "b", "b", "c", "c", "c"],
+                "bar_lhs": [1, 1, 1, 2, 2, 2, 3, 3, 3],
+                "foo_rhs": ["a", "b", "c", "a", "b", "c", "a", "b", "c"],
+                "bar_rhs": [1, 2, 3, 1, 2, 3, 1, 2, 3],
+            }
+        )
+        expected2 = rf.DataFrame(
+            {"foo": [1, 1, 1, 2, 2, 2, 3, 3, 3], "bar": [1, 2, 3, 1, 2, 3, 1, 2, 3]}
+        )
+        self.assertEqual(result1, expected1)
+        self.assertEqual(result2, expected2)
 
     def test_dedupe(self):
         df = rf.DataFrame({"foo": [1, 1, 2, 2], "bar": ["A", "A", "B", "A"]})

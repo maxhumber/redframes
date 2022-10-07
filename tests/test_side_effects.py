@@ -61,6 +61,10 @@ class TestSideEffects(unittest.TestCase):
         _ = self.df.combine(["foo", "bar"], into="foo")
         self.assertEqual(self.df, self.expected)
 
+    def test_cross(self):
+        _ = self.df.cross(postfix=("_a", "_b"))
+        self.assertEqual(self.df, self.expected)
+
     def test_dedupe(self):
         _ = self.df.dedupe("baz")
         self.assertEqual(self.df, self.expected)

@@ -50,6 +50,10 @@ class TestIndex(unittest.TestCase):
         new = self.df.combine(["foo", "bar"], into="foo")
         self.assertTrue(index_is_okay(new))
 
+    def test_cross(self):
+        new = self.df.cross()
+        self.assertTrue(index_is_okay(new))
+
     def test_dedupe(self):
         new = self.df.dedupe("baz")
         self.assertTrue(index_is_okay(new))
