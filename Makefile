@@ -1,5 +1,5 @@
 test: 
-	python -m unittest tests
+	python -m unittest
 
 format:
 	isort redframes tests
