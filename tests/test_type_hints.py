@@ -176,10 +176,8 @@ class TestTypeHints(unittest.TestCase):
 
     def test_join_bad_how_argument(self):
         rhs = rf.DataFrame()
-        with self.assertRaisesRegex(
-            ValueError,
-            "method argument is invalid, must be one of {'left', 'right', 'inner', 'full'}",
-        ):
+        message = "on argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"
+        with self.assertRaisesRegex(ValueError, message):
             self.df.join(rhs, on="baz", how="inside")
 
     def test_mutate_bad_over(self):

@@ -8,6 +8,6 @@ class TestDeprecations(unittest.TestCase):
         df = rf.DataFrame({"foo": range(10)})
         expected = rf.DataFrame({"foo": [4.5]})
         message = "Marked for removal, please use `rollup` instead"
-        with self.assertWarnsRegex(DeprecationWarning, message):
+        with self.assertWarnsRegex(FutureWarning, message):
             result = df.summarize({"foo": ("foo", rf.stat.mean)})
             self.assertEqual(result, expected)
