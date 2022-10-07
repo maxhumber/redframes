@@ -11,14 +11,15 @@ def join(
     rhs: PandasDataFrame,
     on: LazyColumns,
     how: Join = "left",
+    postfix: tuple[str, str] = ("_lhs", "_rhs"),
 ) -> PandasDataFrame:
     _check_type(on, {list, str})
     _check_type(how, str)
+    _check_type(postfix, tuple)
     if not how in ["left", "right", "inner", "full"]:
-        raise ValueError(
-            "method argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"
-        )
-    how = "outer" if how == "full" else how  # type: ignore
-    df = pd.merge(lhs, rhs, on=on, how=how, suffixes=("_lhs", "_rhs"))
+        message = "on argument is invalid, must be one of {'left', 'right', 'inner', 'full'}"
+        raise ValueError(message)
+    how = "outer" if (how == "full") else how  # type: ignore
+    df = pd.merge(lhs, rhs, on=on, how=how, suffixes=postfix)
     df = df.reset_index(drop=True)
     return df
