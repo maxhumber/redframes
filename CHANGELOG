@@ -1,4 +1,4 @@
-- 1.2b1
+- 1.2
     - NEW: `cross` join verb!
     - NEW: `join(..., postfix=("_lhs, "_rhs"))` argument
     - NEW: `memory` property to check DataFrame memory footprint
