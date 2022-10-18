@@ -218,24 +218,76 @@ class TestDocstrings(unittest.TestCase):
         self.assertEqual(result3, expected3)
 
     def test_gather(self):
-        df = rf.DataFrame({"foo": [1, 2], "bar": [3, 4], "baz": [4, 5]})
+        df = rf.DataFrame(
+            {
+                "foo": [1, 2, 1, 2],
+                "bar": ["A", "B", "C", "D"],
+                "baz": ["!", "@", "#", "$"],
+                "jaz": range(4),
+            }
+        )
         result1 = df.gather()
         result2 = df.gather(["foo", "bar"], into=("var", "val"))
+        result3 = df.gather(beside=["foo", "bar"])
         expected1 = rf.DataFrame(
             {
-                "variable": ["foo", "foo", "bar", "bar", "baz", "baz"],
-                "value": [1, 2, 3, 4, 4, 5],
+                "variable": [
+                    "foo",
+                    "foo",
+                    "foo",
+                    "foo",
+                    "bar",
+                    "bar",
+                    "bar",
+                    "bar",
+                    "baz",
+                    "baz",
+                    "baz",
+                    "baz",
+                    "jaz",
+                    "jaz",
+                    "jaz",
+                    "jaz",
+                ],
+                "value": [
+                    1,
+                    2,
+                    1,
+                    2,
+                    "A",
+                    "B",
+                    "C",
+                    "D",
+                    "!",
+                    "@",
+                    "#",
+                    "$",
+                    0,
+                    1,
+                    2,
+                    3,
+                ],
             }
         )
         expected2 = rf.DataFrame(
             {
-                "baz": [4, 5, 4, 5],
-                "var": ["foo", "foo", "bar", "bar"],
-                "val": [1, 2, 3, 4],
+                "baz": ["!", "@", "#", "$", "!", "@", "#", "$"],
+                "jaz": [0, 1, 2, 3, 0, 1, 2, 3],
+                "var": ["foo", "foo", "foo", "foo", "bar", "bar", "bar", "bar"],
+                "val": [1, 2, 1, 2, "A", "B", "C", "D"],
+            }
+        )
+        expected3 = rf.DataFrame(
+            {
+                "foo": [1, 2, 1, 2, 1, 2, 1, 2],
+                "bar": ["A", "B", "C", "D", "A", "B", "C", "D"],
+                "variable": ["baz", "baz", "baz", "baz", "jaz", "jaz", "jaz", "jaz"],
+                "value": ["!", "@", "#", "$", 0, 1, 2, 3],
             }
         )
         self.assertEqual(result1, expected1)
         self.assertEqual(result2, expected2)
+        self.assertEqual(result3, expected3)
 
     def test_group(self):
         df = rf.DataFrame(

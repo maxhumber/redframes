@@ -1,3 +1,4 @@
+- remove summarize
 - explode, collapse verbs
 - more research into `.assign` mutate(..., vectorized=True)?
 - datasets
@@ -8,4 +9,4 @@
 - hide/protect/private
 - 10 minutes tutorial
 - cheatsheet (pandas/dplyr/tidyr)
-- anaconda
+- anaconda?

@@ -1,3 +1,6 @@
+- 1.3b1
+    - NEW: `gather(beside=...)` argument!
+    - IMPROVED: `sample` errors are more explicit
 - 1.2
     - NEW: `cross` join verb!
     - NEW: `join(..., postfix=("_lhs, "_rhs"))` argument

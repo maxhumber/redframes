@@ -156,9 +156,22 @@ class TestTypeHints(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "must be list | None"):
             self.df.gather(1)
 
+    def test_gather_bad_beside(self):
+        with self.assertRaisesRegex(TypeError, "must be str | list | None"):
+            self.df.gather(beside=1)
+
     def test_gather_bad_into_column(self):
         with self.assertRaisesRegex(TypeError, "must be tuple"):
             self.df.gather(["foo", "bar"], into=1)
+
+    def test_gather_bad_into_tuple(self):
+        # with self.assertRaisesRegex(TypeError, f'must be tuple[str, str]'):
+        #     self.df.gather(into=("one", "two", "three"))
+        pass
+
+    def test_gather_bad_both_not_none(self):
+        with self.assertRaisesRegex(ValueError, "columns OR beside must be None"):
+            self.df.gather(columns=["foo", "bar"], beside=["baz"])
 
     def test_group_bad_by_columns(self):
         with self.assertRaisesRegex(TypeError, "must be list | str"):
