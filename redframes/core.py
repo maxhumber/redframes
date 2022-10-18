@@ -819,9 +819,10 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     def gather(
         self,
         columns: Columns | None = None,
+        beside: LazyColumns | None = None,
         into: tuple[Column, Column] = ("variable", "value"),
     ):
-        """Lengthen data, increase rows, decrease columns (opposite of `spread`)
+        """Lengthen data by increasing rows and decreasing columns (opposite of `spread`)
 
         pandas: `melt`
         tidyverse: `gather`, `pivot_longer`
@@ -829,40 +830,77 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         Examples:
 
         ```python
-        df = rf.DataFrame({"foo": [1, 2], "bar": [3, 4], "baz": [4, 5]})
+        df = rf.DataFrame({
+            "foo": [1, 2, 1, 2],
+            "bar": ["A", "B", "C", "D"],
+            "baz": ["!", "@", "#", "$"],
+            "jaz": range(4)
+        })
         ```
-        |   foo |   bar |   baz |
-        |------:|------:|------:|
-        |     1 |     3 |     4 |
-        |     2 |     4 |     5 |
+        |   foo | bar   | baz   |   jaz |
+        |------:|:------|:------|------:|
+        |     1 | A     | !     |     0 |
+        |     2 | B     | @     |     1 |
+        |     1 | C     | #     |     2 |
+        |     2 | D     | $     |     3 |
 
         All columns:
 
         ```python
         df.gather()
         ```
-        | variable   |   value |
-        |:-----------|--------:|
-        | foo        |       1 |
-        | foo        |       2 |
-        | bar        |       3 |
-        | bar        |       4 |
-        | baz        |       4 |
-        | baz        |       5 |
+        | variable   | value   |
+        |:-----------|:--------|
+        | foo        | 1       |
+        | foo        | 2       |
+        | foo        | 1       |
+        | foo        | 2       |
+        | bar        | A       |
+        | bar        | B       |
+        | bar        | C       |
+        | bar        | D       |
+        | baz        | !       |
+        | baz        | @       |
+        | baz        | #       |
+        | baz        | $       |
+        | jaz        | 0       |
+        | jaz        | 1       |
+        | jaz        | 2       |
+        | jaz        | 3       |
 
         Multiple columns:
 
         ```python
         df.gather(["foo", "bar"], into=("var", "val"))
         ```
-        |   baz | var   |   val |
-        |------:|:------|------:|
-        |     4 | foo   |     1 |
-        |     5 | foo   |     2 |
-        |     4 | bar   |     3 |
-        |     5 | bar   |     4 |
+        | baz   |   jaz | var   | val   |
+        |:------|------:|:------|:------|
+        | !     |     0 | foo   | 1     |
+        | @     |     1 | foo   | 2     |
+        | #     |     2 | foo   | 1     |
+        | $     |     3 | foo   | 2     |
+        | !     |     0 | bar   | A     |
+        | @     |     1 | bar   | B     |
+        | #     |     2 | bar   | C     |
+        | $     |     3 | bar   | D     |
+
+        All columns except:
+
+        ```python
+        df.gather(beside=["foo", "bar"])
+        ```
+        |   foo | bar   | variable   | value   |
+        |------:|:------|:-----------|:--------|
+        |     1 | A     | baz        | !       |
+        |     2 | B     | baz        | @       |
+        |     1 | C     | baz        | #       |
+        |     2 | D     | baz        | $       |
+        |     1 | A     | jaz        | 0       |
+        |     2 | B     | jaz        | 1       |
+        |     1 | C     | jaz        | 2       |
+        |     2 | D     | jaz        | 3       |
         """
-        return _wrap(gather(self._data, columns, into))
+        return _wrap(gather(self._data, columns, beside, into))
 
     def group(self, by: LazyColumns) -> GroupedFrame:
         """Create a GroupedFrame overwhich split-apply-combine operations can be applied
@@ -1324,7 +1362,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(split(self._data, column, into, sep, drop))
 
     def spread(self, column: Column, using: Column) -> DataFrame:
-        """Widen data, increase columns, decreas rows (opposite of `gather`)
+        """Widen data by increasing columns and decreasing rows (opposite of `gather`)
 
         pandas: `pivot_table`
         tidyverse: `spread`, `pivot_wider`

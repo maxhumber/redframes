@@ -1,5 +1,5 @@
 - 1.3b1
-    - NEW: `gather`
+    - NEW: `gather(beside=...)` argument
     - IMPROVED: `sample` errors
 - 1.2
     - NEW: `cross` join verb!
