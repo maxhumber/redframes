@@ -25,3 +25,13 @@ class TestLadyBugs(unittest.TestCase):
         result = df.combine(["foo", "bar"], into="foo", sep="-", drop=True)
         expected = rf.DataFrame({"foo": ["1-1", "2-2", "3-3"]})
         self.assertEqual(result, expected)
+
+    def test_sample_float_1_point_0(self):
+        df = rf.DataFrame({"foo": range(100)})
+        with self.assertRaisesRegex(ValueError, "must be int if > 1"):
+            df.sample(1.0)
+
+    def test_sample_negative_1(self):
+        df = rf.DataFrame({"foo": range(100)})
+        with self.assertRaisesRegex(ValueError, "must be > 0"):
+            df.sample(-1)
