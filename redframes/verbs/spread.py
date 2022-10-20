@@ -1,6 +1,6 @@
 import uuid
 
-import pandas as pd
+import pandas as pd  # pyright: ignore[reportMissingImports]
 
 from ..checks import _check_type
 from ..types import Column, PandasDataFrame

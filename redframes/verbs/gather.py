@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import pandas as pd
+import pandas as pd  # pyright: ignore[reportMissingImports]
 
 from ..checks import _check_type
 from ..types import Column, Columns, LazyColumns, PandasDataFrame
@@ -36,8 +36,8 @@ def gather(
         value_vars = columns
     df = pd.melt(
         df,
-        id_vars=id_vars,
-        value_vars=value_vars,
+        id_vars=id_vars,  # pyright: ignore[reportUnboundVariable]
+        value_vars=value_vars,  # pyright: ignore[reportUnboundVariable]
         var_name=into[0],
         value_name=into[1],
     )

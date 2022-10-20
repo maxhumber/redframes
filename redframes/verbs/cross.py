@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import pandas as pd
+import pandas as pd  # pyright: ignore[reportMissingImports]
 
 from ..checks import _check_type
 from ..types import PandasDataFrame

@@ -1,6 +1,6 @@
 """Common summary functions/statistics"""
 
-import numpy as np
+import numpy as np  # pyright: ignore[reportMissingImports]
 
 count = len
 mean = np.mean

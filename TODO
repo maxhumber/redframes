@@ -1,8 +1,7 @@
 1.4 
-- unpack verb 
-- pack verb
-- group(by=) optimizations
-- group(by=) repr
+- update readme
+- unpack verb -> tests (docstrings, types, index)
+- pack verb -> tests (docstrings, types, index)
 - warning on multiple columns in mutate (override)
 
 1.5 

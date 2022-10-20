@@ -10,7 +10,7 @@ def rollup(
 ) -> PandasDataFrame:
     _check_type(over, dict)
     if isinstance(df, PandasGroupedFrame):
-        groups = set(df.grouper.names)
+        groups = set(df.grouper.names)  # type: ignore
         keys = set(over.keys())
         if groups.intersection(keys):
             raise KeyError("unable to overwrite group keys")

@@ -1,11 +1,11 @@
 - 1.4b1
     - NEW: pinned pandas (below 2.0)
     - NEW: pack verb
-    - NEW: unpack
-    - IMPROVED: groupby repr
+    - NEW: unpack verb
+    - IMPROVED: group `__repr__`
+    - IMPROVED: group optimzations
     - BUGFIX: rf.wrap (multi index columns)
     - BUGFIX: sort order of group by operations
-
 - 1.3
     - NEW: `gather(beside=...)` argument!
     - IMPROVED: `sample` errors are more explicit

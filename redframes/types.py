@@ -3,9 +3,9 @@ from __future__ import annotations
 import datetime
 from typing import Any, Callable, Literal, Union
 
-import numpy as np
-import pandas as pd
-import pandas.core.groupby.generic as pg
+import numpy as np  # pyright: ignore[reportMissingImports]
+import pandas as pd  # pyright: ignore[reportMissingImports]
+import pandas.core.groupby.generic as pg  # pyright: ignore[reportMissingImports]
 
 Value = Any
 Values = list[Value]

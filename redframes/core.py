@@ -256,10 +256,10 @@ class GroupedFrame(_CommonMixin):
     """GroupedFrame compatible with: `accumulate`, `pack`, `rank`, `rollup`, `take`"""
 
     def __repr__(self) -> str:
-        return self._data.obj.__repr__()
+        return self._data.obj.__repr__()  # type: ignore
 
     def _repr_html_(self) -> str:
-        return self._data.obj.to_html(index=True)
+        return self._data.obj.to_html(index=True)  # type: ignore
 
 
 class DataFrame(_CommonMixin, _InterchangeMixin):
@@ -553,7 +553,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         """
         rhs = self if (rhs == None) else rhs
         _check_type(rhs, DataFrame)
-        return _wrap(cross(self._data, rhs._data, postfix))
+        return _wrap(cross(self._data, rhs._data, postfix))  # type: ignore
 
     def dedupe(self, columns: LazyColumns | None = None) -> DataFrame:
         """Drop duplicate rows with reference to optional target columns
