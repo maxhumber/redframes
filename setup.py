@@ -1,9 +1,9 @@
 from setuptools import find_packages, setup
 
+exec(open("redframes/version.py").read())
+
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
-
-exec(open("redframes/version.py").read())
 
 setup(
     name="redframes",
@@ -17,7 +17,7 @@ setup(
     license="BSD 2",
     packages=find_packages(),
     python_requires=">=3.9",
-    install_requires=["pandas>=1.5"],
+    install_requires=["pandas>=1.5,<2.0"],
     extras_require={
         "test": [
             "matplotlib",
