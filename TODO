@@ -1,12 +1,23 @@
-- remove summarize
-- explode, collapse verbs
-- more research into `.assign` mutate(..., vectorized=True)?
-- datasets
-- .log (Untitled12)
-- .slice
-- .complete
-- .tally?
+1.4 
+- explode/unpack (?) verb 
+- collapse/pack (?) verb
+- warning on multiple columns in mutate (override)
+- fix multi-index columns
+
+1.5 
+- better docs
+- remove summarize (deprecation)
+- tally verb
+- reorder/move columns to front / end / before / after
+- tidyr: complete
+
+Later
+- slice verb
+- complete verb
 - hide/protect/private
-- 10 minutes tutorial
-- cheatsheet (pandas/dplyr/tidyr)
-- anaconda?
+- cheatsheet & tutorial
+
+Maybe
+- log verb (Untitled12)
+- builtin datasets
+- vectorized mutate support (`.assign` mutate(..., vectorized=True))?

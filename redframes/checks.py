@@ -57,7 +57,7 @@ def _check_index(df: PandasDataFrame) -> None:
 
 
 def _check_columns(df: PandasDataFrame) -> None:
-    if not isinstance(df.columns, PandasIndex):
+    if type(df.columns) != PandasIndex:
         raise KeyError("must be flat")
     if df.columns.has_duplicates:
         raise KeyError("must not contain duplicate keys")
