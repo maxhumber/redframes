@@ -1,8 +1,10 @@
 - 1.4b1
-    - NEW: collapse
-    - NEW: expand
+    - NEW: pinned pandas (below 2.0)
+    - NEW: pack verb
+    - NEW: unpack
+    - IMPROVED: groupby repr
     - BUGFIX: rf.wrap (multi index columns)
-    - BUGFIX: sort order
+    - BUGFIX: sort order of group by operations
 
 - 1.3
     - NEW: `gather(beside=...)` argument!

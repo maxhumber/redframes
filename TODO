@@ -1,17 +1,19 @@
 1.4 
-- explode/unpack (?) verb 
-- collapse/pack (?) verb
-- group by simplifications
+- unpack verb 
+- pack verb
+- group(by=) optimizations
+- group(by=) repr
 - warning on multiple columns in mutate (override)
 
 1.5 
 - better docs
-- remove summarize (deprecation)
 - tally verb
+- complete verb (tidyr)
 - reorder/move columns to front / end / before / after
-- tidyr: complete
+- remove summarize verb
 
 Later
+- speedtests
 - complete verb (tidyr)
 - hide/protect/private
 - cheatsheet & tutorial

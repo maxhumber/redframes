@@ -75,7 +75,7 @@ class TestDupeColumns(unittest.TestCase):
             self.df.rename({"foo": "oof", "bar": "oof"})
 
     def test_rollup_group_existing_column(self):
-        with self.assertRaisesRegex(ValueError, "cannot insert *"):
+        with self.assertRaisesRegex(KeyError, "unable to overwrite group key"):
             self.df.group("baz").rollup({"baz": ("foo", rf.stat.max)})
 
     def test_select_duplicate_keys(self):

@@ -1,7 +1,8 @@
 import unittest
 
-import redframes as rf
 import pandas as pd
+
+import redframes as rf
 
 
 class TestLadyBugs(unittest.TestCase):
@@ -38,7 +39,9 @@ class TestLadyBugs(unittest.TestCase):
             df.sample(-1)
 
     def test_io_wrap_multi_columns(self):
-        columns = pd.MultiIndex.from_arrays([['route', 'action', 'action'], ['type', 'source', 'destination']])
+        columns = pd.MultiIndex.from_arrays(
+            [["route", "action", "action"], ["type", "source", "destination"]]
+        )
         pdf = pd.DataFrame([[1, 2, 3]], columns=columns)
         with self.assertRaisesRegex(KeyError, "must be flat"):
             df = rf.wrap(pdf)
