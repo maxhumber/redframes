@@ -11,6 +11,7 @@ from .gather import gather
 from .group import group
 from .join import join
 from .mutate import mutate
+from .pack import pack
 from .rank import rank
 from .rename import rename
 from .replace import replace
@@ -22,3 +23,4 @@ from .sort import sort
 from .split import split
 from .spread import spread
 from .take import take
+from .unpack import unpack
