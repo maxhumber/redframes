@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime
 import pprint
 import warnings
 
@@ -9,6 +8,7 @@ from .types import (
     Any,
     Column,
     Columns,
+    DateTime,
     Direction,
     Func,
     Join,
@@ -38,6 +38,7 @@ from .verbs import (
     group,
     join,
     mutate,
+    pack,
     rank,
     rename,
     replace,
@@ -49,6 +50,7 @@ from .verbs import (
     split,
     spread,
     take,
+    unpack,
 )
 
 
@@ -161,6 +163,10 @@ class _CommonMixin(_TakeMixin):
         """
         return _wrap(accumulate(self._data, column, into))
 
+    def pack(self, column: Column, sep: str) -> DataFrame:
+        """TODO: docstring"""
+        return _wrap(pack(self._data, column, sep))
+
     def rank(
         self,
         column: Column,
@@ -247,10 +253,13 @@ class _CommonMixin(_TakeMixin):
 
 
 class GroupedFrame(_CommonMixin):
-    """GroupedFrame compatible with: `accumulate`, `rank`, `rollup`, `take`"""
+    """GroupedFrame compatible with: `accumulate`, `pack`, `rank`, `rollup`, `take`"""
 
     def __repr__(self) -> str:
-        return "GroupedFrame()"
+        return self._data.obj.__repr__()
+
+    def _repr_html_(self) -> str:
+        return self._data.obj.to_html(index=True)
 
 
 class DataFrame(_CommonMixin, _InterchangeMixin):
@@ -410,7 +419,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
             NumpyType("int64"): int,
             NumpyType("float64"): float,
             NumpyType("bool"): bool,
-            NumpyType("datetime64"): datetime.datetime,
+            NumpyType("datetime64"): DateTime,
         }
         raw_types = dict(self._data.dtypes)
         clean_types = {}
@@ -1393,3 +1402,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         | nan |   7 |
         """
         return _wrap(spread(self._data, column, using))
+
+    def unpack(self, column: Column, sep: str) -> DataFrame:
+        """TODO: docstring"""
+        return _wrap(unpack(self._data, column, sep))

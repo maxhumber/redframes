@@ -15,6 +15,7 @@ def pack(
     df = df.reset_index(drop=True)
     return df
 
+
 # def pack(
 #     df: PandasDataFrame | PandasGroupedFrame, column: Column, sep: str
 # ) -> PandasDataFrame:
@@ -24,7 +25,7 @@ def pack(
 #         order = df.obj.columns
 #         print(order)
 #         # drop = False
-#     # else: 
+#     # else:
 #     #     order = df.columns
 #     #     drop = True
 #     drop = isinstance(df, PandasDataFrame)
