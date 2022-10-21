@@ -2,6 +2,7 @@
     - NEW: pinned pandas (below 2.0)
     - NEW: pack verb
     - NEW: unpack verb
+    - NEW: `make loc` to help development
     - IMPROVED: group `__repr__`
     - IMPROVED: group optimzations
     - BUGFIX: rf.wrap (multi index columns)

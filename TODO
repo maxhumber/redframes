@@ -1,15 +1,15 @@
 1.4 
+- better docs
 - update readme
 - unpack verb -> tests (docstrings, types, index)
 - pack verb -> tests (docstrings, types, index)
-- warning on multiple columns in mutate (override)
 
 1.5 
-- better docs
 - tally verb
 - complete verb (tidyr)
 - reorder/move columns to front / end / before / after
 - remove summarize verb
+- warning on multiple columns in mutate (override)
 
 Later
 - speedtests
@@ -22,3 +22,5 @@ Maybe
 - log verb (Untitled12)
 - builtin datasets
 - vectorized mutate support (`.assign` mutate(..., vectorized=True))?
+- polars/arrow backend
+- RedList?
