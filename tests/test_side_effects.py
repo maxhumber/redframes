@@ -106,6 +106,10 @@ class TestSideEffects(unittest.TestCase):
         _ = self.df.mutate({"foo": lambda row: row["foo"] * 10})
         self.assertEqual(self.df, self.expected)
 
+    def test_pack(self):
+        _ = self.df.pack("foo", sep="|")
+        self.assertEqual(self.df, self.expected)
+
     def test_rank(self):
         _ = self.df.rank("bar", into="bar_rank", descending=True)
         self.assertEqual(self.df, self.expected)
@@ -148,4 +152,8 @@ class TestSideEffects(unittest.TestCase):
 
     def test_take(self):
         _ = self.df.take(-3)
+        self.assertEqual(self.df, self.expected)
+
+    def test_take(self):
+        _ = self.df.unpack("jaz", sep="::")
         self.assertEqual(self.df, self.expected)

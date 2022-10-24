@@ -1,20 +1,34 @@
 1.4 
-- better docs
-- update readme
-- unpack verb -> tests (docstrings, types, index)
-- pack verb -> tests (docstrings, types, index)
+- unpack verb -> tests (docstrings, types)
+- pack verb -> tests (docstrings, types)
+- group().gather() tests 
+- group beside deprecation tests
+- test readme
 
-1.5 
+1.5
+- pd.DataFrame().to_redframes()
+- to_pandas / (to_csv / to_dict)
+- rf.read_csv() / rf.from_csv()
+- deprecate io functions
+- replace `__str__`
+- from_dict, from_pandas, from_csv, from_excel?
+
+1.6
+- reorder/move columns to front / end / before / after
 - tally verb
 - complete verb (tidyr)
-- reorder/move columns to front / end / before / after
-- remove summarize verb
-- warning on multiple columns in mutate (override)
+
+1.7
+- warning on multiple columns in mutate (override) or fix?
+- expose @extension
+
+2.0
+- explicit * keyword arguments
+- remove deprecated functions/methods
 
 Later
-- speedtests
 - complete verb (tidyr)
-- hide/protect/private
+- hide/protect/private methods/attributes
 - cheatsheet & tutorial
 
 Maybe
@@ -23,4 +37,5 @@ Maybe
 - builtin datasets
 - vectorized mutate support (`.assign` mutate(..., vectorized=True))?
 - polars/arrow backend
-- RedList?
+- class RedList(list): ...?
+- speedtests

@@ -2,11 +2,14 @@
     - NEW: pinned pandas (below 2.0)
     - NEW: pack verb
     - NEW: unpack verb
+    - NEW: group().gather()
     - NEW: `make loc` to help development
     - IMPROVED: group `__repr__`
     - IMPROVED: group optimzations
     - BUGFIX: rf.wrap (multi index columns)
     - BUGFIX: sort order of group by operations
+    - BUGFIX: some TypeErrors in gather changed to ValueError
+    - DEPRECATED: `gather(beside=...)` (lol, I was wrong about this...)
 - 1.3
     - NEW: `gather(beside=...)` argument!
     - IMPROVED: `sample` errors are more explicit
