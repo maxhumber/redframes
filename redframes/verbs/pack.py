@@ -11,6 +11,6 @@ def pack(
     _check_type(sep, str)
     order = df.obj.columns if isinstance(df, PandasGroupedFrame) else df.columns  # type: ignore
     df = df.agg(**{column: (column, lambda x: x.str.cat(sep=sep))})  # type: ignore
-    df = df[order]
+    df = df[[col for col in df.columns if col in order]]
     df = df.reset_index(drop=True)
     return df

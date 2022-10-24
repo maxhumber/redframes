@@ -1,6 +1,7 @@
 1.4 
 - unpack verb -> tests (docstrings, types)
 - pack verb -> tests (docstrings, types)
+    - what to do about non-strings??
 - group().gather() tests 
 - group beside deprecation tests
 - test readme
