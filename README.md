@@ -8,6 +8,7 @@
   </div>
   <br/>
 </div>
+
 **redframes** (**re**ctangular **d**ata **frames**) is a general purpose data manipulation library that prioritizes syntax,  simplicity, and speed (to a solution). Importantly, the library is fully interoperable with [pandas](https://github.com/pandas-dev/pandas), compatible with [scikit-learn](https://github.com/scikit-learn/scikit-learn), and works great with [matplotlib](https://github.com/matplotlib/matplotlib). 
 
 
@@ -143,9 +144,9 @@ Verbs are [pure](https://en.wikipedia.org/wiki/Pure_function) and "chain-able" m
 | `combine`                                        | Combine multiple <u>Column</u>s into a single <u>Column</u> (opposite of `split`) |
 | `cross`                                          | Cross join <u>Column</u>s from another DataFrame             |
 | `dedupe`                                         | Remove duplicate <u>Row</u>s                                 |
-| [`denix`](https://www.dictionary.com/browse/nix) | Remove <u>Row</u>s with { *None, NaN, NULL* } values         |
+| [`denix`](https://www.dictionary.com/browse/nix) | Remove <u>Row</u>s with *NaN/None* values                    |
 | `drop`                                           | Drop entire <u>Column</u>s                                   |
-| `fill`                                           | Fill and/or replace { *None, NaN, NULL* } values in target <u>Column</u>s |
+| `fill`                                           | Fill and/or replace *NaN/None* values in target <u>Column</u>s |
 | `filter`                                         | Keep <u>Row</u>s matching specific conditions                |
 | `gather`<sup>‡</sup>                             | Gather <u>Column</u>s into <u>Row</u>s (opposite of `spread`) |
 | `group`                                          | Prepare groups for compatible verbs<sup>‡</sup>              |
