@@ -1,17 +1,16 @@
-- 1.4b1
-
-    - NEW: pinned pandas (below 2.0)
-    - NEW: pack verb
-    - NEW: unpack verb
-    - NEW: group().gather()
-    - NEW: `make loc` to help development
-    - IMPROVED: readme examples 
-    - IMPROVED: group `__repr__`
-    - IMPROVED: group performance optimizations
-    - BUGFIX: rf.wrap (multi index columns)
-    - BUGFIX: sort order of group by operations
-    - BUGFIX: some `TypeError`s in gather changed to ValueError
-    - DEPRECATED: `gather(beside=...)` (please use `group` + `gather`) ...whoops!
+- 1.4
+    - NEW: pandas dependency pinned to below 2.0
+    - NEW: `pack` verb
+    - NEW: `unpack` verb
+    - NEW: `group` + `gather` compatibility
+    - NEW: `make loc` (for development)
+    - IMPROVED: README Quickstart + "Verb Table"
+    - IMPROVED: GroupedFrame `__repr__`
+    - IMPROVED: `group` performance optimizations
+    - BUGFIX: `rf.wrap` now properly throws an error on "MultiIndex" columns
+    - BUGFIX: sort order is now retained in `group` operations
+    - BUGFIX: some `TypeError`s have been changed to `ValueError`s
+    - DEPRECATED: `gather(beside=...)` ...whoops! please use `group` + `gather`!
 - 1.3
     - NEW: `gather(beside=...)` argument!
     - IMPROVED: `sample` errors are more explicit
@@ -24,7 +23,7 @@
     - BUGFIX: `summarize` deprecation warning now displays properly
     - BREAKING: `combine` now explicitly requires a `sep` argument
 - 1.1
-    - BUMP: Pandas 1.5+
+    - BUMP: pandas 1.5+
     - NEW: `__dataframe__` interchange format support
     - NEW: `rollup` verb (fka `summarize`)
     - NEW: `__version__`
