@@ -15,21 +15,50 @@ class TestReadme(unittest.TestCase):
     def test_quick_start(self):
         import redframes as rf
 
-        df = rf.DataFrame({
-            'bear': [
-                'Brown bear', 'Polar bear', 'Asian black bear', 'American black bear', 
-                'Sun bear', 'Sloth bear', 'Spectacled bear', 'Giant panda'],
-            'genus': [
-                'Ursus', 'Ursus', 'Ursus', 'Ursus', 
-                'Helarctos', 'Melursus', 'Tremarctos', 'Ailuropoda'],
-            'weight (male, lbs)': [
-                '300-860', '880-1320', '220-440', '125-500', 
-                '60-150', '175-310', '220-340', '190-275'],
-            'weight (female, lbs)': [
-                '205-455', '330-550', '110-275', '90-300', 
-                '45-90', '120-210', '140-180', '155-220'
-            ],
-        })
+        df = rf.DataFrame(
+            {
+                "bear": [
+                    "Brown bear",
+                    "Polar bear",
+                    "Asian black bear",
+                    "American black bear",
+                    "Sun bear",
+                    "Sloth bear",
+                    "Spectacled bear",
+                    "Giant panda",
+                ],
+                "genus": [
+                    "Ursus",
+                    "Ursus",
+                    "Ursus",
+                    "Ursus",
+                    "Helarctos",
+                    "Melursus",
+                    "Tremarctos",
+                    "Ailuropoda",
+                ],
+                "weight (male, lbs)": [
+                    "300-860",
+                    "880-1320",
+                    "220-440",
+                    "125-500",
+                    "60-150",
+                    "175-310",
+                    "220-340",
+                    "190-275",
+                ],
+                "weight (female, lbs)": [
+                    "205-455",
+                    "330-550",
+                    "110-275",
+                    "90-300",
+                    "45-90",
+                    "120-210",
+                    "140-180",
+                    "155-220",
+                ],
+            }
+        )
 
         # | bear                | genus      | weight (male, lbs)   | weight (female, lbs)   |
         # |:--------------------|:-----------|:---------------------|:-----------------------|
@@ -43,18 +72,17 @@ class TestReadme(unittest.TestCase):
         # | Giant panda         | Ailuropoda | 190-275              | 155-220                |
 
         (
-            df
-                .rename({"weight (male, lbs)": "male", "weight (female, lbs)": "female"})
-                .gather(["male", "female"], into=("sex", "weight"))
-                .split("weight", into=["min", "max"], sep="-")
-                .gather(["min", "max"], into=("stat", "weight"))
-                .mutate({"weight": lambda row: float(row["weight"])})
-                .group(["genus", "sex"])
-                .rollup({"weight": ("weight", rf.stat.mean)})
-                .spread("sex", using="weight")
-                .mutate({"dimorphism": lambda row: round(row["male"] / row["female"], 2)})
-                .drop(["male", "female"])
-                .sort("dimorphism", descending=True)
+            df.rename({"weight (male, lbs)": "male", "weight (female, lbs)": "female"})
+            .gather(["male", "female"], into=("sex", "weight"))
+            .split("weight", into=["min", "max"], sep="-")
+            .gather(["min", "max"], into=("stat", "weight"))
+            .mutate({"weight": lambda row: float(row["weight"])})
+            .group(["genus", "sex"])
+            .rollup({"weight": ("weight", rf.stat.mean)})
+            .spread("sex", using="weight")
+            .mutate({"dimorphism": lambda row: round(row["male"] / row["female"], 2)})
+            .drop(["male", "female"])
+            .sort("dimorphism", descending=True)
         )
 
         # | genus      |   dimorphism |
@@ -70,31 +98,74 @@ class TestReadme(unittest.TestCase):
     def test_pandas_comparison(self):
         import pandas as pd
 
-        df = pd.DataFrame({
-            'bear': [
-                'Brown bear', 'Polar bear', 'Asian black bear', 'American black bear', 
-                'Sun bear', 'Sloth bear', 'Spectacled bear', 'Giant panda'],
-            'genus': [
-                'Ursus', 'Ursus', 'Ursus', 'Ursus', 
-                'Helarctos', 'Melursus', 'Tremarctos', 'Ailuropoda'],
-            'weight (male, lbs)': [
-                '300-860', '880-1320', '220-440', '125-500', 
-                '60-150', '175-310', '220-340', '190-275'],
-            'weight (female, lbs)': [
-                '205-455', '330-550', '110-275', '90-300', 
-                '45-90', '120-210', '140-180', '155-220'
-            ],
-        })
+        df = pd.DataFrame(
+            {
+                "bear": [
+                    "Brown bear",
+                    "Polar bear",
+                    "Asian black bear",
+                    "American black bear",
+                    "Sun bear",
+                    "Sloth bear",
+                    "Spectacled bear",
+                    "Giant panda",
+                ],
+                "genus": [
+                    "Ursus",
+                    "Ursus",
+                    "Ursus",
+                    "Ursus",
+                    "Helarctos",
+                    "Melursus",
+                    "Tremarctos",
+                    "Ailuropoda",
+                ],
+                "weight (male, lbs)": [
+                    "300-860",
+                    "880-1320",
+                    "220-440",
+                    "125-500",
+                    "60-150",
+                    "175-310",
+                    "220-340",
+                    "190-275",
+                ],
+                "weight (female, lbs)": [
+                    "205-455",
+                    "330-550",
+                    "110-275",
+                    "90-300",
+                    "45-90",
+                    "120-210",
+                    "140-180",
+                    "155-220",
+                ],
+            }
+        )
 
-        df = df.rename(columns={"weight (male, lbs)": "male", "weight (female, lbs)": "female"})
-        df = pd.melt(df, id_vars=['bear', 'genus'], value_vars=['male', 'female'], var_name='sex', value_name='weight')
+        df = df.rename(
+            columns={"weight (male, lbs)": "male", "weight (female, lbs)": "female"}
+        )
+        df = pd.melt(
+            df,
+            id_vars=["bear", "genus"],
+            value_vars=["male", "female"],
+            var_name="sex",
+            value_name="weight",
+        )
         df[["min", "max"]] = df["weight"].str.split("-", expand=True)
         df = df.drop("weight", axis=1)
-        df = pd.melt(df, id_vars=['bear', 'genus', 'sex'], value_vars=['min', 'max'], var_name='stat', value_name='weight')
-        df['weight'] = df["weight"].astype('float')
+        df = pd.melt(
+            df,
+            id_vars=["bear", "genus", "sex"],
+            value_vars=["min", "max"],
+            var_name="stat",
+            value_name="weight",
+        )
+        df["weight"] = df["weight"].astype("float")
         df = df.groupby(["genus", "sex"])["weight"].mean()
         df = df.reset_index()
-        df = pd.pivot_table(df, index=['genus'], columns=['sex'], values='weight')
+        df = pd.pivot_table(df, index=["genus"], columns=["sex"], values="weight")
         df = df.reset_index()
         df = df.rename_axis(None, axis=1)
         df["dimorphism"] = round(df["male"] / df["female"], 2)
@@ -128,10 +199,10 @@ class TestReadme(unittest.TestCase):
 
         df = rf.DataFrame({"genus": [1]})
 
-        df["genus"] 
+        df["genus"]
         # ['Ursus', 'Ursus', 'Ursus', 'Ursus', 'Helarctos', 'Melursus', 'Tremarctos', 'Ailuropoda']
 
-        df.columns 
+        df.columns
         # ['bear', 'genus', 'weight (male, lbs)', 'weight (female, lbs)']
 
         df.dimensions
@@ -149,39 +220,45 @@ class TestReadme(unittest.TestCase):
         self.assertTrue(True)
 
     def test_matplotlib(self):
-        import redframes as rf
         import matplotlib.pyplot as plt
 
-        football = rf.DataFrame({
-            'position': ['TE', 'K', 'RB', 'WR', 'QB'],
-            'avp': [116.98, 131.15, 180, 222.22, 272.91]
-        })
+        import redframes as rf
 
-        df = (
-            football
-                .mutate({"color": lambda row: row["position"] in ["WR", "RB"]})
-                .replace({"color": {False: "orange", True: "red"}})
+        football = rf.DataFrame(
+            {
+                "position": ["TE", "K", "RB", "WR", "QB"],
+                "avp": [116.98, 131.15, 180, 222.22, 272.91],
+            }
         )
 
-        plt.barh(df["position"], df["avp"], color=df["color"]);
+        df = football.mutate(
+            {"color": lambda row: row["position"] in ["WR", "RB"]}
+        ).replace({"color": {False: "orange", True: "red"}})
+
+        plt.barh(df["position"], df["avp"], color=df["color"])
 
         self.assertTrue(True)
 
     def test_sklearn(self):
-        import redframes as rf
-        from sklearn.model_selection import train_test_split
         from sklearn.linear_model import LinearRegression
+        from sklearn.model_selection import train_test_split
 
-        df = rf.DataFrame({
-            "touchdowns": [15, 19, 5, 7, 9, 10, 12, 22, 16, 10],
-            "age": [21, 22, 21, 24, 26, 28, 30, 35, 28, 21],
-            "mvp": [1, 1, 0, 0, 0, 0, 0, 1, 0, 0]
-        })
+        import redframes as rf
+
+        df = rf.DataFrame(
+            {
+                "touchdowns": [15, 19, 5, 7, 9, 10, 12, 22, 16, 10],
+                "age": [21, 22, 21, 24, 26, 28, 30, 35, 28, 21],
+                "mvp": [1, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+            }
+        )
 
         target = "touchdowns"
         y = df[target]
         X = df.drop(target)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.3, random_state=1
+        )
 
         model = LinearRegression()
         model.fit(X_train, y_train)
@@ -191,7 +268,7 @@ class TestReadme(unittest.TestCase):
         print(X_train.take(1))
         # rf.DataFrame({'age': [21], 'mvp': [0]})
 
-        X_new = rf.DataFrame({'age': [22], 'mvp': [1]})
+        X_new = rf.DataFrame({"age": [22], "mvp": [1]})
         model.predict(X_new)
         # array([19.])
 

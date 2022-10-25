@@ -66,7 +66,7 @@ class _TakeMixin:
         self._data = data
 
     def take(self, rows: int, **kwargs) -> DataFrame:
-        """Take any number of rows
+        """Take any number of rows (from the top/bottom)
 
         Examples:
 
@@ -131,7 +131,7 @@ class _CommonMixin(_TakeMixin):
         self._data = data
 
     def accumulate(self, column: Column, into: Column) -> DataFrame:
-        """Find the cumulative sum 
+        """Run a cumulative sum over a column
 
         Example:
 
@@ -163,7 +163,7 @@ class _CommonMixin(_TakeMixin):
         beside: LazyColumns | None = None,
         into: tuple[Column, Column] = ("variable", "value"),
     ):
-        """Lengthen data by increasing rows and decreasing columns (opposite of `spread`)
+        """Gather columns into rows (opposite of spread)
 
         Examples:
 
@@ -241,7 +241,10 @@ class _CommonMixin(_TakeMixin):
         return _wrap(gather(self._data, columns, beside, into))
 
     def pack(self, column: Column, sep: str) -> DataFrame:
-        """TODO: docstring"""
+        """Collate and concatenate row values for a target column (opposite of unpack)
+
+        XXX: Examples
+        """
         return _wrap(pack(self._data, column, sep))
 
     def rank(
@@ -250,7 +253,7 @@ class _CommonMixin(_TakeMixin):
         into: Column,
         descending: bool = False,
     ) -> DataFrame:
-        """Densely rank values in a specific column
+        """Rank order values in a column
 
         Example:
 
@@ -285,7 +288,7 @@ class _CommonMixin(_TakeMixin):
         return _wrap(rank(self._data, column, into, descending))
 
     def rollup(self, over: dict[Column, tuple[Column, Func]]) -> DataFrame:
-        """Apply summary functions/statistics to create new columns over specified columns
+        """Apply summary functions and/or statistics to target columns
 
         Example:
 
@@ -354,7 +357,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
             self._data = PandasDataFrame(data)
 
     def __eq__(self, rhs: Any) -> bool:
-        """Check if two DataFrames are equal to eachother
+        """Check if two DataFrames are equal to each other
 
         Example:
 
@@ -413,7 +416,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
 
     @property
     def columns(self) -> Columns:
-        """Inspect column names (keys)
+        """Inspect column keys (names)
 
         Example:
 
@@ -501,7 +504,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return clean_types
 
     def append(self, other: DataFrame) -> DataFrame:
-        """Concatenate another DataFrame to the bottom
+        """Append rows from another DataFrame
 
         Example:
 
@@ -562,7 +565,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     def cross(
         self, rhs: DataFrame | None = None, postfix: tuple[str, str] = ("_lhs", "_rhs")
     ) -> DataFrame:
-        """Cross join another DataFrame (or the DataFrame itself)
+        """Cross join columns from another DataFrame
 
         Examples:
 
@@ -618,7 +621,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(cross(self._data, rhs._data, postfix))  # type: ignore
 
     def dedupe(self, columns: LazyColumns | None = None) -> DataFrame:
-        """Drop duplicate rows with reference to optional target columns
+        """Remove duplicate rows
 
         Examples:
 
@@ -667,7 +670,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(dedupe(self._data, columns))
 
     def denix(self, columns: LazyColumns | None = None) -> DataFrame:
-        """Remove missing values with reference to optional target columns
+        """Remove rows with *NaN/None* values
 
         Example:
 
@@ -717,7 +720,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(denix(self._data, columns))
 
     def drop(self, columns: LazyColumns) -> DataFrame:
-        """Drop specific columns (related: `select`)
+        """Drop entire columns
 
         Examples:
 
@@ -823,9 +826,9 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(fill(self._data, columns, direction, constant))
 
     def filter(self, func: Func) -> DataFrame:
-        """Retain all rows that satisfy specific conditions
+        """Keep rows matching specific conditions
 
-        `|`, `&`, `< <= == != >= >`, `isin`
+        Compatible operators: `|`, `&`, `< <= == != >= >`, `isin`
 
         Examples:
 
@@ -873,9 +876,9 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(filter(self._data, func))
 
     def group(self, by: LazyColumns) -> GroupedFrame:
-        """Create a GroupedFrame overwhich split-apply-combine operations can be applied
+        """Prepare groups for compatible verbs
 
-        Compatible verbs: `accumulate`, `rank`, `rollup`, `take`
+        Compatible verbs: `accumulate`, `gather`, `pack`, `rank`, `rollup`, `take`
 
         Example:
 
@@ -949,7 +952,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         how: Join = "left",
         postfix: tuple[str, str] = ("_lhs", "_rhs"),
     ) -> DataFrame:
-        """Join two DataFrames together using specific matching columns
+        """Join columns from another DataFrame
 
         Examples:
 
@@ -1019,7 +1022,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(join(self._data, rhs._data, on, how, postfix))
 
     def mutate(self, over: dict[Column, Func]) -> DataFrame:
-        """Create new, or transform existing columns
+        """Create a new, or overwrite an existing column
 
         Example:
 
@@ -1048,7 +1051,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(mutate(self._data, over))
 
     def rename(self, columns: dict[OldColumn, NewColumn]) -> DataFrame:
-        """Rename columns from "Old" to "New"
+        """Rename column keys (from "old" to "new")
 
         Example:
 
@@ -1072,7 +1075,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(rename(self._data, columns))
 
     def replace(self, over: dict[Column, dict[OldValue, NewValue]]) -> DataFrame:
-        """Replace values in specified columns, from "old" to "new"
+        """Replace matching values within columns (from "old" to "new")
 
         Example:
 
@@ -1104,7 +1107,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(replace(self._data, over))
 
     def sample(self, rows: int | float, seed: int | None = None) -> DataFrame:
-        """Sample any number, or percentage total of rows
+        """Randomly sample any number of rows
 
         Examples:
 
@@ -1158,7 +1161,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(sample(self._data, rows, seed))
 
     def select(self, columns: LazyColumns) -> DataFrame:
-        """Retain specified columns (opposite of `drop`)
+        """Select specific columns
 
         Examples:
 
@@ -1193,7 +1196,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(select(self._data, columns))
 
     def shuffle(self, seed: int | None = None) -> DataFrame:
-        """Shuffle all rows
+        """Shuffle the order of all rows
 
         Example:
 
@@ -1222,7 +1225,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(shuffle(self._data, seed))
 
     def sort(self, columns: LazyColumns, descending: bool = False) -> DataFrame:
-        """Order rows with reference to specific columns
+        """Sort rows by specific columns
 
         Examples:
 
@@ -1277,7 +1280,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     def split(
         self, column: Column, into: Columns, sep: str, drop: bool = True
     ) -> DataFrame:
-        """Split a column into multiple columns (opposite of `combine`)
+        """Split a single column into multiple columns (opposite of `combine`)
 
         Example:
 
@@ -1302,7 +1305,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(split(self._data, column, into, sep, drop))
 
     def spread(self, column: Column, using: Column) -> DataFrame:
-        """Widen data by increasing columns and decreasing rows (opposite of `gather`)
+        """Spread rows into columns (opposite of `gather`)
 
         Example:
 
@@ -1332,5 +1335,8 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(spread(self._data, column, using))
 
     def unpack(self, column: Column, sep: str) -> DataFrame:
-        """TODO: docstring"""
+        """'Explode' concatenated row values into multiple rows (opposite of `pack`)
+
+        TODO: Examples
+        """
         return _wrap(unpack(self._data, column, sep))

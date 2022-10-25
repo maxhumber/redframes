@@ -1,11 +1,12 @@
 1.4 
+- group().gather() tests 
+- group beside= deprecation tests
 - unpack verb -> tests (docstrings, types)
 - pack verb -> tests (docstrings, types)
     - what to do about non-strings??
-- group().gather() tests 
-- group beside= deprecation tests
 
 1.5
+- docstrings examples to bears
 - pd.DataFrame().to_redframes()
 - to_pandas / (to_csv / to_dict)
 - rf.read_csv() / rf.from_csv()
