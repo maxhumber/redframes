@@ -90,6 +90,7 @@ For comparison, here's the equivalent pandas:
 import pandas as pd
 
 # df = pd.DataFrame({...})
+
 df = df.rename(columns={"weight (male, lbs)": "male", "weight (female, lbs)": "female"})
 df = pd.melt(df, id_vars=['bear', 'genus'], value_vars=['male', 'female'], var_name='sex', value_name='weight')
 df[["min", "max"]] = df["weight"].str.split("-", expand=True)
@@ -116,15 +117,11 @@ df = df.reset_index(drop=True)
 Save, load, and convert `rf.DataFrame` objects:
 
 ```python
-import redframes as rf
-
-df = rf.DataFrame({"foo": [1, 2], "bar": ["A", "B"]})
-
 # save .csv
-rf.save(df, "example.csv")
+rf.save(df, "bears.csv")
 
 # load .csv
-df = rf.load("example.csv")
+df = rf.load("bears.csv")
 
 # convert redframes → pandas
 pandas_df = rf.unwrap(df)
@@ -151,7 +148,7 @@ Verbs are [pure](https://en.wikipedia.org/wiki/Pure_function) and "chain-able" m
 | `fill`                                           | Fill and/or replace { *None, NaN, NULL* } values in target <u>Column</u>s |
 | `filter`                                         | Keep <u>Row</u>s matching specific conditions                |
 | `gather`<sup>‡</sup>                             | Gather <u>Column</u>s into <u>Row</u>s (opposite of `spread`) |
-| `group`                                          | Prepare Groups for compatible verbs<sup>‡</sup>              |
+| `group`                                          | Prepare groups for compatible verbs<sup>‡</sup>              |
 | `join`                                           | Join <u>Column</u>s from another <u>DataFrame</u>            |
 | `mutate`                                         | Create a new, or overwrite an existing <u>Column</u>         |
 | `pack`<sup>‡</sup>                               | Collate and concatenate <u>Row</u> values for a target <u>Column</u> (opposite of `unpack`) |
@@ -164,9 +161,9 @@ Verbs are [pure](https://en.wikipedia.org/wiki/Pure_function) and "chain-able" m
 | `shuffle`                                        | Shuffle the order of all <u>Row</u>s                         |
 | `sort`                                           | Sort <u>Row</u>s by specific <u>Column</u>s                  |
 | `split`                                          | Split a single <u>Column</u> into multiple <u>Column</u>s (opposite of `combine`) |
-| `spread`                                         | Spread <u>Row</u> into <u>Column</u>s (opposite of `gather`) |
+| `spread`                                         | Spread <u>Row</u>s into <u>Column</u>s (opposite of `gather`) |
 | `take`<sup>‡</sup>                               | Take any number of <u>Row</u>s (from the top/bottom)         |
-| `unpack`                                         | Explode concatenated <u>Row</u> values (opposite of `pack`)  |
+| `unpack`                                         | "Explode" concatenated <u>Row</u> values into multiple <u>Row</u>s (opposite of `pack`) |
 
 
 
@@ -175,23 +172,23 @@ Verbs are [pure](https://en.wikipedia.org/wiki/Pure_function) and "chain-able" m
 In addition to all of the verbs there are several properties attached to each `DataFrame` object:
 
 ```python
-df["foo"] 
-# ['A', 'A', 'B', None, 'B', 'A', 'A', 'C']
+df["genus"] 
+# ['Ursus', 'Ursus', 'Ursus', 'Ursus', 'Helarctos', 'Melursus', 'Tremarctos', 'Ailuropoda']
 
 df.columns 
-# ['foo', 'bar', 'baz']
+# ['bear', 'genus', 'weight (male, lbs)', 'weight (female, lbs)']
 
 df.dimensions
-# {'rows': 8, 'columns': 3}
+# {'rows': 8, 'columns': 4}
 
 df.empty
 # False
 
 df.memory
-# '686 B'
+# '2 KB'
 
 df.types
-# {'foo': object, 'bar': int, 'baz': float}
+# {'bear': object, 'genus': object, 'weight (male, lbs)': object, 'weight (female, lbs)': object}
 ```
 
 
@@ -204,15 +201,15 @@ df.types
 import redframes as rf
 import matplotlib.pyplot as plt
 
-df = rf.DataFrame({
+football = rf.DataFrame({
     'position': ['TE', 'K', 'RB', 'WR', 'QB'],
     'avp': [116.98, 131.15, 180, 222.22, 272.91]
 })
 
 df = (
-    df
-    .mutate({"color": lambda row: row["position"] in ["WR", "RB"]})
-    .replace({"color": {False: "orange", True: "red"}})
+    football
+        .mutate({"color": lambda row: row["position"] in ["WR", "RB"]})
+        .replace({"color": {False: "orange", True: "red"}})
 )
 
 plt.barh(df["position"], df["avp"], color=df["color"]);
