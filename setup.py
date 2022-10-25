@@ -9,7 +9,7 @@ setup(
     name="redframes",
     version=__version__,  # type: ignore
     url="https://github.com/maxhumber/redframes",
-    description="[re]ctangular[d]ata[frames]",
+    description="General Purpose Data Manipulation Library",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Max Humber",

@@ -228,7 +228,7 @@ class TestDocstrings(unittest.TestCase):
         )
         result1 = df.gather()
         result2 = df.gather(["foo", "bar"], into=("var", "val"))
-        result3 = df.gather(beside=["foo", "bar"])
+        result3 = df.group(["foo", "bar"]).gather(into=("variable", "value"))
         expected1 = rf.DataFrame(
             {
                 "variable": [

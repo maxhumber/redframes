@@ -1,9 +1,9 @@
 1.4 
-- group().gather() tests 
-- group beside= deprecation tests
-- unpack verb -> tests (docstrings, types)
 - pack verb -> tests (docstrings, types)
     - what to do about non-strings??
+- group().gather() tests 
+- unpack verb -> tests (docstrings, types)
+- group docstrings
 
 1.5
 - docstrings examples to bears

@@ -2,12 +2,13 @@
   <img alt="redframes" src="images/redframes.png" height="200px">
   <br/>
   <div align="center">
-     <a href="https://pandas.pydata.org/"><img alt="Pandas Version" src="https://img.shields.io/badge/pandas->=1.5,<2.0-blue"></a>  
+     <a href="https://pandas.pydata.org/"><img alt="Pandas Version" src="https://img.shields.io/badge/pandas-≥1.5,<2.0-blue"></a>  
     <a href="https://pypi.python.org/pypi/redframes"><img alt="PyPI" src="https://img.shields.io/pypi/v/redframes.svg"></a>
     <a href="https://pepy.tech/project/redframes"><img alt="Downloads" src="https://pepy.tech/badge/redframes"></a>
   </div>
   <br/>
 </div>
+
 
 ### About
 
@@ -137,9 +138,9 @@ Verbs are [pure](https://en.wikipedia.org/wiki/Pure_function) and "chain-able" m
 | `combine`                                        | Combine multiple columns into a single column (opposite of `split`) |
 | `cross`                                          | Cross join columns from another DataFrame                    |
 | `dedupe`                                         | Remove duplicate rows                                        |
-| [`denix`](https://www.dictionary.com/browse/nix) | Remove rows with *NaN/None* values                           |
-| `drop`                                           | Drop entire columns                                          |
-| `fill`                                           | Fill and/or replace *NaN/None* values in target columns      |
+| [`denix`](https://www.dictionary.com/browse/nix) | Remove rows with missing values                              |
+| `drop`                                           | Drop entire columns (opposite of `select`)                   |
+| `fill`                                           | Fill missing values "down", "up", or with a constant         |
 | `filter`                                         | Keep rows matching specific conditions                       |
 | `gather`<sup>‡</sup>                             | Gather columns into rows (opposite of `spread`)              |
 | `group`                                          | Prepare groups for compatible verbs<sup>‡</sup>              |
@@ -151,7 +152,7 @@ Verbs are [pure](https://en.wikipedia.org/wiki/Pure_function) and "chain-able" m
 | `replace`                                        | Replace matching values within columns                       |
 | `rollup`<sup>‡</sup>                             | Apply summary functions and/or statistics to target columns  |
 | `sample`                                         | Randomly sample any number of rows                           |
-| `select`                                         | Select specific columns                                      |
+| `select`                                         | Select specific columns (opposite of `drop`)                 |
 | `shuffle`                                        | Shuffle the order of all rows                                |
 | `sort`                                           | Sort rows by specific columns                                |
 | `split`                                          | Split a single column into multiple columns (opposite of `combine`) |

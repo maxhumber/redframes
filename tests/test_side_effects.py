@@ -107,7 +107,7 @@ class TestSideEffects(unittest.TestCase):
         self.assertEqual(self.df, self.expected)
 
     def test_pack(self):
-        _ = self.df.pack("foo", sep="|")
+        _ = self.df.pack("baz", sep="|")
         self.assertEqual(self.df, self.expected)
 
     def test_rank(self):

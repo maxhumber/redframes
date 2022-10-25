@@ -92,7 +92,7 @@ class TestIndex(unittest.TestCase):
         self.assertTrue(index_is_okay(new))
 
     def test_pack(self):
-        new = self.df.pack("foo", sep="|")
+        new = self.df.pack("baz", sep="|")
         self.assertTrue(index_is_okay(new))
 
     def test_rank(self):
