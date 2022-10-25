@@ -2,12 +2,14 @@
   <img alt="redframes" src="images/redframes.png" height="200px">
   <br/>
   <div align="center">
+     <a href="https://pandas.pydata.org/"><img alt="Pandas Version" src="https://img.shields.io/badge/pandas->=1.5,<2.0-blue"></a>  
     <a href="https://pypi.python.org/pypi/redframes"><img alt="PyPI" src="https://img.shields.io/pypi/v/redframes.svg"></a>
-    <a href="https://pandas.pydata.org/"><img alt="Pandas Version" src="https://img.shields.io/badge/pandas-1.5%2B-blue"></a>  
     <a href="https://pepy.tech/project/redframes"><img alt="Downloads" src="https://pepy.tech/badge/redframes"></a>
   </div>
   <br/>
 </div>
+
+### About
 
 **redframes** (**re**ctangular **d**ata **frames**) is a general purpose data manipulation library that prioritizes syntax,  simplicity, and speed (to a solution). Importantly, the library is fully interoperable with [pandas](https://github.com/pandas-dev/pandas), compatible with [scikit-learn](https://github.com/scikit-learn/scikit-learn), and works great with [matplotlib](https://github.com/matplotlib/matplotlib). 
 
@@ -33,19 +35,10 @@ Copy-and-paste this to get started:
 import redframes as rf
 
 df = rf.DataFrame({
-    'bear': [
-        'Brown bear', 'Polar bear', 'Asian black bear', 'American black bear', 
-        'Sun bear', 'Sloth bear', 'Spectacled bear', 'Giant panda'],
-    'genus': [
-        'Ursus', 'Ursus', 'Ursus', 'Ursus', 
-        'Helarctos', 'Melursus', 'Tremarctos', 'Ailuropoda'],
-    'weight (male, lbs)': [
-        '300-860', '880-1320', '220-440', '125-500', 
-        '60-150', '175-310', '220-340', '190-275'],
-    'weight (female, lbs)': [
-        '205-455', '330-550', '110-275', '90-300', 
-        '45-90', '120-210', '140-180', '155-220'
-    ],
+    'bear': ['Brown bear', 'Polar bear', 'Asian black bear', 'American black bear', 'Sun bear', 'Sloth bear', 'Spectacled bear', 'Giant panda'],
+    'genus': ['Ursus', 'Ursus', 'Ursus', 'Ursus', 'Helarctos', 'Melursus', 'Tremarctos', 'Ailuropoda'],
+    'weight (male, lbs)': ['300-860', '880-1320', '220-440', '125-500', '60-150', '175-310', '220-340', '190-275'],
+    'weight (female, lbs)': ['205-455', '330-550', '110-275', '90-300', '45-90', '120-210', '140-180', '155-220']
 })
 
 # | bear                | genus      | weight (male, lbs)   | weight (female, lbs)   |
@@ -139,32 +132,32 @@ Verbs are [pure](https://en.wikipedia.org/wiki/Pure_function) and "chain-able" m
 
 | Verb                                             | Description                                                  |
 | ------------------------------------------------ | ------------------------------------------------------------ |
-| `accumulate`<sup>‡</sup>                         | Run a cumulative sum over a <u>Column</u>                    |
-| `append`                                         | Append <u>Rows</u> from another DataFrame                    |
-| `combine`                                        | Combine multiple <u>Column</u>s into a single <u>Column</u> (opposite of `split`) |
-| `cross`                                          | Cross join <u>Column</u>s from another DataFrame             |
-| `dedupe`                                         | Remove duplicate <u>Row</u>s                                 |
-| [`denix`](https://www.dictionary.com/browse/nix) | Remove <u>Row</u>s with *NaN/None* values                    |
-| `drop`                                           | Drop entire <u>Column</u>s                                   |
-| `fill`                                           | Fill and/or replace *NaN/None* values in target <u>Column</u>s |
-| `filter`                                         | Keep <u>Row</u>s matching specific conditions                |
-| `gather`<sup>‡</sup>                             | Gather <u>Column</u>s into <u>Row</u>s (opposite of `spread`) |
+| `accumulate`<sup>‡</sup>                         | Run a cumulative sum over a column                           |
+| `append`                                         | Append rows from another DataFrame                           |
+| `combine`                                        | Combine multiple columns into a single column (opposite of `split`) |
+| `cross`                                          | Cross join columns from another DataFrame                    |
+| `dedupe`                                         | Remove duplicate rows                                        |
+| [`denix`](https://www.dictionary.com/browse/nix) | Remove rows with *NaN/None* values                           |
+| `drop`                                           | Drop entire columns                                          |
+| `fill`                                           | Fill and/or replace *NaN/None* values in target columns      |
+| `filter`                                         | Keep rows matching specific conditions                       |
+| `gather`<sup>‡</sup>                             | Gather columns into rows (opposite of `spread`)              |
 | `group`                                          | Prepare groups for compatible verbs<sup>‡</sup>              |
-| `join`                                           | Join <u>Column</u>s from another <u>DataFrame</u>            |
-| `mutate`                                         | Create a new, or overwrite an existing <u>Column</u>         |
-| `pack`<sup>‡</sup>                               | Collate and concatenate <u>Row</u> values for a target <u>Column</u> (opposite of `unpack`) |
-| `rank`<sup>‡</sup>                               | Rank order values in a <u>Column</u>                         |
-| `rename`                                         | Rename <u>Column</u> keys                                    |
-| `replace`                                        | Replace matching values within <u>Column</u>s                |
-| `rollup`<sup>‡</sup>                             | Apply summary functions and/or statistics to target <u>Column</u>s |
-| `sample`                                         | Randomly sample any number of <u>Row</u>s                    |
-| `select`                                         | Select specific <u>Column</u>s                               |
-| `shuffle`                                        | Shuffle the order of all <u>Row</u>s                         |
-| `sort`                                           | Sort <u>Row</u>s by specific <u>Column</u>s                  |
-| `split`                                          | Split a single <u>Column</u> into multiple <u>Column</u>s (opposite of `combine`) |
-| `spread`                                         | Spread <u>Row</u>s into <u>Column</u>s (opposite of `gather`) |
-| `take`<sup>‡</sup>                               | Take any number of <u>Row</u>s (from the top/bottom)         |
-| `unpack`                                         | "Explode" concatenated <u>Row</u> values into multiple <u>Row</u>s (opposite of `pack`) |
+| `join`                                           | Join columns from another DataFrame                          |
+| `mutate`                                         | Create a new, or overwrite an existing column                |
+| `pack`<sup>‡</sup>                               | Collate and concatenate row values for a target column (opposite of `unpack`) |
+| `rank`<sup>‡</sup>                               | Rank order values in a column                                |
+| `rename`                                         | Rename column keys                                           |
+| `replace`                                        | Replace matching values within columns                       |
+| `rollup`<sup>‡</sup>                             | Apply summary functions and/or statistics to target columns  |
+| `sample`                                         | Randomly sample any number of rows                           |
+| `select`                                         | Select specific columns                                      |
+| `shuffle`                                        | Shuffle the order of all rows                                |
+| `sort`                                           | Sort rows by specific columns                                |
+| `split`                                          | Split a single column into multiple columns (opposite of `combine`) |
+| `spread`                                         | Spread rows into columns (opposite of `gather`)              |
+| `take`<sup>‡</sup>                               | Take any number of rows (from the top/bottom)                |
+| `unpack`                                         | "Explode" concatenated row values into multiple rows (opposite of `pack`) |
 
 
 
