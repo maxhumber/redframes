@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import datetime
 from typing import Any, Callable, Literal, Union
 
-import numpy as np
-import pandas as pd
-import pandas.core.groupby.generic as pg
+import numpy as np  # pyright: ignore[reportMissingImports]
+import pandas as pd  # pyright: ignore[reportMissingImports]
+import pandas.core.groupby.generic as pg  # pyright: ignore[reportMissingImports]
 
-Any = Any
 Value = Any
 Values = list[Value]
 OldValue = Value
@@ -25,3 +25,4 @@ PandasDataFrame = pd.DataFrame
 PandasGroupedFrame = pg.DataFrameGroupBy
 PandasIndex = pd.Index
 PandasRangeIndex = pd.RangeIndex
+DateTime = datetime.datetime

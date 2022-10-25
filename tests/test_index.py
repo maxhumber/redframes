@@ -91,6 +91,10 @@ class TestIndex(unittest.TestCase):
         new = self.df.mutate({"foo": lambda row: row["foo"] * 10})
         self.assertTrue(index_is_okay(new))
 
+    def test_pack(self):
+        new = self.df.pack("foo", sep="|")
+        self.assertTrue(index_is_okay(new))
+
     def test_rank(self):
         new = self.df.rank("bar", into="bar_rank", descending=True)
         self.assertTrue(index_is_okay(new))
@@ -133,4 +137,8 @@ class TestIndex(unittest.TestCase):
 
     def test_take(self):
         new = self.df.take(-3)
+        self.assertTrue(index_is_okay(new))
+
+    def test_unpack(self):
+        new = self.df.unpack("jaz", sep="::")
         self.assertTrue(index_is_okay(new))

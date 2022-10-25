@@ -53,3 +53,4 @@ def convert(df: DataFrame | PandasDataFrame) -> PandasDataFrame | DataFrame:
     if isinstance(df, PandasDataFrame):
         return wrap(df)
     raise TypeError("must be rf.DataFrame | pd.DataFrame")
+    

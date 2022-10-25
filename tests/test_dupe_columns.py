@@ -51,15 +51,15 @@ class TestDupeColumns(unittest.TestCase):
             self.df.gather(into=("foo", "foo"))
 
     def test_gather_exising_column_name_for_variable(self):
-        with self.assertRaisesRegex(TypeError, "must not be an existing column key"):
+        with self.assertRaisesRegex(ValueError, "must not be an existing column key"):
             self.df.gather(into=("foo", "value"))
 
     def test_gather_exising_column_name_for_value(self):
-        with self.assertRaisesRegex(TypeError, "must not be an existing column key"):
+        with self.assertRaisesRegex(ValueError, "must not be an existing column key"):
             self.df.gather(into=("variable", "foo"))
 
     def test_gather_exising_column_key(self):
-        with self.assertRaisesRegex(TypeError, "must not be an existing column key"):
+        with self.assertRaisesRegex(ValueError, "must not be an existing column key"):
             self.df.gather(["foo", "bar"], into=("raz", "baz"))
 
     def test_rank_into_overwrite(self):
@@ -75,7 +75,7 @@ class TestDupeColumns(unittest.TestCase):
             self.df.rename({"foo": "oof", "bar": "oof"})
 
     def test_rollup_group_existing_column(self):
-        with self.assertRaisesRegex(ValueError, "cannot insert *"):
+        with self.assertRaisesRegex(KeyError, "unable to overwrite group key"):
             self.df.group("baz").rollup({"baz": ("foo", rf.stat.max)})
 
     def test_select_duplicate_keys(self):

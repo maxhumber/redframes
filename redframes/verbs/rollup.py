@@ -10,8 +10,12 @@ def rollup(
 ) -> PandasDataFrame:
     _check_type(over, dict)
     if isinstance(df, PandasGroupedFrame):
+        groups = set(df.grouper.names)  # type: ignore
+        keys = set(over.keys())
+        if groups.intersection(keys):
+            raise KeyError("unable to overwrite group keys")
         df = df.agg(**over)
-        df = df.reset_index()
+        df = df.reset_index(drop=True)
     else:
         df = df.agg(**over)  # type: ignore
         df = df.T  # type: ignore

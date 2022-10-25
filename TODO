@@ -1,12 +1,41 @@
-- remove summarize
-- explode, collapse verbs
-- more research into `.assign` mutate(..., vectorized=True)?
-- datasets
-- .log (Untitled12)
-- .slice
-- .complete
-- .tally?
-- hide/protect/private
-- 10 minutes tutorial
-- cheatsheet (pandas/dplyr/tidyr)
-- anaconda?
+1.4 
+- unpack verb -> tests (docstrings, types)
+- pack verb -> tests (docstrings, types)
+    - what to do about non-strings??
+- group().gather() tests 
+- group beside= deprecation tests
+
+1.5
+- pd.DataFrame().to_redframes()
+- to_pandas / (to_csv / to_dict)
+- rf.read_csv() / rf.from_csv()
+- deprecate io functions
+- replace `__str__`
+- from_dict, from_pandas, from_csv, from_excel?
+
+1.6
+- reorder/move columns to front / end / before / after
+- tally verb
+- complete verb (tidyr)
+
+1.7
+- warning on multiple columns in mutate (override) or fix?
+- expose @extension
+
+2.0
+- explicit * keyword arguments
+- remove deprecated functions/methods
+
+Later
+- complete verb (tidyr)
+- hide/protect/private methods/attributes
+- cheatsheet & tutorial
+
+Maybe
+- slice verb
+- log verb (Untitled12)
+- builtin datasets
+- vectorized mutate support (`.assign` mutate(..., vectorized=True))?
+- polars/arrow backend
+- class RedList(list): ...?
+- speedtests

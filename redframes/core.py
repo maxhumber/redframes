@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime
 import pprint
 import warnings
 
@@ -9,6 +8,7 @@ from .types import (
     Any,
     Column,
     Columns,
+    DateTime,
     Direction,
     Func,
     Join,
@@ -38,6 +38,7 @@ from .verbs import (
     group,
     join,
     mutate,
+    pack,
     rank,
     rename,
     replace,
@@ -49,11 +50,12 @@ from .verbs import (
     split,
     spread,
     take,
+    unpack,
 )
 
 
 def _wrap(data: PandasDataFrame) -> DataFrame:
-    """Internal/unsafe (no-copy) version of redframes.io.wrap()"""
+    """Unsafe version of redframes.io.wrap()"""
     df = DataFrame()
     df._data = data
     return df
@@ -64,10 +66,7 @@ class _TakeMixin:
         self._data = data
 
     def take(self, rows: int, **kwargs) -> DataFrame:
-        """Take any number of rows from a DataFrame
-
-        pandas: `head`, `tail`
-        tidyverse: `slice_head`, `slice_tail`
+        """Take any number of rows
 
         Examples:
 
@@ -132,10 +131,7 @@ class _CommonMixin(_TakeMixin):
         self._data = data
 
     def accumulate(self, column: Column, into: Column) -> DataFrame:
-        """Accumulate (cumsum) values in one column into another column
-
-        pandas: `cumsum`
-        tidyverse: `mutate(... = cumsum(...))`
+        """Find the cumulative sum 
 
         Example:
 
@@ -161,6 +157,93 @@ class _CommonMixin(_TakeMixin):
         """
         return _wrap(accumulate(self._data, column, into))
 
+    def gather(
+        self,
+        columns: Columns | None = None,
+        beside: LazyColumns | None = None,
+        into: tuple[Column, Column] = ("variable", "value"),
+    ):
+        """Lengthen data by increasing rows and decreasing columns (opposite of `spread`)
+
+        Examples:
+
+        ```python
+        df = rf.DataFrame({
+            "foo": [1, 2, 1, 2],
+            "bar": ["A", "B", "C", "D"],
+            "baz": ["!", "@", "#", "$"],
+            "jaz": range(4)
+        })
+        ```
+        |   foo | bar   | baz   |   jaz |
+        |------:|:------|:------|------:|
+        |     1 | A     | !     |     0 |
+        |     2 | B     | @     |     1 |
+        |     1 | C     | #     |     2 |
+        |     2 | D     | $     |     3 |
+
+        All columns:
+
+        ```python
+        df.gather()
+        ```
+        | variable   | value   |
+        |:-----------|:--------|
+        | foo        | 1       |
+        | foo        | 2       |
+        | foo        | 1       |
+        | foo        | 2       |
+        | bar        | A       |
+        | bar        | B       |
+        | bar        | C       |
+        | bar        | D       |
+        | baz        | !       |
+        | baz        | @       |
+        | baz        | #       |
+        | baz        | $       |
+        | jaz        | 0       |
+        | jaz        | 1       |
+        | jaz        | 2       |
+        | jaz        | 3       |
+
+        Multiple columns:
+
+        ```python
+        df.gather(["foo", "bar"], into=("var", "val"))
+        ```
+        | baz   |   jaz | var   | val   |
+        |:------|------:|:------|:------|
+        | !     |     0 | foo   | 1     |
+        | @     |     1 | foo   | 2     |
+        | #     |     2 | foo   | 1     |
+        | $     |     3 | foo   | 2     |
+        | !     |     0 | bar   | A     |
+        | @     |     1 | bar   | B     |
+        | #     |     2 | bar   | C     |
+        | $     |     3 | bar   | D     |
+
+        All columns beside:
+
+        ```python
+        df.group(["foo", "bar"]).gather(into=("variable", "value"))
+        ```
+        |   foo | bar   | variable   | value   |
+        |------:|:------|:-----------|:--------|
+        |     1 | A     | baz        | !       |
+        |     2 | B     | baz        | @       |
+        |     1 | C     | baz        | #       |
+        |     2 | D     | baz        | $       |
+        |     1 | A     | jaz        | 0       |
+        |     2 | B     | jaz        | 1       |
+        |     1 | C     | jaz        | 2       |
+        |     2 | D     | jaz        | 3       |
+        """
+        return _wrap(gather(self._data, columns, beside, into))
+
+    def pack(self, column: Column, sep: str) -> DataFrame:
+        """TODO: docstring"""
+        return _wrap(pack(self._data, column, sep))
+
     def rank(
         self,
         column: Column,
@@ -168,9 +251,6 @@ class _CommonMixin(_TakeMixin):
         descending: bool = False,
     ) -> DataFrame:
         """Densely rank values in a specific column
-
-        pandas: `rank("dense")`
-        tidyverse: `dense_rank`
 
         Example:
 
@@ -206,9 +286,6 @@ class _CommonMixin(_TakeMixin):
 
     def rollup(self, over: dict[Column, tuple[Column, Func]]) -> DataFrame:
         """Apply summary functions/statistics to create new columns over specified columns
-
-        pandas: `agg`
-        tidyverse: `summarise`
 
         Example:
 
@@ -247,10 +324,13 @@ class _CommonMixin(_TakeMixin):
 
 
 class GroupedFrame(_CommonMixin):
-    """GroupedFrame compatible with: `accumulate`, `rank`, `rollup`, `take`"""
+    """GroupedFrame compatible with: `accumulate`, `gather`, `pack`, `rank`, `rollup`, `take`"""
 
     def __repr__(self) -> str:
-        return "GroupedFrame()"
+        return self._data.obj.__repr__()  # type: ignore
+
+    def _repr_html_(self) -> str:
+        return self._data.obj.to_html(index=True)  # type: ignore
 
 
 class DataFrame(_CommonMixin, _InterchangeMixin):
@@ -309,7 +389,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return self._data.__repr__()
 
     def _repr_html_(self) -> str:
-        return self._data.to_html(index=True)  # index=False?
+        return self._data.to_html(index=True)
 
     def __str__(self) -> str:
         """Return string constructor (for copy-and-pasting)
@@ -410,7 +490,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
             NumpyType("int64"): int,
             NumpyType("float64"): float,
             NumpyType("bool"): bool,
-            NumpyType("datetime64"): datetime.datetime,
+            NumpyType("datetime64"): DateTime,
         }
         raw_types = dict(self._data.dtypes)
         clean_types = {}
@@ -422,9 +502,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
 
     def append(self, other: DataFrame) -> DataFrame:
         """Concatenate another DataFrame to the bottom
-
-        pandas: `concat`
-        tidyverse: `bind_rows`
 
         Example:
 
@@ -462,9 +539,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     ) -> DataFrame:
         """Combine multiple columns into a single column (opposite of `split`)
 
-        pandas: `+`
-        tidyverse: `unite`
-
         Example:
 
         ```python
@@ -489,9 +563,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         self, rhs: DataFrame | None = None, postfix: tuple[str, str] = ("_lhs", "_rhs")
     ) -> DataFrame:
         """Cross join another DataFrame (or the DataFrame itself)
-
-        pandas: `merge(..., how="cross")`
-        tidyverse: `full_join(..., by = character())`
 
         Examples:
 
@@ -544,13 +615,10 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         """
         rhs = self if (rhs == None) else rhs
         _check_type(rhs, DataFrame)
-        return _wrap(cross(self._data, rhs._data, postfix))
+        return _wrap(cross(self._data, rhs._data, postfix))  # type: ignore
 
     def dedupe(self, columns: LazyColumns | None = None) -> DataFrame:
         """Drop duplicate rows with reference to optional target columns
-
-        pandas: `drop_duplicates`
-        tidyverse: `distinct`
 
         Examples:
 
@@ -600,9 +668,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
 
     def denix(self, columns: LazyColumns | None = None) -> DataFrame:
         """Remove missing values with reference to optional target columns
-
-        pandas: `dropna`
-        tidyverse: `drop_na`
 
         Example:
 
@@ -654,9 +719,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     def drop(self, columns: LazyColumns) -> DataFrame:
         """Drop specific columns (related: `select`)
 
-        pandas: `drop(..., axis=1)`
-        tidyverse: `select(- ...)`
-
         Examples:
 
         ```python
@@ -692,9 +754,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         constant: Value | None = None,
     ) -> DataFrame:
         """Fill missing values "down", "up", or with a constant
-
-        pandas: `fillna`
-        tidyverse: `fill`, `replace_na`
 
         Examples:
 
@@ -768,9 +827,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
 
         `|`, `&`, `< <= == != >= >`, `isin`
 
-        pandas: `df[df[col] == condition]`
-        tidyverse: `filter`
-
         Examples:
 
         ```python
@@ -816,99 +872,10 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         """
         return _wrap(filter(self._data, func))
 
-    def gather(
-        self,
-        columns: Columns | None = None,
-        beside: LazyColumns | None = None,
-        into: tuple[Column, Column] = ("variable", "value"),
-    ):
-        """Lengthen data by increasing rows and decreasing columns (opposite of `spread`)
-
-        pandas: `melt`
-        tidyverse: `gather`, `pivot_longer`
-
-        Examples:
-
-        ```python
-        df = rf.DataFrame({
-            "foo": [1, 2, 1, 2],
-            "bar": ["A", "B", "C", "D"],
-            "baz": ["!", "@", "#", "$"],
-            "jaz": range(4)
-        })
-        ```
-        |   foo | bar   | baz   |   jaz |
-        |------:|:------|:------|------:|
-        |     1 | A     | !     |     0 |
-        |     2 | B     | @     |     1 |
-        |     1 | C     | #     |     2 |
-        |     2 | D     | $     |     3 |
-
-        All columns:
-
-        ```python
-        df.gather()
-        ```
-        | variable   | value   |
-        |:-----------|:--------|
-        | foo        | 1       |
-        | foo        | 2       |
-        | foo        | 1       |
-        | foo        | 2       |
-        | bar        | A       |
-        | bar        | B       |
-        | bar        | C       |
-        | bar        | D       |
-        | baz        | !       |
-        | baz        | @       |
-        | baz        | #       |
-        | baz        | $       |
-        | jaz        | 0       |
-        | jaz        | 1       |
-        | jaz        | 2       |
-        | jaz        | 3       |
-
-        Multiple columns:
-
-        ```python
-        df.gather(["foo", "bar"], into=("var", "val"))
-        ```
-        | baz   |   jaz | var   | val   |
-        |:------|------:|:------|:------|
-        | !     |     0 | foo   | 1     |
-        | @     |     1 | foo   | 2     |
-        | #     |     2 | foo   | 1     |
-        | $     |     3 | foo   | 2     |
-        | !     |     0 | bar   | A     |
-        | @     |     1 | bar   | B     |
-        | #     |     2 | bar   | C     |
-        | $     |     3 | bar   | D     |
-
-        All columns except:
-
-        ```python
-        df.gather(beside=["foo", "bar"])
-        ```
-        |   foo | bar   | variable   | value   |
-        |------:|:------|:-----------|:--------|
-        |     1 | A     | baz        | !       |
-        |     2 | B     | baz        | @       |
-        |     1 | C     | baz        | #       |
-        |     2 | D     | baz        | $       |
-        |     1 | A     | jaz        | 0       |
-        |     2 | B     | jaz        | 1       |
-        |     1 | C     | jaz        | 2       |
-        |     2 | D     | jaz        | 3       |
-        """
-        return _wrap(gather(self._data, columns, beside, into))
-
     def group(self, by: LazyColumns) -> GroupedFrame:
         """Create a GroupedFrame overwhich split-apply-combine operations can be applied
 
         Compatible verbs: `accumulate`, `rank`, `rollup`, `take`
-
-        pandas: `groupby`
-        tidyverse: `group_by`
 
         Example:
 
@@ -984,9 +951,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     ) -> DataFrame:
         """Join two DataFrames together using specific matching columns
 
-        pandas: `merge`
-        tidyverse: `left_join`, `right_join`, `inner_join`, `full_join`
-
         Examples:
 
         ```python
@@ -1057,9 +1021,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     def mutate(self, over: dict[Column, Func]) -> DataFrame:
         """Create new, or transform existing columns
 
-        pandas: `apply`, `astype`
-        tidyverse: `mutate`
-
         Example:
 
         ```python
@@ -1089,9 +1050,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     def rename(self, columns: dict[OldColumn, NewColumn]) -> DataFrame:
         """Rename columns from "Old" to "New"
 
-        pandas: `rename`
-        tidyverse: `rename`
-
         Example:
 
         ```python
@@ -1115,9 +1073,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
 
     def replace(self, over: dict[Column, dict[OldValue, NewValue]]) -> DataFrame:
         """Replace values in specified columns, from "old" to "new"
-
-        pandas: `replace`
-        tidyverse: `mutate(... = case_when(...))`
 
         Example:
 
@@ -1150,9 +1105,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
 
     def sample(self, rows: int | float, seed: int | None = None) -> DataFrame:
         """Sample any number, or percentage total of rows
-
-        pandas: `sample(n, frac)`
-        tidyverse: `sample_n`, `sample_frac`
 
         Examples:
 
@@ -1208,9 +1160,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     def select(self, columns: LazyColumns) -> DataFrame:
         """Retain specified columns (opposite of `drop`)
 
-        pandas: `select`
-        tidyverse: `select`
-
         Examples:
 
         ```python
@@ -1244,10 +1193,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         return _wrap(select(self._data, columns))
 
     def shuffle(self, seed: int | None = None) -> DataFrame:
-        """Shuffle all rows in DataFrame
-
-        pandas: `sample(frac=1)`
-        tidyverse: `sample_frac(..., 1)`
+        """Shuffle all rows
 
         Example:
 
@@ -1277,9 +1223,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
 
     def sort(self, columns: LazyColumns, descending: bool = False) -> DataFrame:
         """Order rows with reference to specific columns
-
-        pandas: `sort_values`
-        tidyverse: `arrange`
 
         Examples:
 
@@ -1336,9 +1279,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     ) -> DataFrame:
         """Split a column into multiple columns (opposite of `combine`)
 
-        pandas: `df[col].str.split()`
-        tidyverse: `separate`
-
         Example:
 
         ```python
@@ -1363,9 +1303,6 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
 
     def spread(self, column: Column, using: Column) -> DataFrame:
         """Widen data by increasing columns and decreasing rows (opposite of `gather`)
-
-        pandas: `pivot_table`
-        tidyverse: `spread`, `pivot_wider`
 
         Example:
 
@@ -1393,3 +1330,7 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         | nan |   7 |
         """
         return _wrap(spread(self._data, column, using))
+
+    def unpack(self, column: Column, sep: str) -> DataFrame:
+        """TODO: docstring"""
+        return _wrap(unpack(self._data, column, sep))

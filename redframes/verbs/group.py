@@ -6,5 +6,5 @@ from ..types import LazyColumns, PandasDataFrame, PandasGroupedFrame
 
 def group(df: PandasDataFrame, by: LazyColumns) -> PandasGroupedFrame:
     _check_type(by, {list, str})
-    gdf = df.groupby(by)
+    gdf = df.groupby(by, as_index=False, sort=False)
     return gdf

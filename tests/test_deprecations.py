@@ -11,3 +11,11 @@ class TestDeprecations(unittest.TestCase):
         with self.assertWarnsRegex(FutureWarning, message):
             result = df.summarize({"foo": ("foo", rf.stat.mean)})
             self.assertEqual(result, expected)
+
+    # def test_gather_beside_deprecation(self):
+    #     df = rf.DataFrame({"foo": [1, 1, 2, 2], "bar": [1, 2, 3, 4]})
+    #     expected = None
+    #     message = "Marked for removal, please use `rollup` instead"
+    #     with self.assertWarnsRegex(FutureWarning, message):
+    #         result = df.gather(beside="foo")
+    #         self.assertEqual(result, expected)
