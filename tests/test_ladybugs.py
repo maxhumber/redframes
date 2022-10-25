@@ -46,22 +46,26 @@ class TestLadyBugs(unittest.TestCase):
         with self.assertRaisesRegex(KeyError, "must be flat"):
             rf.wrap(pdf)
 
-    def test_group_gather_beside_conflict(self): 
-        df = rf.DataFrame({
-            "foo": [1, 1, 1, 2, 2, 1, 3, 3], 
-            "bar": range(8), 
-            "baz": range(8), 
-            "jaz": range(8)
-        })
+    def test_group_gather_beside_conflict(self):
+        df = rf.DataFrame(
+            {
+                "foo": [1, 1, 1, 2, 2, 1, 3, 3],
+                "bar": range(8),
+                "baz": range(8),
+                "jaz": range(8),
+            }
+        )
         with self.assertRaisesRegex(ValueError, "beside is incompatible*"):
             df.group("foo").gather(beside="bar")
 
-    def test_group_gather_columns_conflict(self): 
-        df = rf.DataFrame({
-            "foo": [1, 1, 1, 2, 2, 1, 3, 3], 
-            "bar": range(8), 
-            "baz": range(8), 
-            "jaz": range(8)
-        })
+    def test_group_gather_columns_conflict(self):
+        df = rf.DataFrame(
+            {
+                "foo": [1, 1, 1, 2, 2, 1, 3, 3],
+                "bar": range(8),
+                "baz": range(8),
+                "jaz": range(8),
+            }
+        )
         with self.assertRaisesRegex(ValueError, "columns is incompatible*"):
             df.group("foo").gather(columns=["foo", "bar"])

@@ -197,6 +197,14 @@ class TestTypeHints(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "must be dict"):
             self.df.mutate(1)
 
+    def test_pack_bad_column(self):
+        with self.assertRaisesRegex(TypeError, "must be str"):
+            self.df.pack(1, sep="|")
+
+    def test_pack_bad_sep(self):
+        with self.assertRaisesRegex(TypeError, "must be str"):
+            self.df.pack("baz", sep=1)
+
     def test_rename_bad_columns(self):
         with self.assertRaisesRegex(TypeError, "must be dict"):
             self.df.rename(1)
@@ -251,3 +259,11 @@ class TestTypeHints(unittest.TestCase):
     def test_spread_bad_using_column(self):
         with self.assertRaisesRegex(TypeError, "must be str"):
             self.df.spread("foo", using=1)
+
+    def test_unpack_bad_column(self):
+        with self.assertRaisesRegex(TypeError, "must be str"):
+            self.df.unpack(1, sep="|")
+
+    def test_unpack_bad_sep(self):
+        with self.assertRaisesRegex(TypeError, "must be str"):
+            self.df.unpack("jaz", sep=1)

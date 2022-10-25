@@ -243,7 +243,42 @@ class _CommonMixin(_TakeMixin):
     def pack(self, column: Column, sep: str) -> DataFrame:
         """Collate and concatenate row values for a target column (opposite of unpack)
 
-        XXX: Examples
+        Examples:
+
+        ```python
+        df = rf.DataFrame({
+            "foo": ["A", "A", "B", "A", "B", "C"],
+            "bar": [1, 2, 3, 4, 5, 6]
+        })
+        ```
+        | foo   |   bar |
+        |:------|------:|
+        | A     |     1 |
+        | A     |     2 |
+        | B     |     3 |
+        | A     |     4 |
+        | B     |     5 |
+        | C     |     6 |
+
+        Pack all rows:
+
+        ```python
+        df.pack("foo", sep="+")
+        ```
+        | foo         |
+        |:------------|
+        | A+A+B+A+B+C |
+
+        Pack rows by Group:
+
+        ```python
+        df.group("foo").pack("bar", sep="|")
+        ```
+        | foo   | bar   |
+        |:------|:------|
+        | A     | 1|2|4 |
+        | B     | 3|5   |
+        | C     | 6     |
         """
         return _wrap(pack(self._data, column, sep))
 
@@ -1366,6 +1401,33 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
     def unpack(self, column: Column, sep: str) -> DataFrame:
         """'Explode' concatenated row values into multiple rows (opposite of `pack`)
 
-        TODO: Examples
+        Example:
+
+        ```python
+        df = rf.DataFrame({
+            "foo": [1, 2, 3, 4],
+            "bar": ["A:B", "B:C:D", "D:E", "F"]
+        })
+        ```
+        |   foo | bar   |
+        |------:|:------|
+        |     1 | A:B   |
+        |     2 | B:C:D |
+        |     3 | D:E   |
+        |     4 | F     |
+
+        ```python
+        df.unpack("bar", sep=":")
+        ```
+        |   foo | bar   |
+        |------:|:------|
+        |     1 | A     |
+        |     1 | B     |
+        |     2 | B     |
+        |     2 | C     |
+        |     2 | D     |
+        |     3 | D     |
+        |     3 | E     |
+        |     4 | F     |
         """
         return _wrap(unpack(self._data, column, sep))

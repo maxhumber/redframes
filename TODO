@@ -1,7 +1,3 @@
-1.4 
-- pack verb -> tests (docstrings, types)
-- unpack verb -> tests (docstrings, types)
-
 1.5
 - docstrings examples to bears
 - pd.DataFrame().to_redframes()
