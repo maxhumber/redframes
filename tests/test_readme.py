@@ -265,7 +265,7 @@ class TestReadme(unittest.TestCase):
         model.score(X_test, y_test)
         # 0.5083194901655527
 
-        print(X_train.take(1))
+        # print(X_train.take(1))
         # rf.DataFrame({'age': [21], 'mvp': [0]})
 
         X_new = rf.DataFrame({"age": [22], "mvp": [1]})

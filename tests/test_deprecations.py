@@ -14,11 +14,13 @@ class TestDeprecations(unittest.TestCase):
 
     def test_gather_beside_deprecation(self):
         df = rf.DataFrame({"foo": [1, 1, 2, 2], "bar": [1, 2, 3, 4]})
-        expected = rf.DataFrame({
-            'foo': [1, 1, 2, 2],
-            'variable': ['bar', 'bar', 'bar', 'bar'],
-            'value': [1, 2, 3, 4]
-        })
+        expected = rf.DataFrame(
+            {
+                "foo": [1, 1, 2, 2],
+                "variable": ["bar", "bar", "bar", "bar"],
+                "value": [1, 2, 3, 4],
+            }
+        )
         with self.assertWarnsRegex(FutureWarning, "Marked for removal*"):
             result = df.gather(beside="foo")
             self.assertEqual(result, expected)

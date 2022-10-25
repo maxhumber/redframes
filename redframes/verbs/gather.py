@@ -42,7 +42,7 @@ def gather(
     _check_type(columns, {list, None})
     _check_type(beside, {str, list, None})
     _check_type(into, tuple)
-    if beside != None:
+    if (columns == None) and (beside != None):
         warnings.warn(
             "Marked for removal, please use `df.group(...).gather(...)` instead",
             FutureWarning,
