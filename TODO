@@ -3,8 +3,7 @@
 - pack verb -> tests (docstrings, types)
     - what to do about non-strings??
 - group().gather() tests 
-- group beside deprecation tests
-- test readme
+- group beside= deprecation tests
 
 1.5
 - pd.DataFrame().to_redframes()
