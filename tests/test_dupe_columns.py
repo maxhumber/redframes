@@ -62,6 +62,10 @@ class TestDupeColumns(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "must not be an existing column key"):
             self.df.gather(["foo", "bar"], into=("raz", "baz"))
 
+    def test_gather_group_into_conflict(self):
+        with self.assertRaisesRegex(ValueError, "must not be an existing column key"):
+            self.df.group("foo").gather(into=("foo", "bar"))
+
     def test_rank_into_overwrite(self):
         self.df.rank("bar", into="bar", descending=True)
         self.assertTrue(True)

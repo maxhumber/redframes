@@ -44,4 +44,24 @@ class TestLadyBugs(unittest.TestCase):
         )
         pdf = pd.DataFrame([[1, 2, 3]], columns=columns)
         with self.assertRaisesRegex(KeyError, "must be flat"):
-            df = rf.wrap(pdf)
+            rf.wrap(pdf)
+
+    def test_group_gather_beside_conflict(self): 
+        df = rf.DataFrame({
+            "foo": [1, 1, 1, 2, 2, 1, 3, 3], 
+            "bar": range(8), 
+            "baz": range(8), 
+            "jaz": range(8)
+        })
+        with self.assertRaisesRegex(ValueError, "beside is incompatible*"):
+            df.group("foo").gather(beside="bar")
+
+    def test_group_gather_columns_conflict(self): 
+        df = rf.DataFrame({
+            "foo": [1, 1, 1, 2, 2, 1, 3, 3], 
+            "bar": range(8), 
+            "baz": range(8), 
+            "jaz": range(8)
+        })
+        with self.assertRaisesRegex(ValueError, "columns is incompatible*"):
+            df.group("foo").gather(columns=["foo", "bar"])

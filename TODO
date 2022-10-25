@@ -1,5 +1,4 @@
 1.4 
-- group().gather() tests 
 - pack verb -> tests (docstrings, types)
 - unpack verb -> tests (docstrings, types)
 
