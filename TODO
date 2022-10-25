@@ -1,9 +1,7 @@
 1.4 
-- pack verb -> tests (docstrings, types)
-    - what to do about non-strings??
 - group().gather() tests 
+- pack verb -> tests (docstrings, types)
 - unpack verb -> tests (docstrings, types)
-- group docstrings
 
 1.5
 - docstrings examples to bears

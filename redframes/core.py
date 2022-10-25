@@ -906,6 +906,35 @@ class DataFrame(_CommonMixin, _InterchangeMixin):
         | B     |     4 |     5 |            4 |
         | B     |     5 |     6 |            9 |
 
+        + `gather`:
+
+        ```python
+        df.group("foo").gather()
+        ```
+        | foo   | variable   |   value |
+        |:------|:-----------|--------:|
+        | A     | bar        |       1 |
+        | A     | bar        |       2 |
+        | A     | bar        |       3 |
+        | B     | bar        |       4 |
+        | B     | bar        |       5 |
+        | A     | baz        |       9 |
+        | A     | baz        |       7 |
+        | A     | baz        |       7 |
+        | B     | baz        |       5 |
+        | B     | baz        |       6 |
+
+        + `pack`:
+
+        ```python
+        df.group("foo").pack("bar", sep=":")
+        ```
+        | foo   | bar   |
+        |:------|:------|
+        | A     | 1:2:3 |
+        | B     | 4:5   |
+
+
         + `rank`:
 
         ```python

@@ -298,11 +298,13 @@ class TestDocstrings(unittest.TestCase):
             }
         )
         result1 = df.group("foo").accumulate("bar", into="bar_cumsum")
-        result2 = df.group("foo").rank("baz", into="baz_rank", descending=True)
-        result3 = df.group("foo").rollup(
+        result2 = df.group("foo").gather()
+        result3 = df.group("foo").pack("bar", sep=":")
+        result4 = df.group("foo").rank("baz", into="baz_rank", descending=True)
+        result5 = df.group("foo").rollup(
             {"bar_mean": ("bar", rf.stat.mean), "baz_min": ("baz", rf.stat.min)}
         )
-        result4 = df.group("foo").take(1)
+        result6 = df.group("foo").take(1)
         expected1 = rf.DataFrame(
             {
                 "foo": ["A", "A", "A", "B", "B"],
@@ -313,20 +315,41 @@ class TestDocstrings(unittest.TestCase):
         )
         expected2 = rf.DataFrame(
             {
+                "foo": ["A", "A", "A", "B", "B", "A", "A", "A", "B", "B"],
+                "variable": [
+                    "bar",
+                    "bar",
+                    "bar",
+                    "bar",
+                    "bar",
+                    "baz",
+                    "baz",
+                    "baz",
+                    "baz",
+                    "baz",
+                ],
+                "value": [1, 2, 3, 4, 5, 9, 7, 7, 5, 6],
+            }
+        )
+        expected3 = rf.DataFrame({"foo": ["A", "B"], "bar": ["1:2:3", "4:5"]})
+        expected4 = rf.DataFrame(
+            {
                 "foo": ["A", "A", "A", "B", "B"],
                 "bar": [1, 2, 3, 4, 5],
                 "baz": [9, 7, 7, 5, 6],
                 "baz_rank": [1.0, 2.0, 2.0, 2.0, 1.0],
             }
         )
-        expected3 = rf.DataFrame(
+        expected5 = rf.DataFrame(
             {"foo": ["A", "B"], "bar_mean": [2.0, 4.5], "baz_min": [7, 5]}
         )
-        expected4 = rf.DataFrame({"foo": ["A", "B"], "bar": [1, 4], "baz": [9, 5]})
+        expected6 = rf.DataFrame({"foo": ["A", "B"], "bar": [1, 4], "baz": [9, 5]})
         self.assertEqual(result1, expected1)
         self.assertEqual(result2, expected2)
         self.assertEqual(result3, expected3)
         self.assertEqual(result4, expected4)
+        self.assertEqual(result5, expected5)
+        self.assertEqual(result6, expected6)
 
     def test_join(self):
         adf = rf.DataFrame({"foo": ["A", "B", "C"], "bar": [1, 2, 3]})
