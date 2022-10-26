@@ -55,6 +55,12 @@ from .verbs import (
 )
 
 
+def _wrap(data: PandasDataFrame) -> DataFrame:
+    df = DataFrame()
+    df._data = data
+    return df
+
+
 @extension(PandasDataFrame)
 def to_redframes(self: PandasDataFrame) -> DataFrame:
     """Convert a pd.DataFrame into a rf.DataFrame
@@ -69,15 +75,7 @@ def to_redframes(self: PandasDataFrame) -> DataFrame:
     _check_type(self, PandasDataFrame)
     _check_index(self)
     _check_columns(self)
-    df = DataFrame()
-    df._data = self.copy()
-    return df
-
-
-def _wrap(data: PandasDataFrame) -> DataFrame:
-    df = DataFrame()
-    df._data = data
-    return df
+    return _wrap(self)
 
 
 class _TakeMixin:
@@ -392,6 +390,9 @@ class GroupedFrame(_CommonMixin):
 
 class DataFrame(_CommonMixin, _InterchangeMixin):
     def to_pandas(self) -> PandasDataFrame:
+        """
+        TODO: docstring!!
+        """
         return self._data.copy()
 
     def __init__(self, data: dict[Column, Values] | None = None) -> None:
