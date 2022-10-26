@@ -1,3 +1,6 @@
+- 1.5
+    - IMPROVED: README matplotlib + scikit-learn examples
+
 - 1.4
     - NEW: pandas dependency pinned to below 2.0
     - NEW: `pack` verb

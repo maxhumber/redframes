@@ -84,8 +84,7 @@ For comparison, here's the equivalent pandas:
 ```python
 import pandas as pd
 
-# df = pd.DataFrame({...})
-
+# df = pd.DataFrame({ ... })
 df = df.rename(columns={"weight (male, lbs)": "male", "weight (female, lbs)": "female"})
 df = pd.melt(df, id_vars=['bear', 'genus'], value_vars=['male', 'female'], var_name='sex', value_name='weight')
 df[["min", "max"]] = df["weight"].str.split("-", expand=True)
@@ -101,8 +100,6 @@ df["dimorphism"] = round(df["male"] / df["female"], 2)
 df = df.drop(["female", "male"], axis=1)
 df = df.sort_values("dimorphism", ascending=False)
 df = df.reset_index(drop=True)
-
-# 🤮
 ```
 
 
@@ -193,24 +190,25 @@ df.types
 `rf.DataFrame` objects integrate seamlessly with `matplotlib`:
 
 ```python
-import redframes as rf
 import matplotlib.pyplot as plt
 
-football = rf.DataFrame({
-    'position': ['TE', 'K', 'RB', 'WR', 'QB'],
-    'avp': [116.98, 131.15, 180, 222.22, 272.91]
-})
-
-df = (
-    football
-        .mutate({"color": lambda row: row["position"] in ["WR", "RB"]})
+avg = (
+    df
+        .rename({"weight (male, lbs)": "male", "weight (female, lbs)": "female"})
+        .gather(["male", "female"], into=("sex", "weight"))
+        .unpack("weight", sep="-")
+        .mutate({"weight": lambda row: float(row["weight"])})
+        .group(["bear", "genus"])
+        .rollup({"weight": ("weight", rf.stat.mean)})
+        .mutate({"color": lambda row: row["genus"] == "Ursus"})
         .replace({"color": {False: "orange", True: "red"}})
+        .sort("bear", descending=True)
 )
 
-plt.barh(df["position"], df["avp"], color=df["color"]);
+plt.barh(avg["bear"], avg["weight"], color=avg["color"]);
 ```
 
-<img alt="redframes" src="images/bars.png" height="200px">
+<img alt="redframes" src="images/bars.png" width="500px">
 
 
 
@@ -219,30 +217,43 @@ plt.barh(df["position"], df["avp"], color=df["color"]);
 `rf.DataFrame` objects are fully compatible with `sklearn` functions, estimators, and transformers:
 
 ```python
-import redframes as rf
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
-df = rf.DataFrame({
-    "touchdowns": [15, 19, 5, 7, 9, 10, 12, 22, 16, 10],
-    "age": [21, 22, 21, 24, 26, 28, 30, 35, 28, 21],
-    "mvp": [1, 1, 0, 0, 0, 0, 0, 1, 0, 0]
-})
+weights = (
+    df
+        .rename({"weight (male, lbs)": "male", "weight (female, lbs)": "female"})
+        .gather(["male", "female"], into=("sex", "weight"))
+        .unpack("weight", sep="-")
+        .mutate({
+            "weight": lambda row: float(row["weight"]),
+            "male": lambda row: int(row["sex"] == "male"),
+            "ursus": lambda row: int(row["genus"] == "Ursus")   
+        })
+        .select(["male", "ursus", "weight"])
+)
 
-target = "touchdowns"
-y = df[target]
-X = df.drop(target)
+target = "weight"
+y = weights[target]
+X = weights.drop(target)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
 
 model = LinearRegression()
 model.fit(X_train, y_train)
 model.score(X_test, y_test)
-# 0.5083194901655527
 
 print(X_train.take(1))
-# rf.DataFrame({'age': [21], 'mvp': [0]})
+# rf.DataFrame({'male': [0], 'ursus': [0]})
 
-X_new = rf.DataFrame({'age': [22], 'mvp': [1]})
+X_new = rf.DataFrame({'male': [1], 'ursus': [1]})
 model.predict(X_new)
-# array([19.])
+# array([439.91071429])
 ```
+
+
+
+### Stars
+
+If you like **redframes** please consider "starring" this repo as it helps others find the project!
+
+<img alt="stars" src="https://api.star-history.com/svg?repos=maxhumber/redframes&type=Date" width="500px">

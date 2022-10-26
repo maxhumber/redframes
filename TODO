@@ -1,13 +1,14 @@
 1.5
 - docstrings examples to bears
 - pd.DataFrame().to_redframes()
-- to_pandas / (to_csv / to_dict)
-- rf.read_csv() / rf.from_csv()
+- rf.DataFrame().to_pandas() 
+- df.to_csv()
+- rf.from_csv()
+
 - deprecate io functions
-- replace `__str__`
-- from_dict, from_pandas, from_csv, from_excel?
 
 1.6
+- replace `__str__`
 - reorder/move columns to front / end / before / after
 - tally verb
 - complete verb (tidyr)
