@@ -3,7 +3,8 @@ from __future__ import annotations
 import pprint
 import warnings
 
-from .checks import _check_type
+from .checks import _check_columns, _check_index, _check_type
+from .extension import extension
 from .types import (
     Any,
     Column,
@@ -54,8 +55,26 @@ from .verbs import (
 )
 
 
+@extension(PandasDataFrame)
+def to_redframes(self: PandasDataFrame) -> DataFrame:
+    """Convert a pd.DataFrame into a rf.DataFrame
+
+    Example:
+
+    ```python
+    df = pd.DataFrame({"foo": [0]})
+    df = df.to_redframes()
+    ```
+    """
+    _check_type(self, PandasDataFrame)
+    _check_index(self)
+    _check_columns(self)
+    df = DataFrame()
+    df._data = self.copy()
+    return df
+
+
 def _wrap(data: PandasDataFrame) -> DataFrame:
-    """Unsafe version of redframes.io.wrap()"""
     df = DataFrame()
     df._data = data
     return df
@@ -372,6 +391,9 @@ class GroupedFrame(_CommonMixin):
 
 
 class DataFrame(_CommonMixin, _InterchangeMixin):
+    def to_pandas(self) -> PandasDataFrame:
+        return self._data.copy()
+
     def __init__(self, data: dict[Column, Values] | None = None) -> None:
         """Initialize a DataFrame with a standard dictionary
 
