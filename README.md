@@ -98,7 +98,6 @@ weight_range[["min", "max"]] = weight_range["weight"].str.split("-", expand=True
         .melt(id_vars=["bear", "genus", "sex"], value_vars=["min", "max"], var_name="stat", value_name="weight")
         .groupby(["genus", "sex"])["weight"].mean()
         .unstack()
-        .rename_axis(None, axis=1)
         .assign(dimorphism=lambda df: df["male"].div(df["female"]).round(2))
         ["dimorphism"]
         .sort_values(ascending=False)
