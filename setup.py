@@ -16,8 +16,8 @@ setup(
     author_email="max.humber@gmail.com",
     license="BSD 2",
     packages=find_packages(),
-    python_requires=">=3.9",
-    install_requires=["pandas>=1.5,<2.0"],
+    python_requires=">=3.8",
+    install_requires=["pandas>=1.5,<3.0"],
     extras_require={
         "test": [
             "matplotlib",
@@ -38,6 +38,7 @@ setup(
     },
     classifiers=[
         "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",

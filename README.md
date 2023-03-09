@@ -2,12 +2,13 @@
   <img alt="redframes" src="images/redframes.png" height="200px">
   <br/>
   <div align="center">
-     <a href="https://pandas.pydata.org/"><img alt="Pandas Version" src="https://img.shields.io/badge/pandas-≥1.5,<2.0-blue"></a>  
+     <a href="https://pandas.pydata.org/"><img alt="Pandas Version" src="https://img.shields.io/badge/pandas-≥1.5,<3.0-blue"></a>  
     <a href="https://pypi.python.org/pypi/redframes"><img alt="PyPI" src="https://img.shields.io/pypi/v/redframes.svg"></a>
     <a href="https://pepy.tech/project/redframes"><img alt="Downloads" src="https://pepy.tech/badge/redframes"></a>
   </div>
   <br/>
 </div>
+
 
 
 ### About
