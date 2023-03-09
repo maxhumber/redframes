@@ -1,3 +1,6 @@
+- 1.4.1
+    - BUMP: support for pandas 2.0+
+    - NEW: support for Python 3.8
 - 1.4
     - NEW: pandas dependency pinned to below 2.0
     - NEW: `pack` verb
