@@ -87,21 +87,22 @@ import pandas as pd
 
 # df = pd.DataFrame({...})
 
-df = df.rename(columns={"weight (male, lbs)": "male", "weight (female, lbs)": "female"})
-df = pd.melt(df, id_vars=['bear', 'genus'], value_vars=['male', 'female'], var_name='sex', value_name='weight')
-df[["min", "max"]] = df["weight"].str.split("-", expand=True)
-df = df.drop("weight", axis=1)
-df = pd.melt(df, id_vars=['bear', 'genus', 'sex'], value_vars=['min', 'max'], var_name='stat', value_name='weight')
-df['weight'] = df["weight"].astype('float')
-df = df.groupby(["genus", "sex"])["weight"].mean()
-df = df.reset_index()
-df = pd.pivot_table(df, index=['genus'], columns=['sex'], values='weight')
-df = df.reset_index()
-df = df.rename_axis(None, axis=1)
-df["dimorphism"] = round(df["male"] / df["female"], 2)
-df = df.drop(["female", "male"], axis=1)
-df = df.sort_values("dimorphism", ascending=False)
-df = df.reset_index(drop=True)
+weight_range = (
+    df
+        .rename(columns={"weight (male, lbs)": "male", "weight (female, lbs)": "female"})
+        .melt(id_vars=["bear", "genus"], value_vars=["male", "female"], var_name="sex", value_name="weight")
+)
+weight_range[["min", "max"]] = weight_range["weight"].str.split("-", expand=True).astype("float")
+(
+    weight_range
+        .drop(columns="weight")
+        .melt(id_vars=["bear", "genus", "sex"], value_vars=["min", "max"], var_name="stat", value_name="weight")
+        .groupby(["genus", "sex"])["weight"].mean()
+        .unstack()
+        .assign(dimorphism=lambda df: df["male"].div(df["female"]).round(2))
+        ["dimorphism"]
+        .sort_values(ascending=False)
+)
 
 # 🤮
 ```
