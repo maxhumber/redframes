@@ -1,18 +1,18 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any, Callable, Literal, Union
+from typing import Any, Callable, Literal, Union, List
 
 import numpy as np  # pyright: ignore[reportMissingImports]
 import pandas as pd  # pyright: ignore[reportMissingImports]
 import pandas.core.groupby.generic as pg  # pyright: ignore[reportMissingImports]
 
 Value = Any
-Values = list[Value]
+Values = List[Value]
 OldValue = Value
 NewValue = Value
 Column = str
-Columns = list[Column]
+Columns = List[Column]
 LazyColumns = Union[Column, Columns]
 OldColumn = Column
 NewColumn = Column

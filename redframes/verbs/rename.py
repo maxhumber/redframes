@@ -1,8 +1,10 @@
+from typing import Dict
+
 from ..checks import _check_type, _check_values
 from ..types import NewColumn, OldColumn, PandasDataFrame
 
 
-def rename(df: PandasDataFrame, columns: dict[OldColumn, NewColumn]) -> PandasDataFrame:
+def rename(df: PandasDataFrame, columns: Dict[OldColumn, NewColumn]) -> PandasDataFrame:
     _check_type(columns, dict)
     cv = columns.values()
     _check_values(cv, str)
