@@ -1,9 +1,11 @@
+from typing import Dict
+
 from ..checks import _check_type
 from ..types import Column, NewValue, OldValue, PandasDataFrame
 
 
 def replace(
-    df: PandasDataFrame, over: dict[Column, dict[OldValue, NewValue]]
+    df: PandasDataFrame, over: Dict[Column, Dict[OldValue, NewValue]]
 ) -> PandasDataFrame:
     _check_type(over, dict)
     bad_columns = list(set(over.keys()) - set(df.columns))
